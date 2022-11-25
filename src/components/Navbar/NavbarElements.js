@@ -1,9 +1,10 @@
 import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
+import { Dropdown, Menu } from 'semantic-ui-react'
 import styled from 'styled-components';
   
 export const Nav = styled.nav`
-  background: #63D471;
+  background: #00238b;
   height: 85px;
   display: flex;
   justify-content: space-between;
@@ -14,7 +15,7 @@ export const Nav = styled.nav`
 `;
   
 export const NavLink = styled(Link)`
-  color: #808080;
+  color: #ffffff;
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -22,7 +23,7 @@ export const NavLink = styled(Link)`
   height: 100%;
   cursor: pointer;
   &.active {
-    color: #000000;
+    color: #a3a3a3;
   }
 `;
   
@@ -84,3 +85,41 @@ export const NavBtnLink = styled(Link)`
     color: #808080;
   }
 `;
+
+const friendOptions = [
+  {
+    key: 'ETC',
+    text: 'ETC',
+    value: 'ETC',
+    image: { avatar: true, src: '/images/avatar/small/jenny.jpg' },
+  },
+  {
+    key: 'Nova Network',
+    text: 'Nova Network',
+    value: 'Nova Network',
+    image: { avatar: true, src: '/images/avatar/small/elliot.jpg' },
+  },
+  {
+    key: 'Nebula',
+    text: 'Nebula',
+    value: 'Nebula',
+    image: { avatar: true, src: '/images/avatar/small/stevie.jpg' },
+  },
+  {
+    key: 'localhost',
+    text: 'localhost',
+    value: 'localhost',
+    image: { avatar: true, src: '/images/avatar/small/christian.jpg' },
+  },
+]
+
+export const NetworkDropdown = () => (
+  <Menu compact>
+    <Dropdown 
+      selection
+      simple option
+      options={friendOptions} 
+      defaultValue={friendOptions[0].value}
+    />
+  </Menu>
+)

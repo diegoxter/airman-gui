@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Button } from 'semantic-ui-react'
+
 import { ethers } from "ethers";
 
 class Metamask extends Component {
@@ -21,11 +23,11 @@ class Metamask extends Component {
   renderMetamask() {
     if (!this.state.selectedAddress) {
       return (
-        <button onClick={() => this.connectToMetamask()}>Connect to Metamask</button>
+        <Button onClick={() => this.connectToMetamask()}>Connect to Metamask</Button>
       )
     } else {
       return (
-        <button onClick={() => this.connectToMetamask()}>{this.state.selectedAddress}</button>
+        <Button onClick={() => this.connectToMetamask()}>{this.state.selectedAddress}</Button>
         //<p>Welcome {this.state.selectedAddress}</p>
       );
     }

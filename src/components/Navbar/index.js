@@ -1,33 +1,30 @@
 import React from 'react';
+import { Divider, Grid, Icon } from 'semantic-ui-react'
 import {
   Nav,
   NavLink,
   Bars,
   NavMenu,
   NavBtn,
-  NavBtnLink,
+  NetworkDropdown,
 } from './NavbarElements';
 import Metamask from '../Metamask';
-import {
-  Menu,
-  MenuList,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  MenuPopover,
-  MenuLink,
-} from "@reach/menu-button";
-import "@reach/menu-button/styles.css";
-  
+import 'semantic-ui-css/semantic.min.css'
+
+
 const Navbar = () => {
   return (
     <>
-      <Nav>
+      <Nav> {/* TO DO reformat this to semantic-ui-react*/}
         <Bars />
   
         <NavMenu>
+          <NavLink to='/' activestyle="true">
+            <Icon name='home'/>
+          </NavLink>
+
           <NavLink to='/about' activestyle="true">
-            Element 1
+            Home
           </NavLink>
           <NavLink to='/events' activestyle="true">
             Element 2
@@ -38,19 +35,12 @@ const Navbar = () => {
           {/* Second Nav */}
           {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
         </NavMenu>
-        <Menu>
-      <MenuButton
-      className="button-primary"
-      style={{ boxShadow: "2px 2px 2px hsla(0, 0%, 0%, 0.25)", color: "blue"}}
-      
-      >Network</MenuButton>
-      <MenuList>
-        <MenuItem>Element 1</MenuItem>
-        <MenuLink to="view">Element 2</MenuLink>
-      </MenuList>
-    </Menu>
         <NavBtn>
-          <Metamask />
+          <Grid>
+            <NetworkDropdown />
+            <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
+            <Metamask />
+          </Grid>
         </NavBtn>
       </Nav>
     </>
