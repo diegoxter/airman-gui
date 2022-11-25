@@ -2,6 +2,11 @@ import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown, Menu } from 'semantic-ui-react'
 import styled from 'styled-components';
+import ETC_ICON_URL from '../assets/etc-logo.png'
+import NOVA_ICON_URL from '../assets/NN-logo.png'
+import NEBULA_ICON_URL from '../assets/Nebula-logo.png'
+import LOCALHOST_ICON_URL from '../assets/localhost.png'
+
   
 export const Nav = styled.nav`
   background: #00238b;
@@ -91,25 +96,25 @@ const friendOptions = [
     key: 'ETC',
     text: 'ETC',
     value: 'ETC',
-    image: { avatar: true, src: '/images/avatar/small/jenny.jpg' },
+    image: { avatar: true, src: ETC_ICON_URL },
   },
   {
     key: 'Nova Network',
     text: 'Nova Network',
     value: 'Nova Network',
-    image: { avatar: true, src: '/images/avatar/small/elliot.jpg' },
+    image: { avatar: true, src: NOVA_ICON_URL },
   },
   {
     key: 'Nebula',
     text: 'Nebula',
     value: 'Nebula',
-    image: { avatar: true, src: '/images/avatar/small/stevie.jpg' },
+    image: { avatar: true, src: NEBULA_ICON_URL },
   },
   {
     key: 'localhost',
     text: 'localhost',
     value: 'localhost',
-    image: { avatar: true, src: '/images/avatar/small/christian.jpg' },
+    image: { avatar: true, src: LOCALHOST_ICON_URL },
   },
 ]
 

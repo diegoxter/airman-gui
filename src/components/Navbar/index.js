@@ -15,25 +15,24 @@ import 'semantic-ui-css/semantic.min.css'
 const Navbar = () => {
   return (
     <>
-      <Nav> {/* TO DO reformat this to semantic-ui-react*/}
+      <Nav> 
         <Bars />
-  
-        <NavMenu>
-          <NavLink to='/' activestyle="true">
-            <Icon name='home'/>
-          </NavLink>
+          <NavMenu>
+            <NavLink to='/' activestyle="true">
+              <Icon name='home'/>
+            </NavLink>
 
-          <NavLink to='/about' activestyle="true">
-            Home
-          </NavLink>
-          <NavLink to='/events' activestyle="true">
-            Element 2
-          </NavLink>
-          <NavLink to='/annual' activestyle="true">
-            Element 3
-          </NavLink>
-          {/* Second Nav */}
-          {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
+            <NavLink to='/about' activestyle="true">
+              Home
+            </NavLink>
+            <NavLink to='/events' activestyle="true">
+              Element 2
+            </NavLink>
+            <NavLink to='/annual' activestyle="true">
+              Element 3
+            </NavLink>
+            {/* Second Nav */}
+            {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
         </NavMenu>
         <NavBtn>
           <Grid>
