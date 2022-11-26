@@ -1,6 +1,7 @@
 import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
-import { Dropdown, Menu } from 'semantic-ui-react'
+import { Dropdown } from 'semantic-ui-react'
+import Metamask from '../Metamask';
 import styled from 'styled-components';
 import ETC_ICON_URL from '../assets/etc-logo.png'
 import NOVA_ICON_URL from '../assets/NN-logo.png'
@@ -17,6 +18,10 @@ export const Nav = styled.nav`
   z-index: 12;
   /* Third Nav */
   /* justify-content: flex-start; */
+  @media screen and (max-width: 768px) {
+    align-items: center;
+    display: flex;
+  }
 `;
   
 export const NavLink = styled(Link)`
@@ -36,7 +41,7 @@ export const Bars = styled(FaBars)`
   display: none;
   color: #808080;
   @media screen and (max-width: 768px) {
-    display: block;
+    display: none;
     position: absolute;
     top: 0;
     right: 0;
@@ -56,7 +61,9 @@ export const NavMenu = styled.div`
   /* width: 100vw;
   white-space: nowrap; */
   @media screen and (max-width: 768px) {
-    display: none;
+    font-size: 1.8rem;
+    display: flex;
+    transform: translate(25%, 25%);
   }
 `;
   
@@ -88,6 +95,7 @@ export const NavBtnLink = styled(Link)`
     transition: all 0.2s ease-in-out;
     background: #fff;
     color: #808080;
+    display: none;
   }
 `;
 

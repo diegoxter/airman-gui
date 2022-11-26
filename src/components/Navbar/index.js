@@ -23,16 +23,13 @@ const Navbar = () => {
             </NavLink>
 
             <NavLink to='/about' activestyle="true">
-              Home
+              About
             </NavLink>
 
             <NavLink to='/events' activestyle="true">
-              Element 2
+              Events
             </NavLink>
             
-            <NavLink to='/annual' activestyle="true">
-              Element 3
-            </NavLink>
           </NavMenu>
         <Grid>
           <NavBtn>

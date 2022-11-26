@@ -22,14 +22,16 @@ class Metamask extends Component {
   renderMetamask() {
     if (!this.state.selectedAddress) {
       return (
-        <Button icon size='large' onClick={() => this.connectToMetamask()}>
-          <Icon name='lock'></Icon> Connect wallet
-        </Button>
+        <div>
+          <Button icon size='large' onClick={() => this.connectToMetamask()}>
+            <Icon name='lock'></Icon> Connect wallet
+          </Button>
+        </div>
       )
     } else {
       return (
-        <Button icon size='large' onClick={() => this.connectToMetamask()}>
-        <Icon name='user circle'></Icon> Profile 
+        <Button icon size='large'>
+        <Icon name='user circle'></Icon> {this.state.selectedAddress} 
         </Button>
       );
     }

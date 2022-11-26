@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Grid } from 'semantic-ui-react'
 
 const Home = () => {
-  const CardExampleLinkCard = () => (
+  const AirdropCard = () => (
     <Card
       href='#card-example-link-card'
       header='Elliot Baker'
@@ -12,14 +12,10 @@ const Home = () => {
   )
 
   return (
-    // to do a grid
-    <Grid style={{
-      position: 'relative',
-      display: 'flex',
-      height: '10vh'
-    }}>
-      <CardExampleLinkCard />
-    </Grid>
+
+      <Grid>
+        <AirdropCard />
+      </Grid>
   );
 };
   
