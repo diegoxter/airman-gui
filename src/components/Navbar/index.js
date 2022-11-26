@@ -25,22 +25,24 @@ const Navbar = () => {
             <NavLink to='/about' activestyle="true">
               Home
             </NavLink>
+
             <NavLink to='/events' activestyle="true">
               Element 2
             </NavLink>
+            
             <NavLink to='/annual' activestyle="true">
               Element 3
             </NavLink>
-            {/* Second Nav */}
-            {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
-        </NavMenu>
-        <NavBtn>
-          <Grid>
+          </NavMenu>
+        <Grid>
+          <NavBtn>
             <NetworkDropdown />
-            <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
+          </NavBtn>
+          <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
+          <NavBtn>
             <Metamask />
-          </Grid>
-        </NavBtn>
+          </NavBtn>
+        </Grid>
       </Nav>
     </>
   );

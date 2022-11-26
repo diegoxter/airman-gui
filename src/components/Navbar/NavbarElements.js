@@ -63,7 +63,7 @@ export const NavMenu = styled.div`
 export const NavBtn = styled.nav`
   display: flex;
   align-items: center;
-  margin-right: 24px;
+  margin-top: 5px;
   /* Third Nav */
   /* justify-content: flex-end;
   width: 100vw; */
@@ -96,35 +96,33 @@ const friendOptions = [
     key: 'ETC',
     text: 'ETC',
     value: 'ETC',
-    image: { avatar: true, src: ETC_ICON_URL },
+    image: { class:"ui mini image", src: ETC_ICON_URL },
   },
   {
     key: 'Nova Network',
     text: 'Nova Network',
     value: 'Nova Network',
-    image: { avatar: true, src: NOVA_ICON_URL },
+    image: { class:"ui mini image", src: NOVA_ICON_URL },
   },
   {
     key: 'Nebula',
     text: 'Nebula',
     value: 'Nebula',
-    image: { avatar: true, src: NEBULA_ICON_URL },
+    image: { class:"ui mini image", src: NEBULA_ICON_URL },
   },
   {
     key: 'localhost',
     text: 'localhost',
     value: 'localhost',
-    image: { avatar: true, src: LOCALHOST_ICON_URL },
+    image: { class:"ui mini image", src: LOCALHOST_ICON_URL },
   },
 ]
 
 export const NetworkDropdown = () => (
-  <Menu compact>
     <Dropdown 
       selection
       simple option
       options={friendOptions} 
       defaultValue={friendOptions[0].value}
     />
-  </Menu>
 )

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Image } from 'semantic-ui-react'
-import METAMASK_ICON_URL from './assets/metamask.png'
+import { Button, Icon } from 'semantic-ui-react'
 import { ethers } from "ethers";
 
 class Metamask extends Component {
@@ -23,14 +22,15 @@ class Metamask extends Component {
   renderMetamask() {
     if (!this.state.selectedAddress) {
       return (
-        <Button onClick={() => this.connectToMetamask()}>
-          <Image src={METAMASK_ICON_URL} inline size='mini'/> Connect to Metamask
+        <Button icon size='large' onClick={() => this.connectToMetamask()}>
+          <Icon name='lock'></Icon> Connect wallet
         </Button>
       )
     } else {
       return (
-        <Button onClick={() => this.connectToMetamask()}>{this.state.selectedAddress}</Button>
-        //<p>Welcome {this.state.selectedAddress}</p>
+        <Button icon size='large' onClick={() => this.connectToMetamask()}>
+        <Icon name='user circle'></Icon> Profile 
+        </Button>
       );
     }
   }
@@ -45,3 +45,4 @@ class Metamask extends Component {
 }
 
 export default Metamask;
+// <a href="https://iconscout.com/icons/metamask" target="_blank">MetaMask Icon</a> by <a href="https://iconscout.com/contributors/icon-mafia" target="_blank">Icon Mafia</a>
