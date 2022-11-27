@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown } from 'semantic-ui-react'
-import Metamask from '../Metamask';
+// import Metamask from '../Metamask';
 import styled from 'styled-components';
 import ETC_ICON_URL from '../assets/etc-logo.png'
 import NOVA_ICON_URL from '../assets/NN-logo.png'
@@ -99,38 +100,45 @@ export const NavBtnLink = styled(Link)`
   }
 `;
 
-const friendOptions = [
-  {
-    key: 'ETC',
-    text: 'ETC',
-    value: 'ETC',
-    image: { class:"ui mini image", src: ETC_ICON_URL },
-  },
-  {
-    key: 'Nova Network',
-    text: 'Nova Network',
-    value: 'Nova Network',
-    image: { class:"ui mini image", src: NOVA_ICON_URL },
-  },
-  {
-    key: 'Nebula',
-    text: 'Nebula',
-    value: 'Nebula',
-    image: { class:"ui mini image", src: NEBULA_ICON_URL },
-  },
-  {
-    key: 'localhost',
-    text: 'localhost',
-    value: 'localhost',
-    image: { class:"ui mini image", src: LOCALHOST_ICON_URL },
-  },
-]
+export const NetworkDropdown = () => {
+  const [ network, setNetwork ] = useState("")
 
-export const NetworkDropdown = () => (
+  const handleChange = (e, { value }) => setNetwork(value)
+
+  const networkOptions = [
+    {
+      key: 'ETC',
+      text: 'ETC',
+      value: 'ETC',
+      image: { class:"ui mini image", src: ETC_ICON_URL },
+    },
+    {
+      key: 'Nova Network',
+      text: 'Nova Network',
+      value: 'Nova Network',
+      image: { class:"ui mini image", src: NOVA_ICON_URL },
+    },
+    {
+      key: 'Nebula',
+      text: 'Nebula',
+      value: 'Nebula',
+      image: { class:"ui mini image", src: NEBULA_ICON_URL },
+    },
+    {
+      key: 'localhost',
+      text: 'localhost',
+      value: 'localhost',
+      image: { class:"ui mini image", src: LOCALHOST_ICON_URL },
+    },
+  ]
+  console.log(network)
+  return (
     <Dropdown 
       selection
       simple option
-      options={friendOptions} 
-      defaultValue={friendOptions[0].value}
+      options={networkOptions}
+      onChange={handleChange} 
+      defaultValue={networkOptions[0].value}
     />
-)
+  )
+}
