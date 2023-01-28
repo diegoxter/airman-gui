@@ -1,13 +1,14 @@
-import { useState } from "react";
 import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown } from 'semantic-ui-react'
 import styled from 'styled-components';
-import ETC_ICON_URL from '../assets/etc-logo.png'
-import NOVA_ICON_URL from '../assets/NN-logo.png'
-import NEBULA_ICON_URL from '../assets/Nebula-logo.png'
-import LOCALHOST_ICON_URL from '../assets/localhost.png'
+import Metamask from '../Metamask';
 
+import { 
+  ETC_ICON_URL, 
+  NOVA_ICON_URL, 
+  LOCALHOST_ICON_URL 
+} from './iconURI'
   
 export const Nav = styled.nav`
   background: #00238b;
@@ -100,28 +101,24 @@ export const NavBtnLink = styled(Link)`
 `;
 
 export const NetworkDropdown = () => {
-  const [ network, setNetwork ] = useState("")
+  const meta = new Metamask()
 
-  const handleChange = (e, { value }) => {setNetwork(value)}
+  const handleChange = (e, { value }) => {
+    meta.handleNetworkChange(value)
+  }
 
   const networkOptions = [
     {
       key: 'ETC',
       text: 'ETC',
-      value: '61',
+      value: '3D',
       image: { class:"ui mini image", src: ETC_ICON_URL },
     },
     {
       key: 'Nova Network',
       text: 'Nova Network',
-      value: '87',
+      value: '57',
       image: { class:"ui mini image", src: NOVA_ICON_URL },
-    },
-    {
-      key: 'Nebula',
-      text: 'Nebula',
-      value: '107',
-      image: { class:"ui mini image", src: NEBULA_ICON_URL },
     },
     {
       key: 'localhost',
@@ -130,7 +127,7 @@ export const NetworkDropdown = () => {
       image: { class:"ui mini image", src: LOCALHOST_ICON_URL },
     },
   ]
-  console.log(network)
+
   return (
     <Dropdown 
       selection

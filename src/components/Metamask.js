@@ -13,32 +13,73 @@ class Metamask extends Component {
     };
   }
 
-  handleNetworkChange(e) {
-    this.setState({activeChain: e})
+  async handleNetworkChange(chainID) {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x'+chainID }],
+      });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+            let url = ''
+
+            switch (chainID) {
+              case '61':
+                url = 'https://etc.wallet.coinbase.com/api/';
+                break;
+
+              case '87':
+                url = 'https://dev.rpc.novanetwork.io';
+                break;
+
+              case 'localhost':
+                url = '';
+                break;
+              
+              default:
+                console.log('ups')
+            }
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: '0x'+chainID,
+                chainName: '...',
+                rpcUrls: [url],
+              },
+            ],
+          });
+        } catch (addError) {
+          // handle "add" error
+        }
+      }
+      // handle other "switch" errors
+    }
   }
 
   handleSignerChange(e) {
-    this.setState({selectedAddress: e})
+    console.log('new signer ' + e)
   }
 
   async connectToMetamask() {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const accounts = await provider.send("eth_requestAccounts", []);
-    this.handleSignerChange(accounts[0])
+    this.setState({ selectedAddress: accounts[0] })
     
     const { chainId } = await provider.getNetwork()
-    this.handleNetworkChange(chainId)
+    this.setState({activeChain: chainId})
   }
 
   renderMetamask() {
-    const selectedAddress = this.state.selectedAddress
 
     const connectedMenuOptions = [
-      { key: 'am', value: 'am', flag: 'am', text: selectedAddress },
-      { key: 'aw', value: 'aw', flag: 'aw', text: 'Placeholder' },
+      { key: 'aw', value: 'aw', flag: 'aw', text: this.state.activeChain },
+      { key: 'am', value: 'am', flag: 'am', text: this.state.selectedAddress },
     ]
     
-    if (selectedAddress === '') {
+    if (this.state.selectedAddress === '') {
       return (
         <div>
           <Button icon size='large' onClick={() => this.connectToMetamask()}>

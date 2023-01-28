@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -17,6 +17,13 @@ export const Content = styled.div`
 
   
 function App() {
+  /*
+  const [network, setNetwork] = useState('0x61');
+
+  function changeNetwork(chainId) {
+    setNetwork(chainId)
+  }
+*/
   return (
     <Router>
       <Navbar />
