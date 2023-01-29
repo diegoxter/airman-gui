@@ -30,7 +30,7 @@ class Metamask extends Component {
 
             switch (chainID) {
               case '3d':
-                url = 'https://www.ethercluster.com/etc	';
+                url = 'https://www.ethercluster.com/etc';
                 name = 'Ethereum Classic'
 
                 break;
@@ -53,8 +53,6 @@ class Metamask extends Component {
 
             }
 
-            console.log(url)
-            console.log(chainID)
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [
@@ -65,10 +63,14 @@ class Metamask extends Component {
               },
             ],
           });
+
+          this.setState({activeChain: chainID})
+          //window.location.reload();
         } catch (addError) {
           // handle "add" error
         }
       }
+      console.log(await this.state.activeChain)
       // handle other "switch" errors
     }
   }
@@ -87,7 +89,6 @@ class Metamask extends Component {
   }
 
   renderMetamask() {
-
     const connectedMenuOptions = [
       { key: 'aw', value: 'aw', flag: 'aw', text: this.state.activeChain },
       { key: 'am', value: 'am', flag: 'am', text: this.state.selectedAddress },
