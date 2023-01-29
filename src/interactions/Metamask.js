@@ -20,7 +20,7 @@ class Metamask extends Component {
         params: [{ chainId: '0x'+chainID }],
       });
 
-      this.setState({activeChain: chainID})
+      this.state({activeChain: chainID})
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
@@ -75,6 +75,13 @@ class Metamask extends Component {
     }
   }
 
+  getNetworkData() {
+    return { 
+      activeChain: this.state.activeChain, 
+      selectedAddress: this.state.selectedAddress
+    }
+  }
+
   handleSignerChange(e) {
     console.log('new signer ' + e)
   }
@@ -94,6 +101,7 @@ class Metamask extends Component {
       { key: 'am', value: 'am', flag: 'am', text: this.state.selectedAddress },
     ]
     
+    // TO DO rework this
     if (this.state.selectedAddress === '') {
       return (
         <div>
