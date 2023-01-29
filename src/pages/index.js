@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Grid } from 'semantic-ui-react'
+import AirdropList from '../interactions/GetAirdropList';
 
 const Home = () => {
   const AirdropCard = () => (
@@ -10,6 +11,10 @@ const Home = () => {
       description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
     />
   )
+
+  // TO DO bring the list here
+  const list = new AirdropList()
+
 /*
   const NoContent = () => (
     <div
