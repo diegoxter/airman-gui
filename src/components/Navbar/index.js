@@ -8,7 +8,7 @@ import {
   NavBtn,
   NetworkDropdown,
 } from './NavbarElements';
-import Metamask from '../Metamask';
+import Metamask from '../../interactions/Metamask';
 import 'semantic-ui-css/semantic.min.css'
 
 
@@ -18,15 +18,15 @@ const Navbar = () => {
       <Nav> 
         <Bars />
           <NavMenu>
-            <NavLink to='/' activestyle="true">
+            <NavLink to='/' activestyle={true.toString()}>
               <Icon name='home'/>
             </NavLink>
 
-            <NavLink to='/about' activestyle="true">
+            <NavLink to='/about' activestyle={true.toString()}>
               About
             </NavLink>
 
-            <NavLink to='/events' activestyle="true">
+            <NavLink to='/events' activestyle={true.toString()}>
               Events
             </NavLink>
             

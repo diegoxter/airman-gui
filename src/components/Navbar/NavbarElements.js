@@ -2,7 +2,7 @@ import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown } from 'semantic-ui-react'
 import styled from 'styled-components';
-import Metamask from '../Metamask';
+import Metamask from '../../interactions/Metamask';
 
 import { 
   ETC_ICON_URL, 
@@ -111,20 +111,20 @@ export const NetworkDropdown = () => {
     {
       key: 'ETC',
       text: 'ETC',
-      value: '3D',
-      image: { class:"ui mini image", src: ETC_ICON_URL },
+      value: '3d',
+      image: { className:"ui mini image", src: ETC_ICON_URL },
     },
     {
       key: 'Nova Network',
       text: 'Nova Network',
       value: '57',
-      image: { class:"ui mini image", src: NOVA_ICON_URL },
+      image: { className:"ui mini image", src: NOVA_ICON_URL },
     },
     {
       key: 'localhost',
       text: 'localhost',
       value: 'localhost',
-      image: { class:"ui mini image", src: LOCALHOST_ICON_URL },
+      image: { className:"ui mini image", src: LOCALHOST_ICON_URL },
     },
   ]
 

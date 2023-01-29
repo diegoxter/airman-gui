@@ -19,35 +19,49 @@ class Metamask extends Component {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0x'+chainID }],
       });
+
+      this.setState({activeChain: chainID})
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
         try {
             let url = ''
+            let name = ''
 
             switch (chainID) {
-              case '61':
-                url = 'https://etc.wallet.coinbase.com/api/';
+              case '3d':
+                url = 'https://www.ethercluster.com/etc	';
+                name = 'Ethereum Classic'
+
                 break;
 
-              case '87':
+              case '57':
                 url = 'https://dev.rpc.novanetwork.io';
+                name = 'Nova Network'
+
                 break;
 
               case 'localhost':
                 url = '';
+                name = ''
+
                 break;
               
               default:
-                console.log('ups')
+                url = 'https://etc.wallet.coinbase.com/api/';
+                name = 'Ethereum Classic'
+
             }
+
+            console.log(url)
+            console.log(chainID)
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [
               {
                 chainId: '0x'+chainID,
-                chainName: '...',
-                rpcUrls: [url],
+                chainName: name,
+                rpcUrls: [ url ],
               },
             ],
           });
@@ -87,7 +101,7 @@ class Metamask extends Component {
           </Button>
         </div>
       )
-    } else {
+    } else {  // TO DO If the selected network is not supported we should get an error button
       return (
         <Dropdown
         button
