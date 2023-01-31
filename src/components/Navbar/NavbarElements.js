@@ -8,7 +8,7 @@ import {
   ETC_ICON_URL, 
   NOVA_ICON_URL, 
   LOCALHOST_ICON_URL 
-} from './iconURI'
+} from './data/iconURI'
   
 export const Nav = styled.nav`
   background: #00238b;
@@ -100,7 +100,7 @@ export const NavBtnLink = styled(Link)`
   }
 `;
 
-export const NetworkDropdown = () => {
+export const NetworkDropdown = ({ network }) => {
   const meta = new Metamask()
 
   const handleChange = (e, { value }) => {
@@ -111,13 +111,13 @@ export const NetworkDropdown = () => {
     {
       key: 'ETC',
       text: 'ETC',
-      value: '3d',
+      value: '61',
       image: { className:"ui mini image", src: ETC_ICON_URL },
     },
     {
       key: 'Nova Network',
       text: 'Nova Network',
-      value: '57',
+      value: '87',
       image: { className:"ui mini image", src: NOVA_ICON_URL },
     },
     {
@@ -128,13 +128,33 @@ export const NetworkDropdown = () => {
     },
   ]
 
-  return (
-    <Dropdown 
-      selection
-      simple option
-      options={networkOptions}
-      onChange={handleChange} 
-      defaultValue={networkOptions[0].value}
-    />
-  )
+  function displayActiveNetwork() {
+    const i = networkOptions.findIndex(e => e.value === network.toString());
+
+    if (i >= 0 ) {
+      return networkOptions[i].value
+    } else {
+      return false
+    }
+  }
+
+  if (network === '') {
+    console.log('vacio')
+  } else {
+    if (displayActiveNetwork() !== false) {
+      return (
+        <Dropdown 
+          selection
+          simple option
+          options={networkOptions}
+          onChange={handleChange} 
+          defaultValue={displayActiveNetwork()}
+        />
+      )
+    } else {
+      console.log('no soportado')
+    }
+
+  }
+
 }

@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 class Metamask extends Component {
   constructor(props) {
     super(props);
+    // TO DO rework this to better handle in-class states
     this.handleNetworkChange = this.handleNetworkChange.bind(this);
     this.handleSignerChange = this.handleSignerChange.bind(this);
     this.state = {
@@ -13,14 +14,20 @@ class Metamask extends Component {
     };
   }
 
+  convert(integer) {
+    var str = Number(integer).toString(16);
+    return str.length === 1 ? "0" + str : str;
+  };
+
+
   async handleNetworkChange(chainID) {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x'+chainID }],
+        params: [{ chainId: '0x'+ this.convert(chainID) }],
       });
 
-      this.state({activeChain: chainID})
+      this.props.changeNetwork(chainID)
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
@@ -64,17 +71,18 @@ class Metamask extends Component {
             ],
           });
 
-          this.setState({activeChain: chainID})
+          this.props.changeNetwork(this.convert(chainID))
           //window.location.reload();
         } catch (addError) {
           // handle "add" error
         }
       }
-      console.log(await this.state.activeChain)
+      //console.log(this.props.network)
       // handle other "switch" errors
     }
   }
 
+  // TO DO probably this has to go as it's already being tracked in App.js
   getNetworkData() {
     return { 
       activeChain: this.state.activeChain, 
@@ -89,20 +97,20 @@ class Metamask extends Component {
   async connectToMetamask() {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const accounts = await provider.send("eth_requestAccounts", []);
-    this.setState({ selectedAddress: accounts[0] })
+    // changeNetwork({activeChain: chainID})
     
     const { chainId } = await provider.getNetwork()
-    this.setState({activeChain: chainId})
+    this.props.changeNetwork(chainId)
   }
 
+  // TO DO Rework this to use the class state to redraw on network change
   renderMetamask() {
     const connectedMenuOptions = [
-      { key: 'aw', value: 'aw', flag: 'aw', text: this.state.activeChain },
-      { key: 'am', value: 'am', flag: 'am', text: this.state.selectedAddress },
+      { key: 'aw', value: 'aw', flag: 'aw', text: this.props.network },
+      { key: 'am', value: 'am', flag: 'am', text: 'this.state.selectedAddress' }, 
     ]
-    
-    // TO DO rework this
-    if (this.state.selectedAddress === '') {
+
+    if (this.props.network === '') {
       return (
         <div>
           <Button icon size='large' onClick={() => this.connectToMetamask()}>

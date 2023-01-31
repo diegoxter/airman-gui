@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Grid } from 'semantic-ui-react'
-import AirdropList from '../interactions/GetAirdropList';
+//import AirdropList from '../interactions/GetAirdropList';
 
 const Home = () => {
   const AirdropCard = () => (
@@ -13,7 +13,7 @@ const Home = () => {
   )
 
   // TO DO bring the list here
-  const list = new AirdropList()
+  //const list = new AirdropList()
 
 /*
   const NoContent = () => (
