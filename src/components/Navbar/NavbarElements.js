@@ -131,23 +131,31 @@ export const NetworkDropdown = ({ network }) => {
   function displayActiveNetwork() {
     const i = networkOptions.findIndex(e => e.value === network.toString());
 
-    return networkOptions[i].value
+    if (i >= 0 ) {
+      return networkOptions[i].value
+    } else {
+      return false
+    }
+
   }
 
   if (network === '') {
     console.log('vacio')
   } else {
+    if (displayActiveNetwork() != false) {
+      return (
+        <Dropdown 
+          selection
+          simple option
+          options={networkOptions}
+          onChange={handleChange} 
+          defaultValue={displayActiveNetwork()}
+        />
+      )
+    } else {
+      console.log('no soportado')
+    }
 
-
-    return (
-      <Dropdown 
-        selection
-        simple option
-        options={networkOptions}
-        onChange={handleChange} 
-        defaultValue={displayActiveNetwork()}
-      />
-    )
   }
 
 }
