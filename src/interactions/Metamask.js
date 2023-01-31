@@ -67,6 +67,7 @@ class Metamask extends Component {
                 chainId: '0x'+chainID,
                 chainName: name,
                 rpcUrls: [ url ],
+                // TO DO add the native currency
               },
             ],
           });
@@ -127,7 +128,7 @@ class Metamask extends Component {
         labeled
         icon='user circle'
         text='Profile'
-        options={connectedMenuOptions}
+        options={connectedMenuOptions} // TO DO redraw this when the network changes
         >
         </Dropdown>
       );
@@ -144,4 +145,5 @@ class Metamask extends Component {
 }
 
 export default Metamask;
+
 // <a href="https://iconscout.com/icons/metamask" target="_blank">MetaMask Icon</a> by <a href="https://iconscout.com/contributors/icon-mafia" target="_blank">Icon Mafia</a>

@@ -139,7 +139,7 @@ export const NetworkDropdown = ({ network }) => {
   }
 
   if (network === '') {
-    console.log('vacio')
+    return false
   } else {
     if (displayActiveNetwork() !== false) {
       return (
@@ -152,7 +152,7 @@ export const NetworkDropdown = ({ network }) => {
         />
       )
     } else {
-      console.log('no soportado')
+      console.log('no soportado')  // TO DO show a dropdown asking the user to change to a supported network
     }
 
   }
