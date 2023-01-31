@@ -12,7 +12,7 @@ import Metamask from '../../interactions/Metamask';
 import 'semantic-ui-css/semantic.min.css'
 
 
-const Navbar = () => {
+const Navbar = ({ network }) => {
   return (
     <>
       <Nav> 
@@ -33,7 +33,7 @@ const Navbar = () => {
           </NavMenu>
         <Grid>
           <NavBtn>
-            <NetworkDropdown />
+            <NetworkDropdown network={ network }/>
           </NavBtn>
           <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
           <NavBtn>

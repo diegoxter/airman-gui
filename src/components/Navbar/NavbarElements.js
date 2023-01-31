@@ -100,7 +100,7 @@ export const NavBtnLink = styled(Link)`
   }
 `;
 
-export const NetworkDropdown = () => {
+export const NetworkDropdown = ({ network }) => {
   const meta = new Metamask()
 
   const handleChange = (e, { value }) => {
@@ -128,13 +128,18 @@ export const NetworkDropdown = () => {
     },
   ]
 
-  return (
-    <Dropdown 
-      selection
-      simple option
-      options={networkOptions}
-      onChange={handleChange} 
-      defaultValue={networkOptions[0].value}
-    />
-  )
+  if (network === '') {
+    console.log('vacio')
+  } else {
+    return (
+      <Dropdown 
+        selection
+        simple option
+        options={networkOptions}
+        onChange={handleChange} 
+        defaultValue={networkOptions[0].value}
+      />
+    )
+  }
+
 }

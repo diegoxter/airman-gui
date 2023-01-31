@@ -17,16 +17,16 @@ export const Content = styled.div`
 
   
 function App() {
-  /*
-  const [network, setNetwork] = useState('0x61');
+  
+  const [network, setNetwork] = useState('');
 
   function changeNetwork(chainId) {
     setNetwork(chainId)
   }
-*/
+
   return (
     <Router>
-      <Navbar />
+      <Navbar network={network}/>
         <Content>
             <Routes>
               <Route path='/' exact element={<Home />} />
