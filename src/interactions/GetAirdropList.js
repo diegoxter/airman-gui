@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Metamask from './Metamask';
 
 const meta = new Metamask()
-
+/*
 class AirdropList extends Component {
   constructor(props) {
     super(props);
@@ -21,3 +21,4 @@ class AirdropList extends Component {
 
 
 export default AirdropList;
+*/

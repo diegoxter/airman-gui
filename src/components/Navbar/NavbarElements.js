@@ -111,13 +111,13 @@ export const NetworkDropdown = ({ network }) => {
     {
       key: 'ETC',
       text: 'ETC',
-      value: '3d',
+      value: '61',
       image: { className:"ui mini image", src: ETC_ICON_URL },
     },
     {
       key: 'Nova Network',
       text: 'Nova Network',
-      value: '57',
+      value: '87',
       image: { className:"ui mini image", src: NOVA_ICON_URL },
     },
     {
@@ -129,7 +129,7 @@ export const NetworkDropdown = ({ network }) => {
   ]
 
   function displayActiveNetwork() {
-    const i = networkOptions.findIndex(e => e.value === network);
+    const i = networkOptions.findIndex(e => e.value === network.toString());
 
     return networkOptions[i].value
   }

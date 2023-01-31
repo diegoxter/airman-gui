@@ -26,7 +26,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar network={network}/>
+      <Navbar network={ network } changeNetwork={ changeNetwork }/>
         <Content>
             <Routes>
               <Route path='/' exact element={<Home />} />
