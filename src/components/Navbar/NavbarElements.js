@@ -128,16 +128,24 @@ export const NetworkDropdown = ({ network }) => {
     },
   ]
 
+  function displayActiveNetwork() {
+    const i = networkOptions.findIndex(e => e.value === network);
+
+    return networkOptions[i].value
+  }
+
   if (network === '') {
     console.log('vacio')
   } else {
+
+
     return (
       <Dropdown 
         selection
         simple option
         options={networkOptions}
         onChange={handleChange} 
-        defaultValue={networkOptions[0].value}
+        defaultValue={displayActiveNetwork()}
       />
     )
   }
