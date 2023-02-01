@@ -3,13 +3,8 @@ import { NavLink as Link } from 'react-router-dom';
 import { Dropdown } from 'semantic-ui-react'
 import styled from 'styled-components';
 import Metamask from '../../interactions/Metamask';
+import { networkOptions, isSupportedNetwork } from './data/NetworkDropdownElements';
 
-import { 
-  ETC_ICON_URL, 
-  NOVA_ICON_URL, 
-  LOCALHOST_ICON_URL 
-} from './data/iconURI'
-  
 export const Nav = styled.nav`
   background: #00238b;
   height: 85px;
@@ -106,27 +101,7 @@ export const NetworkDropdown = ({ network }) => {
   const handleChange = (e, { value }) => {
     meta.handleNetworkChange(value)
   }
-
-  const networkOptions = [
-    {
-      key: 'ETC',
-      text: 'ETC',
-      value: '61',
-      image: { className:"ui mini image", src: ETC_ICON_URL },
-    },
-    {
-      key: 'Nova Network',
-      text: 'Nova Network',
-      value: '87',
-      image: { className:"ui mini image", src: NOVA_ICON_URL },
-    },
-    {
-      key: 'localhost',
-      text: 'localhost',
-      value: 'localhost',
-      image: { className:"ui mini image", src: LOCALHOST_ICON_URL },
-    },
-  ]
+  isSupportedNetwork(network)
 
   function displayActiveNetwork() {
     const i = networkOptions.findIndex(e => e.value === network.toString());
@@ -152,7 +127,16 @@ export const NetworkDropdown = ({ network }) => {
         />
       )
     } else {
-      console.log('no soportado')  // TO DO show a dropdown asking the user to change to a supported network
+      console.log('no soportado')  // TO DO redraw this after choosing a valid network
+      return (
+        <Dropdown 
+        text='Please use a supported network' 
+        options={networkOptions} 
+        onChange={handleChange} // TO DO there's a bug here that it autoselects a new network without clicking
+        selection
+        error 
+        />
+      )
     }
 
   }

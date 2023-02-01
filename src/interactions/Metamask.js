@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Icon, Dropdown } from 'semantic-ui-react'
 import { ethers } from "ethers";
+import { isSupportedNetwork } from '../components/Navbar/data/NetworkDropdownElements';
+
 
 class Metamask extends Component {
   constructor(props) {
@@ -120,18 +122,24 @@ class Metamask extends Component {
         </div>
       )
     } else {  // TO DO If the selected network is not supported we should get an error button
-      return (
-        <Dropdown
-        button
-        className='icon'
-        floating
-        labeled
-        icon='user circle'
-        text='Profile'
-        options={connectedMenuOptions} // TO DO redraw this when the network changes
-        >
-        </Dropdown>
-      );
+      if ((isSupportedNetwork(this.props.network)) === false) {
+        return (
+          <Button negative>Unsupported network</Button>
+        )
+      } else {
+        return (
+          <Dropdown
+          button
+          className='icon'
+          floating
+          labeled
+          icon='user circle'
+          text='Profile'
+          options={connectedMenuOptions} // TO DO redraw this when the network changes
+          >
+          </Dropdown>
+        );
+      }
     }
   }
 
