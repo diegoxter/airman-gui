@@ -2,7 +2,7 @@ import {
   ETC_ICON_URL, 
   NOVA_ICON_URL, 
   LOCALHOST_ICON_URL 
-} from './iconURI'
+} from '../../iconURI'
 
 export const networkOptions = [
     {

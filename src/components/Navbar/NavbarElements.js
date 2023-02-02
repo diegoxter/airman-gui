@@ -3,7 +3,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { Dropdown } from 'semantic-ui-react'
 import styled from 'styled-components';
 import Metamask from '../../interactions/Metamask';
-import { networkOptions, isSupportedNetwork } from './data/NetworkDropdownElements';
+import { networkOptions, isSupportedNetwork } from './data/ElementsAndHelpers';
 
 export const Nav = styled.nav`
   background: #00238b;
