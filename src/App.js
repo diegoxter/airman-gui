@@ -52,6 +52,7 @@ function App() {
 
     if(x.length > 0) {
       switchIsConnected(true)
+      changeAccounts(x[0])
     } 
   }
 
