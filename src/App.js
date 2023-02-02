@@ -51,6 +51,8 @@ function App() {
     } 
   }
 
+  checkIfConnected()
+
   return (
     <Router>
       <Navbar network={ network } changeNetwork={ changeNetwork } isConnected={ isConnected } accounts={ accounts }/>
