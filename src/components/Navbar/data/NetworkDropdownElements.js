@@ -27,7 +27,7 @@ export const networkOptions = [
 
 export function isSupportedNetwork(chainId) {
   const supportedNetworks = [ '0x3d', '0x57' ]
-  let i = ''
+  let i = undefined
 
   if ((typeof chainId) === 'number') {
     const inHex = Number(chainId).toString(16).padStart(2, "0");
@@ -36,5 +36,9 @@ export function isSupportedNetwork(chainId) {
     i = supportedNetworks.find(e => e === chainId);
   }
 
-  return i
+  if (typeof i === 'undefined') {
+    return false
+  } else {
+    return i
+  }
 }
