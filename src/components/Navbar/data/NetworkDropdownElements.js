@@ -8,19 +8,19 @@ export const networkOptions = [
     {
       key: 'ETC',
       text: 'ETC',
-      value: '61', // TO DO get .toHex() this
+      value: '0x3d',
       image: { className:"ui mini image", src: ETC_ICON_URL },
     },
     {
       key: 'Nova Network',
       text: 'Nova Network',
-      value: '87', // TO DO get .toHex() this
+      value: '0x57',
       image: { className:"ui mini image", src: NOVA_ICON_URL },
     },
     {
       key: 'localhost',
       text: 'localhost',
-      value: 'localhost', // TO DO get .toHex() this
+      value: 'localhost',
       image: { className:"ui mini image", src: LOCALHOST_ICON_URL },
     },
 ]
