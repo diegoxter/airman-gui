@@ -28,9 +28,7 @@ function App() {
   }
 
   function changeAccounts(address) {
-    console.log('antes ' + accounts)
     setAccounts(address)
-    console.log('despues ' + accounts)
 
     if (address.length === 0) {
       switchIsConnected(false)
@@ -40,9 +38,6 @@ function App() {
   function switchIsConnected(isIt) {
     setIsConnected(isIt)
   }
-
-  console.log('test ' + accounts)
-
 
   window.ethereum.on('chainChanged', (_chainId) => changeNetwork(_chainId))
   window.ethereum.on('accountsChanged', (_account) => changeAccounts(_account))

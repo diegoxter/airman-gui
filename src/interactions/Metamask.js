@@ -21,7 +21,6 @@ class Metamask extends Component {
     return str.length === 1 ? "0" + str : str;
   };
 
-
   async handleNetworkChange(chainID) {
     try {
       await window.ethereum.request({
@@ -59,7 +58,6 @@ class Metamask extends Component {
               default:
                 url = 'https://etc.wallet.coinbase.com/api/';
                 name = 'Ethereum Classic'
-
             }
 
           await window.ethereum.request({
@@ -93,6 +91,7 @@ class Metamask extends Component {
     }
   }
 
+  // TO DO probably this has to go as it's already being tracked in App.js
   handleSignerChange(e) {
     console.log('new signer ' + e)
   }
@@ -106,11 +105,11 @@ class Metamask extends Component {
     this.props.changeNetwork(chainId)
   }
 
-  // TO DO Rework this to use the class state to redraw on network change
+  // TO DO Rework this to redraw correctly on network change
   renderMetamask() {
     const connectedMenuOptions = [
       { key: 'aw', value: 'aw', flag: 'aw', text: this.props.network },
-      { key: 'am', value: 'am', flag: 'am', text: this.props.accounts }, // TO DO fix this not showing
+      { key: 'am', value: 'am', flag: 'am', text: this.props.accounts }, 
     ]
 
     if (this.props.isConnected === false) {
@@ -147,7 +146,6 @@ class Metamask extends Component {
   }
 
   render() {
-    console.log(this.props.accounts)
     return(
       <div>
         {this.renderMetamask()}
