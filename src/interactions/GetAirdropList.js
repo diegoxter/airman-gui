@@ -1,24 +1,31 @@
-import React, { Component } from 'react';
-import Metamask from './Metamask';
+import { Component } from 'react';
+import { Card, Grid } from 'semantic-ui-react'
+import activeNetworkContractAddr from './data/contracts';
 
-const meta = new Metamask()
-/*
+
 class AirdropList extends Component {
-  constructor(props) {
-    super(props);
-      this.state = {
-        activeChain: meta.state.activeChain,
-      };
-    }
 
-  async getAirdropList() {
-    console.log('Pene '+ await meta.state.activeChain)
+  airdropCard() { 
+    activeNetworkContractAddr(this.props.network)
+    return (
+      <Card
+        href='#card-example-link-card'
+        header='Elliot Baker'
+        meta='Friend'
+        description='Elliot is a sound engineer living in Nashville who enjoys playing guitar and hanging with his cat.'
+      />
+    )
+  }
 
-    console.log('Pito '+this.activeChain)
+  render() {
+    return(
+      <Grid>
+        {this.airdropCard()}
+      </Grid>
+    )
   }
 
 }
 
 
 export default AirdropList;
-*/

@@ -41,7 +41,6 @@ function App() {
 
   window.ethereum.on('chainChanged', (_chainId) => changeNetwork(_chainId))
   window.ethereum.on('accountsChanged', (_account) => changeAccounts(_account))
-  console.log(ethereum.isConnected())
 
   async function checkIfConnected() {
     const x = await window.ethereum.request({ method: 'eth_accounts' })
@@ -52,14 +51,12 @@ function App() {
     } 
   }
 
-  checkIfConnected()
-
   return (
     <Router>
       <Navbar network={ network } changeNetwork={ changeNetwork } isConnected={ isConnected } accounts={ accounts }/>
         <Content>
             <Routes>
-              <Route path='/' exact element={<Home />} />
+              <Route path='/' exact element={<Home network={ network } />} />
               <Route path='/about' element={<About />} />
               <Route path='/events' element={<Events />} />
               <Route path='/annual' element={<AnnualReport />} />

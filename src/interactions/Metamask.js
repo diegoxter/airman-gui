@@ -5,16 +5,6 @@ import { isSupportedNetwork } from '../components/Navbar/data/ElementsAndHelpers
 
 
 class Metamask extends Component {
-  constructor(props) {
-    super(props);
-    // TO DO rework this to better handle in-class states
-    this.handleNetworkChange = this.handleNetworkChange.bind(this);
-    this.handleSignerChange = this.handleSignerChange.bind(this);
-    this.state = {
-      activeChain: '',
-      selectedAddress: ''
-    };
-  }
 
   convert(integer) {
     var str = Number(integer).toString(16);
