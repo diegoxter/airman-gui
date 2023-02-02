@@ -19,17 +19,47 @@ export const Content = styled.div`
 function App() {
   
   const [network, setNetwork] = useState('');
+  const [accounts, setAccounts] = useState('') // TO DO this still needs to be better handled
+  const [isConnected, setIsConnected] = useState(false)
+
 
   function changeNetwork(chainId) {
     setNetwork(chainId)
   }
 
+  function changeAccounts(address) {
+    console.log('antes ' + accounts)
+    setAccounts(address)
+    console.log('despues ' + accounts)
+
+    if (address.length === 0) {
+      switchIsConnected(false)
+    }
+  }
+
+  function switchIsConnected(isIt) {
+    setIsConnected(isIt)
+  }
+
+  console.log('test ' + accounts)
+
+
   window.ethereum.on('chainChanged', (_chainId) => changeNetwork(_chainId))
-  // window.ethereum.on('accountsChanged', (_chainId) => x(_chainId))
+  window.ethereum.on('accountsChanged', (_account) => changeAccounts(_account))
+
+  async function checkIfConnected() {
+    const x = await window.ethereum.request({ method: 'eth_accounts' })
+
+    if(x.length > 0) {
+      switchIsConnected(true)
+    } 
+  }
+
+  checkIfConnected()
 
   return (
     <Router>
-      <Navbar network={ network } changeNetwork={ changeNetwork }/>
+      <Navbar network={ network } changeNetwork={ changeNetwork } isConnected={ isConnected }/>
         <Content>
             <Routes>
               <Route path='/' exact element={<Home />} />

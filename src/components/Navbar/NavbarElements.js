@@ -115,9 +115,9 @@ export const NetworkDropdown = ({ network }) => {
   if (network === '') {
     return false
   } else {
-    console.log(network + ' tipo de network: ' + typeof network)
     if (isSupportedNetwork(network) === false) {
-      console.log('no soportado')  // TO DO redraw this after choosing a valid network
+      console.log('no soportado')
+      // TO DO don't show this if there are no active accounts passed
       return (
         <Dropdown 
         text='Please use a supported network' 
@@ -128,7 +128,7 @@ export const NetworkDropdown = ({ network }) => {
         />
       )
     } else {
-      console.log('soportado')  // TO DO redraw this after choosing a valid network
+      console.log('soportado')
       return (
         <Dropdown 
           selection

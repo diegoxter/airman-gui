@@ -113,7 +113,7 @@ class Metamask extends Component {
       { key: 'am', value: 'am', flag: 'am', text: 'this.state.selectedAddress' }, 
     ]
 
-    if (this.props.network === '') {
+    if (this.props.isConnected === false) {
       return (
         <div>
           <Button icon size='large' onClick={() => this.connectToMetamask()}>
@@ -122,11 +122,13 @@ class Metamask extends Component {
         </div>
       )
     } else {  // TO DO If the selected network is not supported we should get an error button
+      // As we already have permission there is no confirmation needed
+      this.connectToMetamask()
       if ((isSupportedNetwork(this.props.network)) === false) {
         return (
           <Button negative>Unsupported network</Button>
         )
-      } else {
+      } else { // TO DO dont show this is there is no account 
         return (
           <Dropdown
           button
