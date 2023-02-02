@@ -110,7 +110,7 @@ class Metamask extends Component {
   renderMetamask() {
     const connectedMenuOptions = [
       { key: 'aw', value: 'aw', flag: 'aw', text: this.props.network },
-      { key: 'am', value: 'am', flag: 'am', text: 'this.state.selectedAddress' }, 
+      { key: 'am', value: 'am', flag: 'am', text: this.props.accounts }, // TO DO fix this not showing
     ]
 
     if (this.props.isConnected === false) {
@@ -124,6 +124,7 @@ class Metamask extends Component {
     } else {  // TO DO If the selected network is not supported we should get an error button
       // As we already have permission there is no confirmation needed
       this.connectToMetamask()
+
       if ((isSupportedNetwork(this.props.network)) === false) {
         return (
           <Button negative>Unsupported network</Button>
@@ -146,6 +147,7 @@ class Metamask extends Component {
   }
 
   render() {
+    console.log(this.props.accounts)
     return(
       <div>
         {this.renderMetamask()}

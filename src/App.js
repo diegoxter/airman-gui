@@ -59,7 +59,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar network={ network } changeNetwork={ changeNetwork } isConnected={ isConnected }/>
+      <Navbar network={ network } changeNetwork={ changeNetwork } isConnected={ isConnected } accounts={ accounts }/>
         <Content>
             <Routes>
               <Route path='/' exact element={<Home />} />

@@ -29,20 +29,12 @@ export function isSupportedNetwork(chainId) {
   const supportedNetworks = [ '0x3d', '0x57' ]
   let i = ''
 
-  // TO DO improve this
   if ((typeof chainId) === 'number') {
     const inHex = Number(chainId).toString(16).padStart(2, "0");
     i = supportedNetworks.find(e => e === '0x'+inHex);
-  } else {
+  } else if ((typeof chainId) === 'string') {
     i = supportedNetworks.find(e => e === chainId);
   }
 
-  if ((typeof i) !== 'string') {
-    console.log('no paso ' + i)
-    return false
-  } else {
-    console.log('paso')
-    return i
-  }
-
+  return i
 }
