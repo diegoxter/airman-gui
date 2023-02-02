@@ -101,10 +101,9 @@ export const NetworkDropdown = ({ network }) => {
   const handleChange = (e, { value }) => {
     meta.handleNetworkChange(value)
   }
-  isSupportedNetwork(network)
 
   function displayActiveNetwork() {
-    const i = networkOptions.findIndex(e => e.value === network.toString());
+    const i = networkOptions.findIndex(e => e.value === network);
 
     if (i >= 0 ) {
       return networkOptions[i].value
@@ -116,25 +115,27 @@ export const NetworkDropdown = ({ network }) => {
   if (network === '') {
     return false
   } else {
-    if (displayActiveNetwork() !== false) {
+    console.log(network + ' tipo de network: ' + typeof network)
+    if (isSupportedNetwork(network) === false) {
+      console.log('no soportado')  // TO DO redraw this after choosing a valid network
+      return (
+        <Dropdown 
+        text='Please use a supported network' 
+        options={networkOptions} 
+        onChange={handleChange}  // TO DO if the user cancels the network change the selected item shouldn't change
+        selection
+        error 
+        />
+      )
+    } else {
+      console.log('soportado')  // TO DO redraw this after choosing a valid network
       return (
         <Dropdown 
           selection
           simple option
           options={networkOptions}
           onChange={handleChange} 
-          defaultValue={displayActiveNetwork()}
-        />
-      )
-    } else {
-      console.log('no soportado')  // TO DO redraw this after choosing a valid network
-      return (
-        <Dropdown 
-        text='Please use a supported network' 
-        options={networkOptions} 
-        onChange={handleChange} // TO DO there's a bug here that it autoselects a new network without clicking
-        selection
-        error 
+          defaultValue={displayActiveNetwork()} // TO DO fix this not redrawing
         />
       )
     }

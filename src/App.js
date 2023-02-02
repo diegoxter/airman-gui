@@ -24,6 +24,12 @@ function App() {
     setNetwork(chainId)
   }
 
+  const x = (_chainId) => {
+    changeNetwork(_chainId)
+  }
+
+  window.ethereum.on('chainChanged', (_chainId) => x(_chainId))
+
   return (
     <Router>
       <Navbar network={ network } changeNetwork={ changeNetwork }/>

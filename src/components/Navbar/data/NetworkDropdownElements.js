@@ -26,13 +26,22 @@ export const networkOptions = [
 ]
 
 export function isSupportedNetwork(chainId) {
-  const supportedNetworks = [ 61, 87 ]
+  const supportedNetworks = [ '0x3d', '0x57' ]
+  let i = ''
 
-  const i = supportedNetworks.find(e => e === chainId);
+  // TO DO improve this
+  if ((typeof chainId) === 'number') {
+    const inHex = Number(chainId).toString(16).padStart(2, "0");
+    i = supportedNetworks.find(e => e === '0x'+inHex);
+  } else {
+    i = supportedNetworks.find(e => e === chainId);
+  }
 
-  if ((typeof i) !== 'number') {
+  if ((typeof i) !== 'string') {
+    console.log('no paso ' + i)
     return false
   } else {
+    console.log('paso')
     return i
   }
 
