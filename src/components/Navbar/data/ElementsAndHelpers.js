@@ -42,3 +42,71 @@ export function isSupportedNetwork(chainId) {
     return i
   }
 }
+
+export const convert = (integer) => {
+  let str = Number(integer).toString(16);
+  
+  return str.length === 1 ? "0" + str : str;
+};
+
+export async function handleNetworkChange(chainID) {
+
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x'+ convert(chainID) }],
+    });
+
+    this.props.changeNetwork(chainID)
+  } catch (switchError) {
+    // This error code indicates that the chain has not been added to MetaMask.
+    if (switchError.code === 4902) {
+      try {
+          let url = ''
+          let name = ''
+
+          switch (chainID) {
+            case '3d':
+              url = 'https://www.ethercluster.com/etc';
+              name = 'Ethereum Classic'
+
+              break;
+
+            case '57':
+              url = 'https://dev.rpc.novanetwork.io';
+              name = 'Nova Network'
+
+              break;
+
+            case 'localhost':
+              url = 'Test';
+              name = 'Reserva'
+
+              break;
+            
+            default:
+              url = 'https://etc.wallet.coinbase.com/api/';
+              name = 'Ethereum Classic'
+          }
+
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: '0x'+chainID,
+              chainName: name,
+              rpcUrls: [ url ],
+              // TO DO add the native currency
+            },
+          ],
+        });
+
+        this.props.changeNetwork(convert(chainID))
+      } catch (addError) {
+        // handle "add" error
+      }
+    }
+    //console.log(this.props.network)
+    // handle other "switch" errors
+  }
+}

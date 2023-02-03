@@ -2,8 +2,7 @@ import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown } from 'semantic-ui-react'
 import styled from 'styled-components';
-import Metamask from '../../interactions/Metamask';
-import { networkOptions, isSupportedNetwork } from './data/ElementsAndHelpers';
+import { networkOptions, isSupportedNetwork, handleNetworkChange, convert } from './data/ElementsAndHelpers';
 
 export const Nav = styled.nav`
   background: #00238b;
@@ -96,14 +95,13 @@ export const NavBtnLink = styled(Link)`
 `;
 
 export const NetworkDropdown = ({ network }) => {
-  const meta = new Metamask()
 
   const handleChange = (e, { value }) => {
-    meta.handleNetworkChange(value)
+    handleNetworkChange(value)
   }
 
   function displayActiveNetwork() {
-    const i = networkOptions.findIndex(e => e.value === network);
+    const i = networkOptions.findIndex(e => e.value === '0x'+(convert(network)));
 
     if (i >= 0 ) {
       return networkOptions[i].value
