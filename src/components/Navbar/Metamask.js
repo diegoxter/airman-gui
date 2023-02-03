@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Icon, Dropdown } from 'semantic-ui-react'
 import { ethers } from "ethers";
-import { isSupportedNetwork } from '../components/Navbar/data/ElementsAndHelpers';
+import { isSupportedNetwork } from './data/ElementsAndHelpers';
 
 
 class Metamask extends Component {

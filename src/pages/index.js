@@ -1,5 +1,5 @@
 import React from 'react';
-import AirdropList from '../interactions/GetAirdropList';
+import AirdropList from '../components/AirdropList';
 
 const Home = ({ network }) => {
 

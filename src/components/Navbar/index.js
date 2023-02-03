@@ -8,7 +8,7 @@ import {
   NavBtn,
   NetworkDropdown,
 } from './NavbarElements';
-import Metamask from '../../interactions/Metamask';
+import Metamask from './Metamask';
 import 'semantic-ui-css/semantic.min.css'
 
 
@@ -33,7 +33,7 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
           </NavMenu>
         <Grid>
           <NavBtn>
-            <NetworkDropdown network={ network }/>
+            <NetworkDropdown network={ network } accounts={ accounts }/>
           </NavBtn>
           <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
           <NavBtn>

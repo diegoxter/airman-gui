@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { Card, Grid } from 'semantic-ui-react'
-import activeNetworkContractAddr from './data/contracts';
+import activeNetworkContractAddr from '../interactions/data/contracts';
 
 
 class AirdropList extends Component {

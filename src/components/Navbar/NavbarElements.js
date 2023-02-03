@@ -94,14 +94,13 @@ export const NavBtnLink = styled(Link)`
   }
 `;
 
-export const NetworkDropdown = ({ network }) => {
-
+export const NetworkDropdown = ({ network, accounts }) => {
   const handleChange = (e, { value }) => {
     handleNetworkChange(value)
   }
 
-  function displayActiveNetwork() {
-    const i = networkOptions.findIndex(e => e.value === '0x'+(convert(network)));
+  function displayActiveNetwork(_network) {
+    const i = networkOptions.findIndex(e => e.value === '0x'+(convert(_network)));
 
     if (i >= 0 ) {
       return networkOptions[i].value
@@ -113,9 +112,8 @@ export const NetworkDropdown = ({ network }) => {
   if (network === '') {
     return false
   } else {
-    if (isSupportedNetwork(network) === false) {
+    if ((isSupportedNetwork(network) === false) && accounts !== '')  {
       console.log('no soportado')
-      // TO DO don't show this if there are no active accounts passed
       return (
         <Dropdown 
         text='Please use a supported network' 
@@ -126,16 +124,18 @@ export const NetworkDropdown = ({ network }) => {
         />
       )
     } else {
-      console.log('soportado')
-      return (
-        <Dropdown 
-          selection
-          simple option
-          options={networkOptions}
-          onChange={handleChange} 
-          defaultValue={displayActiveNetwork()} // TO DO fix this not redrawing
-        />
-      )
+      if (accounts.length !== 0) {
+        console.log('soportado')
+        return (
+          <Dropdown 
+            selection
+            simple option
+            options={networkOptions}
+            onChange={handleChange} 
+            defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing
+          />
+        )
+      }
     }
   }
 }
