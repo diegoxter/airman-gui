@@ -23,8 +23,8 @@ class Metamask extends Component {
     ]
 
     if (this.props.isConnected === false) {
-      return (
-        <div>
+      return ( // TO DO redraw this if the account is not connected
+        <div> 
           <Button icon size='large' onClick={() => this.connectToMetamask()}>
             <Icon name='lock'></Icon> Connect wallet
           </Button>
