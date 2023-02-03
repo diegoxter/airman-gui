@@ -15,7 +15,6 @@ class Metamask extends Component {
     this.props.changeNetwork(chainId)
   }
 
-  // TO DO Rework this to redraw correctly on network change
   renderMetamask() {
     const connectedMenuOptions = [
       { key: 'aw', value: 'aw', flag: 'aw', text: this.props.network },
@@ -30,15 +29,15 @@ class Metamask extends Component {
           </Button>
         </div>
       )
-    } else {  // TO DO If the selected network is not supported we should get an error button
-      // As we already have permission there is no confirmation needed
+    } else {
+      // Note: As we already have permission there is no confirmation needed from the user
       this.connectToMetamask()
 
       if ((isSupportedNetwork(this.props.network)) === false) {
         return (
           <Button negative>Unsupported network</Button>
         )
-      } else { // TO DO dont show this is there is no account 
+      } else { // TO DO dont show this is if there is the active account is not connected
         return (
           <Dropdown
           button
@@ -47,7 +46,7 @@ class Metamask extends Component {
           labeled
           icon='user circle'
           text='Profile'
-          options={connectedMenuOptions} // TO DO redraw this when the network changes
+          options={connectedMenuOptions}
           >
           </Dropdown>
         );

@@ -132,7 +132,7 @@ export const NetworkDropdown = ({ network, accounts }) => {
             simple option
             options={networkOptions}
             onChange={handleChange} 
-            defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing
+            defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing when the network changed
           />
         )
       }

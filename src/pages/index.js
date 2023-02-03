@@ -3,9 +3,7 @@ import AirdropList from '../components/AirdropList';
 
 const Home = ({ network }) => {
 
-
 // TO DO bring the list here
-//const list = new AirdropList()
 
 /*
   const NoContent = () => (
