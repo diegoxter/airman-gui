@@ -20,13 +20,13 @@ export const networkOptions = [
     {
       key: 'localhost',
       text: 'localhost',
-      value: 'localhost',
+      value: '0x7a69',
       image: { className:"ui mini image", src: LOCALHOST_ICON_URL },
     },
 ]
 
 export function isSupportedNetwork(chainId) {
-  const supportedNetworks = [ '0x3d', '0x57' ]
+  const supportedNetworks = [ '0x3d', '0x57', '0x7a69' ]
   let i = undefined
 
   if ((typeof chainId) === 'number') {
@@ -63,40 +63,52 @@ export async function handleNetworkChange(chainID) {
     if (switchError.code === 4902) {
       try {
           let url = ''
-          let name = ''
+          let chainName = ''
+          let chainSymbol = ''
 
           switch (chainID) {
-            case '3d':
+            case '3d' && '0x3d':
               url = 'https://www.ethercluster.com/etc';
-              name = 'Ethereum Classic'
+              chainName = 'Ethereum Classic'
+              chainSymbol = 'ETC'
 
               break;
 
-            case '57':
+            case '57' && '0x57' :
               url = 'https://dev.rpc.novanetwork.io';
-              name = 'Nova Network'
+              chainName = 'Nova Network'
+              chainSymbol = 'SNT'
+
 
               break;
 
-            case 'localhost':
-              url = 'Test';
-              name = 'Reserva'
+            case '0x7a69':
+              url = 'http://127.0.0.1:8545/';
+              chainName = 'localhost'
+              chainSymbol = 'ETH'
 
               break;
             
             default:
-              url = 'https://etc.wallet.coinbase.com/api/';
-              name = 'Ethereum Classic'
+              url = 'empty';
+              chainName = 'empty'
+              chainSymbol = 'broken'
+ 
+              break;
           }
 
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: '0x'+chainID,
-              chainName: name,
+              chainId: chainID,
+              chainName: chainName,
+              nativeCurrency: {
+                name: chainName,
+                symbol: chainSymbol,
+                decimals: 18
+              },
               rpcUrls: [ url ],
-              // TO DO add the native currency
             },
           ],
         });

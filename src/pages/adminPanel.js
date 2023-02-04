@@ -1,6 +1,7 @@
 import React from 'react';
-  
-const Events = () => {
+import { Divider, Grid } from 'semantic-ui-react'
+
+const AdminPanel = () => {
   return (
     <div
       style={{
@@ -15,4 +16,4 @@ const Events = () => {
   );
 };
   
-export default Events;
+export default AdminPanel;
