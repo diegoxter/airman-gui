@@ -22,12 +22,12 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
               <Icon name='home'/>
             </NavLink>
 
-            <NavLink to='/about' activestyle={true.toString()}>
-              About
-            </NavLink>
-
             <NavLink to='/adminPanel' activestyle={true.toString()}>
               Admin Panel
+            </NavLink>
+
+            <NavLink to='/about' activestyle={true.toString()}>
+              About
             </NavLink>
             
           </NavMenu>
