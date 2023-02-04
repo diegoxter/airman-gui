@@ -3,7 +3,7 @@ import { Grid, Card } from 'semantic-ui-react'
 import AdminPanelModal from '../components/AdminPanelModal';
 
 const AdminPanel = ({ network }) => {
-
+  // TO DO this Grid needs to be draw better
   return (
     <Grid divided='vertically'>
       <Grid.Row>
@@ -33,7 +33,8 @@ const AdminPanel = ({ network }) => {
           height: '100vh'
         }}
       >
-        <h1>Welcome to GeeksforGeeks Events</h1>
+        <h1>Lorem ipsum dolor sit amet, consec
+        </h1>
       </div>
 
 

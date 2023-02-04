@@ -58,7 +58,7 @@ const AdminPanelModal = ({network}) => {
           Cancel
         </Button>
         <Button
-          content="Deploy"
+          content="Let's do it!"
           onClick={() => {
             handleClick();
         }}
