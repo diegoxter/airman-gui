@@ -1,6 +1,6 @@
 export default function activeNetworkContractAddr(network) {
     let adminPanelContract = ''
-    
+
     switch (network) {
         case 61:
             adminPanelContract = '0';
