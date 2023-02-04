@@ -1,25 +1,26 @@
 export default function activeNetworkContractAddr(network) {
-    let contract = ''
+    let adminPanelContract = ''
     
     switch (network) {
         case 61:
-            contract = '0';
+            adminPanelContract = '0';
             break;
 
         case 87:
-            contract = '1';
+            adminPanelContract = '1';
             break;
 
         case 4002:
-            contract = '3';
+            adminPanelContract = '3';
+            break;
+        
+        case 31337: // This is for testing/debugging purposes
+            adminPanelContract = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
             break;
 
         default:
-            contract = 'unsupported';
-    }
-    
-    console.log(network)  // debug
-    console.log(contract) // debug
+            adminPanelContract = 'unsupported';
+    }   
 
-    return contract
+    return adminPanelContract
 }

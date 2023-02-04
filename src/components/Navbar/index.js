@@ -7,8 +7,8 @@ import {
   NavMenu,
   NavBtn,
   NetworkDropdown,
+  Metamask
 } from './NavbarElements';
-import Metamask from './Metamask';
 import 'semantic-ui-css/semantic.min.css'
 
 
@@ -26,8 +26,8 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
               About
             </NavLink>
 
-            <NavLink to='/events' activestyle={true.toString()}>
-              Events
+            <NavLink to='/adminPanel' activestyle={true.toString()}>
+              Admin Panel
             </NavLink>
             
           </NavMenu>
