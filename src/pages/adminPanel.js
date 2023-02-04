@@ -17,9 +17,9 @@ const AdminPanel = () => {
             width: '100%'
           }}>
           <Card.Content>
-            <Card.Header>Deploy a new Airdrop Manager</Card.Header>
+            <Card.Header>Lorem ipsum dolor sit amet</Card.Header>
             <Card.Description>
-              Create a new Airdrop Manager for your community!
+            Aenean commodo ligula eget dolor.            
             </Card.Description>
           </Card.Content>
           <Button 
@@ -30,7 +30,7 @@ const AdminPanel = () => {
               border: '70x'
             }}
               basic color='green' onClick={ handleClick }>
-                Deploy
+                Button
           </Button>
       </Card>
     </ Grid.Row>
@@ -43,7 +43,7 @@ const AdminPanel = () => {
           height: '100vh'
         }}
       >
-        <h1>Welcome to GeeksforGeeks Events</h1>
+        <h1>Aenean massa strong.</h1>
       </div>
 
 
