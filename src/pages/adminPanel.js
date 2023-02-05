@@ -33,7 +33,8 @@ const AdminPanel = ({ network }) => {
           height: '100vh'
         }}
       >
-        <h1>Lorem ipsum dolor sit amet, consec
+        <h1>
+          Lorem ipsum dolor sit amet, consec
         </h1>
       </div>
 
