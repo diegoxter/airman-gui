@@ -16,49 +16,56 @@ const testInteraction = async (network) => {
   console.log(await adminPanelInstance.connect(signer).owner())
 }
 
-const AdminPanelModal = ({network}) => {
-  const [open, setOpen] = useState(false)
-  const [amount, setAmount] = useState(10)
-
-  const handleClick = () => {
-    testInteraction(network)
+// TO DO turn this component its own separated file 
+const InputWithApproveButton = ({amount, isApproved, handleChange}) => {
+  const handleBlur = () => {
+    console.log('test0 ' +amount)
   }
-
-  // TO DO turn this component its own separated file 
-  const InputWithApproveButton = ({ approvedamount }) => {
-    const [amount, setNewAmount] = useState(undefined)
-
-    function handleChange(event) {
-      setNewAmount(event)
-    }
-
-    function handleBlur() {
-      console.log('test ' +amount)
-      console.log('testcito '+approvedamount)
-    }
-
-    
-    if (amount > 0) {
-      console.log(amount)
-
-      return (
-        <Input placeholder='Amount' loading icon='user' onBlur={handleBlur()}/>
+  console.log(amount + ' test1')
+  
+  if (amount !== '') {
+    console.log('test2 '+ amount)
+    return (
+        <Form.Input
+          placeholder='Amount'
+          value={amount}
+          onChange={handleChange} 
+          >
+        </Form.Input>
       )
-    } else {
-      console.log('pipi '+ amount)
-
-      return (
-        <Input
+  } else {
+    console.log(amount + ' test3')
+    return (
+        <Form.Input 
         action={{
           color: 'teal',
+          labelPosition: 'left',
+          icon: 'cart',
           content: 'Approve',
         }}
         actionPosition='right'
-        placeholder='Amount'
-        onBlur={handleBlur()}
-      />
-      )
-    }
+        placeholder='Amount' 
+        onBlur={handleBlur}
+        value={amount}
+        onChange={handleChange} 
+        />
+    )
+  }
+}
+
+
+const AdminPanelModal = ({network}) => {
+  const [open, setOpen] = useState(false)
+  const [amount, setAmount] = useState('')
+  const [isApproved, setApproved] = useState(false)
+
+  const handleChange = (e, { num }) => {
+    setAmount(num) 
+    console.log('you typed '+ num + ' type of num '+ (typeof num))
+  }
+
+  const handleClick = () => {
+    testInteraction(network)
   }
 
   // TO DO Draw the content we actually want
@@ -82,7 +89,7 @@ const AdminPanelModal = ({network}) => {
       <Modal.Header>Lorem Ipsum</Modal.Header>
       <Modal.Content image>
 
-        <Grid columns={3} divided>
+        <Grid columns={2} divided>
           <Grid.Row>
             <Grid.Column>
               <Image size='medium' src='https://react.semantic-ui.com/images/avatar/large/rachel.png' wrapped />
@@ -103,7 +110,11 @@ const AdminPanelModal = ({network}) => {
                 </Form.Field>
                 
                 <Form.Field>
-                  <InputWithApproveButton amountset={amount} approvedamount={100} />
+                  <InputWithApproveButton 
+                  amount={amount} 
+                  isApproved={isApproved} 
+                  handleChange={handleChange} 
+                  />
                 </Form.Field>
 
                 <Form.Field>
