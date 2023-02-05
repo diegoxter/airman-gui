@@ -8,12 +8,12 @@ const AdminPanel = ({ network }) => {
     <Grid divided='vertically'>
       <Grid.Row>
         <Card 
-        style={{
-            display: 'flex',
-            justifyContent: 'Right',
-            alignItems: 'Right',
-            height: '100%',
-            width: '100%'
+          style={{
+              display: 'flex',
+              justifyContent: 'Right',
+              alignItems: 'Right',
+              height: '100%',
+              width: '100%'
           }}>
           <Card.Content>
             <Card.Header>Deploy a new Airdrop Manager</Card.Header>

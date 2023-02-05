@@ -119,11 +119,11 @@ const NetworkDropdown = ({ network, accounts }) => {
       console.log('no soportado')
       return (
         <Dropdown 
-        text='Please use a supported network' 
-        options={networkOptions} 
-        onChange={handleChange}  // TO DO if the user cancels the network change the selected item shouldn't change
-        selection
-        error 
+          text='Please use a supported network' 
+          options={networkOptions} 
+          onChange={handleChange}  // TO DO if the user cancels the network change the selected item shouldn't change
+          selection
+          error 
         />
       )
     } else {
