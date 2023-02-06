@@ -2,7 +2,7 @@ import React,{ useState, Component } from 'react'
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
 import { useDebounce } from "use-debounce";
 import { ethers } from "ethers";
-import activeNetworkContractAddr from '../interactions/data/contracts';
+import activeNetworkContractAddr from '../interactions/data/contracts'; 
 
 import adminPanelAbi from '../assets/abis/AdminPanel.json'
 
@@ -17,53 +17,21 @@ const testInteraction = async (network) => {
   console.log(await adminPanelInstance.connect(signer).owner())
 }
 
-// TO DO this can be a form directly into the AdminPanel component, refactor
-const InputWithApproveButton = () => {
-  const [amount, setAmount] = useState('')
-  const [isApproved, setApproved] = useState(false)
-  const [inputValue] = useDebounce(amount, 1500);
-
-  const handleChange = (num) => {
-    setAmount(num)
-  }
-
-  // probable source https://stackoverflow.com/questions/36683770/how-to-get-the-value-of-an-input-field-using-reactjs
-  // https://dineshigdd.medium.com/how-to-handle-user-input-in-react-functional-component-1cd0cb31d87c
-  // see https://react-hook-form.com/get-started
-
-      return (
-          <Form.Input
-            placeholder='Amount to airdrop'
-            value={amount}
-            onChange={(e) => handleChange(e.target.value)} 
-            >
-          </Form.Input>
-        )
-   /* } else {
-      console.log(this.amount + ' test3')
-      return (
-          <Form.Input 
-          action={{
-            color: 'teal',
-            labelPosition: 'left',
-            icon: 'cart',
-            content: 'Approve',
-          }}
-          actionPosition='right'
-          placeholder='Amount' 
-          onBlur={this.handleBlur}
-          value={this.amount}
-          onChange={this.handleChange} 
-          />
-      )
-    }*/
-}
-
-
-const AdminPanelModal = ({network}) => {
+const AdminPanelModal = ({network, isConnected}) => {
   const [open, setOpen] = useState(false)
   const [name, changeName] = useState('')
+  const [nameInputValue] = useDebounce(name, 1500);
   const [contract, changeContract] = useState('')
+  const [contractInputValue] = useDebounce(contract, 1500);
+  const [amount, setAmount] = useState('')
+  const [amountInputValue] = useDebounce(amount, 1500);
+  const [isApproved, setApproved] = useState(false)
+
+  const handleAmountChange = (num) => {
+    console.log(num + ' was typed')
+    console.log('type of num '+ (typeof num))
+    setAmount(num)
+  }
 
   const handleNameChange = (num ) => {
     console.log(num + ' was typed')
@@ -83,21 +51,24 @@ const AdminPanelModal = ({network}) => {
 
   // TO DO Draw the content we actually want
   return (
+    //(isConnected) 
+    //?
     <Modal
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
       trigger={<Button 
-        style={{
-            width: '20%',
-            position: 'absolute',
-            top: '19px',
-            right: '22px',
-          }}
-            basic color='green'
-      >
-        Deploy
-    </Button>}
+          style={{
+              width: '20%',
+              position: 'absolute',
+              top: '19px',
+              right: '22px',
+            }}
+              basic color='green'
+          >
+          Deploy
+          </Button>
+      }
     >
       <Modal.Header>Lorem Ipsum</Modal.Header>
       <Modal.Content image>
@@ -128,8 +99,12 @@ const AdminPanelModal = ({network}) => {
                 >
                 </Form.Input>
                 
-                <InputWithApproveButton/>
-
+                <Form.Input
+                  placeholder='Amount to airdrop'
+                  value={amount}
+                  onChange={(e) => handleAmountChange(e.target.value)} 
+                  >
+                </Form.Input>
                 <Form.Field>
                   <Checkbox label='I agree to the Terms and Conditions' />
                 </Form.Field>
@@ -155,6 +130,18 @@ const AdminPanelModal = ({network}) => {
         />
       </Modal.Actions>
     </Modal>
+    /*:
+    <Button 
+          style={{
+              width: '20%',
+              position: 'absolute',
+              top: '19px',
+              right: '22px',
+            }}
+              color='red'
+          >
+          Not connected
+    </Button>*/
   )
 }
 
