@@ -17,7 +17,7 @@ const testInteraction = async (network) => {
   console.log(await adminPanelInstance.connect(signer).owner())
 }
 
-// TO DO turn this component its own separated file 
+// TO DO this can be a form directly into the AdminPanel component, refactor
 const InputWithApproveButton = () => {
   const [amount, setAmount] = useState('')
   const [isApproved, setApproved] = useState(false)
@@ -30,8 +30,6 @@ const InputWithApproveButton = () => {
   // probable source https://stackoverflow.com/questions/36683770/how-to-get-the-value-of-an-input-field-using-reactjs
   // https://dineshigdd.medium.com/how-to-handle-user-input-in-react-functional-component-1cd0cb31d87c
   // see https://react-hook-form.com/get-started
-  console.log("test a " + inputValue)
-  console.log("test b " + amount)
 
       return (
           <Form.Input
@@ -65,10 +63,18 @@ const InputWithApproveButton = () => {
 const AdminPanelModal = ({network}) => {
   const [open, setOpen] = useState(false)
   const [name, changeName] = useState('')
+  const [contract, changeContract] = useState('')
 
-  const handleChange = (e, { num }) => {
+  const handleNameChange = (num ) => {
     console.log(num + ' was typed')
     console.log('type of num '+ (typeof num))
+    changeName(num)
+  }
+
+  const handleContractChange = ( num ) => {
+    console.log(num + ' was typed')
+    console.log('type of num '+ (typeof num))
+    changeContract(num)
   }
 
   const handleClick = () => {
@@ -110,15 +116,15 @@ const AdminPanelModal = ({network}) => {
                   label='Project name'       
                   placeholder='Enter name'
                   value={name}
-                  onChange={(e) => handleChange(e.target.value)}
+                  onChange={(e) => handleNameChange(e.target.value)}
                 >
                 </Form.Input>
 
                 <Form.Input
                   label='Token info'       
                   placeholder='Address: 0x...'
-                  value={name}
-                  onChange={(e) => handleChange(e.target.value)}
+                  value={contract}
+                  onChange={(e) => handleContractChange(e.target.value)}
                 >
                 </Form.Input>
                 
