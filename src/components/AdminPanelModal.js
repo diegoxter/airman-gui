@@ -18,12 +18,15 @@ const testInteraction = async (network) => {
 
 // TO DO turn this component its own separated file 
 const InputWithApproveButton = ({amount, isApproved, handleChange}) => {
+  // probable source https://stackoverflow.com/questions/36683770/how-to-get-the-value-of-an-input-field-using-reactjs
+  // https://dineshigdd.medium.com/how-to-handle-user-input-in-react-functional-component-1cd0cb31d87c
+  // see https://react-hook-form.com/get-started
   const handleBlur = () => {
     console.log('test0 ' +amount)
   }
   console.log(amount + ' test1')
   
-  if (amount !== '') {
+  if ((typeof amount) === 'undefined') {
     console.log('test2 '+ amount)
     return (
         <Form.Input
@@ -60,8 +63,9 @@ const AdminPanelModal = ({network}) => {
   const [isApproved, setApproved] = useState(false)
 
   const handleChange = (e, { num }) => {
+    console.log(num + ' was typed')
     setAmount(num) 
-    console.log('you typed '+ num + ' type of num '+ (typeof num))
+    console.log('type of num '+ (typeof num))
   }
 
   const handleClick = () => {
