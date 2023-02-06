@@ -2,6 +2,7 @@ import React,{ useState, Component } from 'react'
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
 import { useDebounce } from "use-debounce";
 import { ethers } from "ethers";
+import { isSupportedNetwork } from './Navbar/data/ElementsAndHelpers';
 import activeNetworkContractAddr from '../interactions/data/contracts'; 
 
 import adminPanelAbi from '../assets/abis/AdminPanel.json'
@@ -10,14 +11,43 @@ const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
 
 const testInteraction = async (network) => {
-  // potential source https://docs.metamask.io/guide/sending-transactions.html#example
   // https://docs.ethers.org/v5/api/
   const adminPanelInstance = new ethers.Contract(activeNetworkContractAddr(network), adminPanelAbi, provider)
   
   console.log(await adminPanelInstance.connect(signer).owner())
 }
 
-const AdminPanelModal = ({network, isConnected}) => {
+const DeployButton = ({isApproved}) => {
+  
+  const handleClick = () => {
+    //testInteraction(network)
+  }
+
+  if (isApproved) {
+    return (
+      <Button
+        content="Let's do it!"
+        onClick={() => {
+          handleClick();
+        }}
+        positive
+      />
+    )
+  } else {
+    return (
+      <Button
+        color='blue'
+        content="Approve tokens"
+        onClick={() => {
+          handleClick();
+        }}
+      />
+    )
+  }
+}
+
+
+const AdminPanelModal = ({network}) => {
   const [open, setOpen] = useState(false)
   const [name, changeName] = useState('')
   const [nameInputValue] = useDebounce(name, 1500);
@@ -27,11 +57,11 @@ const AdminPanelModal = ({network, isConnected}) => {
   const [amountInputValue] = useDebounce(amount, 1500);
   const [isApproved, setApproved] = useState(false)
 
-  const handleAmountChange = (num) => {
-    console.log(num + ' was typed')
-    console.log('type of num '+ (typeof num))
-    setAmount(num)
-  }
+  // Testing purposes
+  console.log(nameInputValue + ' test 1')
+  console.log(contractInputValue + ' test 2')
+  console.log(amountInputValue + ' test 3')
+
 
   const handleNameChange = (num ) => {
     console.log(num + ' was typed')
@@ -45,13 +75,23 @@ const AdminPanelModal = ({network, isConnected}) => {
     changeContract(num)
   }
 
-  const handleClick = () => {
-    testInteraction(network)
+  const handleAmountChange = (num) => {
+    console.log(num + ' was typed')
+    console.log('type of num '+ (typeof num))
+    setAmount(num)
+  }
+
+  const testChange = () => {
+    if (isApproved === false) {
+      setApproved(true)
+    } else {
+      setApproved(false)
+    }
   }
 
   // TO DO Draw the content we actually want
   return (
-    //(isConnected) 
+    //(isSupportedNetwork(network)) 
     //?
     <Modal
       onClose={() => setOpen(false)}
@@ -108,7 +148,12 @@ const AdminPanelModal = ({network, isConnected}) => {
                 <Form.Field>
                   <Checkbox label='I agree to the Terms and Conditions' />
                 </Form.Field>
-                  <Button type='submit'>Submit</Button>
+                  <Button 
+                    type='submit'
+                    onClick={testChange}
+                    >
+                      Submit
+                  </Button>
 
                 </Grid.Row>
               </Form>
@@ -121,13 +166,8 @@ const AdminPanelModal = ({network, isConnected}) => {
         <Button color='red' onClick={() => setOpen(false)}>
           Cancel
         </Button>
-        <Button
-          content="Let's do it!"
-          onClick={() => {
-            handleClick();
-          }}
-          positive
-        />
+        <DeployButton isApproved={isApproved}/>
+
       </Modal.Actions>
     </Modal>
     /*:
@@ -141,7 +181,7 @@ const AdminPanelModal = ({network, isConnected}) => {
               color='red'
           >
           Not connected
-    </Button>*/
+    </Button> */
   )
 }
 

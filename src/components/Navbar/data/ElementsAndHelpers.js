@@ -39,7 +39,7 @@ export function isSupportedNetwork(chainId) {
   if (typeof i === 'undefined') {
     return false
   } else {
-    return i
+    return true
   }
 }
 

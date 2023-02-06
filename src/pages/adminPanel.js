@@ -3,7 +3,7 @@ import { Grid, Card } from 'semantic-ui-react'
 import AdminPanelModal from '../components/AdminPanelModal';
 
 const AdminPanel = ({ network }) => {
-  // TO DO this Grid needs to be draw better
+  // TO DO this Grid needs to be drawn better
   return (
     <Grid divided='vertically'>
       <Grid.Row>
