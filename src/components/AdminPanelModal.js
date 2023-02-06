@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Button, Header, Image, Modal, Form, Checkbox, Grid, Input } from 'semantic-ui-react'
+import React,{ useState, Component } from 'react'
+import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
+import { useDebounce } from "use-debounce";
 import { ethers } from "ethers";
 import activeNetworkContractAddr from '../interactions/data/contracts';
 
@@ -17,54 +18,56 @@ const testInteraction = async (network) => {
 }
 
 // TO DO turn this component its own separated file 
-const InputWithApproveButton = ({amount, isApproved, handleChange}) => {
+const InputWithApproveButton = () => {
+  const [amount, setAmount] = useState('')
+  const [isApproved, setApproved] = useState(false)
+  const [inputValue] = useDebounce(amount, 1500);
+
+  const handleChange = (num) => {
+    setAmount(num)
+  }
+
   // probable source https://stackoverflow.com/questions/36683770/how-to-get-the-value-of-an-input-field-using-reactjs
   // https://dineshigdd.medium.com/how-to-handle-user-input-in-react-functional-component-1cd0cb31d87c
   // see https://react-hook-form.com/get-started
-  const handleBlur = () => {
-    console.log('test0 ' +amount)
-  }
-  console.log(amount + ' test1')
-  
-  if ((typeof amount) === 'undefined') {
-    console.log('test2 '+ amount)
-    return (
-        <Form.Input
-          placeholder='Amount'
-          value={amount}
-          onChange={handleChange} 
-          >
-        </Form.Input>
+  console.log("test a " + inputValue)
+  console.log("test b " + amount)
+
+      return (
+          <Form.Input
+            placeholder='Amount to airdrop'
+            value={amount}
+            onChange={(e) => handleChange(e.target.value)} 
+            >
+          </Form.Input>
+        )
+   /* } else {
+      console.log(this.amount + ' test3')
+      return (
+          <Form.Input 
+          action={{
+            color: 'teal',
+            labelPosition: 'left',
+            icon: 'cart',
+            content: 'Approve',
+          }}
+          actionPosition='right'
+          placeholder='Amount' 
+          onBlur={this.handleBlur}
+          value={this.amount}
+          onChange={this.handleChange} 
+          />
       )
-  } else {
-    console.log(amount + ' test3')
-    return (
-        <Form.Input 
-        action={{
-          color: 'teal',
-          labelPosition: 'left',
-          icon: 'cart',
-          content: 'Approve',
-        }}
-        actionPosition='right'
-        placeholder='Amount' 
-        onBlur={handleBlur}
-        value={amount}
-        onChange={handleChange} 
-        />
-    )
-  }
+    }*/
 }
 
 
 const AdminPanelModal = ({network}) => {
   const [open, setOpen] = useState(false)
-  const [amount, setAmount] = useState('')
-  const [isApproved, setApproved] = useState(false)
+  const [name, changeName] = useState('')
 
   const handleChange = (e, { num }) => {
     console.log(num + ' was typed')
-    setAmount(num) 
     console.log('type of num '+ (typeof num))
   }
 
@@ -103,23 +106,23 @@ const AdminPanelModal = ({network}) => {
               <Form>
                 <Grid.Row>
                 
-                <Form.Field>
-                  <label>Project name</label>
-                  <input placeholder='Name' />
-                </Form.Field>
+                <Form.Input
+                  label='Project name'       
+                  placeholder='Enter name'
+                  value={name}
+                  onChange={(e) => handleChange(e.target.value)}
+                >
+                </Form.Input>
 
-                <Form.Field>
-                  <label>Token info</label>
-                  <input placeholder='Address: 0x...' />
-                </Form.Field>
+                <Form.Input
+                  label='Token info'       
+                  placeholder='Address: 0x...'
+                  value={name}
+                  onChange={(e) => handleChange(e.target.value)}
+                >
+                </Form.Input>
                 
-                <Form.Field>
-                  <InputWithApproveButton 
-                  amount={amount} 
-                  isApproved={isApproved} 
-                  handleChange={handleChange} 
-                  />
-                </Form.Field>
+                <InputWithApproveButton/>
 
                 <Form.Field>
                   <Checkbox label='I agree to the Terms and Conditions' />
