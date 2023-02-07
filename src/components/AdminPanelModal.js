@@ -2,25 +2,17 @@ import React,{ useState, Component } from 'react'
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
 import { useDebounce } from "use-debounce";
 import { ethers } from "ethers";
+import { checkTokenSymbol, checkAllowance } from '../interactions/erc20';
 import { isSupportedNetwork } from './Navbar/data/ElementsAndHelpers';
 import activeNetworkContractAddr from '../interactions/data/contracts'; 
 
 import adminPanelAbi from '../assets/abis/AdminPanel.json'
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-
-const testInteraction = async (network) => {
-  // https://docs.ethers.org/v5/api/
-  const adminPanelInstance = new ethers.Contract(activeNetworkContractAddr(network), adminPanelAbi, provider)
-  
-  console.log(await adminPanelInstance.connect(signer).owner())
-}
-
-const DeployButton = ({isApproved}) => {
+// TO DO get this into a separate file
+const DeployButton = ({ isApproved, contractInputValue, accounts }) => {
   
   const handleClick = () => {
-    //testInteraction(network)
+    checkAllowance(accounts, contractInputValue)
   }
 
   if (isApproved) {
@@ -47,7 +39,7 @@ const DeployButton = ({isApproved}) => {
 }
 
 
-const AdminPanelModal = ({network}) => {
+const AdminPanelModal = ({ network, accounts }) => {
   const [open, setOpen] = useState(false)
   const [name, changeName] = useState('')
   const [nameInputValue] = useDebounce(name, 1500);
@@ -59,7 +51,12 @@ const AdminPanelModal = ({network}) => {
 
   // Testing purposes
   console.log(nameInputValue + ' test 1')
-  console.log(contractInputValue + ' test 2')
+
+  if (contractInputValue !== '')
+  {
+    checkTokenSymbol(contractInputValue)
+  }
+
   console.log(amountInputValue + ' test 3')
 
 
@@ -70,8 +67,6 @@ const AdminPanelModal = ({network}) => {
   }
 
   const handleContractChange = ( num ) => {
-    console.log(num + ' was typed')
-    console.log('type of num '+ (typeof num))
     changeContract(num)
   }
 
@@ -91,12 +86,12 @@ const AdminPanelModal = ({network}) => {
 
   // TO DO Draw the content we actually want
   return (
-    //(isSupportedNetwork(network)) 
-    //?
+    (isSupportedNetwork(network)) 
+    ?
     <Modal
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
-      open={open}
+      open={ open }
       trigger={<Button 
           style={{
               width: '20%',
@@ -166,11 +161,15 @@ const AdminPanelModal = ({network}) => {
         <Button color='red' onClick={() => setOpen(false)}>
           Cancel
         </Button>
-        <DeployButton isApproved={isApproved}/>
+        <DeployButton 
+          isApproved={ isApproved } 
+          contractInputValue={ contractInputValue } 
+          accounts={ accounts }
+        />
 
       </Modal.Actions>
     </Modal>
-    /*:
+    :
     <Button 
           style={{
               width: '20%',
@@ -181,7 +180,7 @@ const AdminPanelModal = ({network}) => {
               color='red'
           >
           Not connected
-    </Button> */
+    </Button>
   )
 }
 

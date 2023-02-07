@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Card } from 'semantic-ui-react'
 import AdminPanelModal from '../components/AdminPanelModal';
 
-const AdminPanel = ({ network }) => {
+const AdminPanel = ({ network, accounts }) => {
   // TO DO this Grid needs to be drawn better
   return (
     <Grid divided='vertically'>
@@ -21,7 +21,7 @@ const AdminPanel = ({ network }) => {
               Create a new Airdrop Manager for your community!
             </Card.Description>
           </Card.Content>
-          <AdminPanelModal network={network}/>  
+          <AdminPanelModal network={ network } accounts={ accounts }/>  
       </Card>
     </ Grid.Row>
 
