@@ -2,7 +2,8 @@ import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown, Button, Icon } from 'semantic-ui-react'
 import styled from 'styled-components';
-import { networkOptions, isSupportedNetwork, handleNetworkChange, convertToHex } from './data/ElementsAndHelpers';
+import { networkOptions } from './data';
+import { isSupportedNetwork, handleNetworkChange, convertToHex } from '../../interactions'
 import React, { Component } from 'react';
 import { ethers } from "ethers";
 
@@ -116,7 +117,6 @@ const NetworkDropdown = ({ network, accounts }) => {
     return false
   } else {
     if ((isSupportedNetwork(network) === false) && accounts !== '')  {
-      console.log('no soportado')
       return (
         <Dropdown 
           text='Please use a supported network' 
@@ -128,7 +128,6 @@ const NetworkDropdown = ({ network, accounts }) => {
       )
     } else {
       if (accounts.length !== 0) {
-        console.log('soportado')
         return (
           <Dropdown 
             selection

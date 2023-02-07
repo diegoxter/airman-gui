@@ -57,7 +57,14 @@ export const DeployButton = ({
   )
 
   if (isValidContract && amount !== '') {
-    if (isApproved) {
+    if (Number(amountInputValue) === 0 || !hasEnoughTokens) {
+      return (
+        <Button
+          content="Not enough tokens"
+          disabled
+        />
+      )
+    } else if (isApproved) {
       return (
         <Button
           content="Let's do it!"
@@ -65,13 +72,6 @@ export const DeployButton = ({
             handleLetsDoItClick();
           }}
           positive
-        />
-      )
-    } else if (Number(amountInputValue) || !hasEnoughTokens) {
-      return (
-        <Button
-          content="Not enough tokens"
-          disabled
         />
       )
     } else if (isValidAmount) {
