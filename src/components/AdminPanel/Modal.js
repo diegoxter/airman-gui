@@ -42,6 +42,15 @@ const AdminPanelModal = ({ network, accounts }) => {
     }
   }
 
+  const handleCancelClick = () => {
+    setOpen(false)
+    changeIsValidAmount(false)
+    setApproved(false)
+    changeContract('')
+    setAmount('')
+    changeName('')
+  }
+
   // TO DO Draw the content we actually want
   return (
     (isSupportedNetwork(network)) 
@@ -116,7 +125,7 @@ const AdminPanelModal = ({ network, accounts }) => {
         </Grid>
   </Modal.Content>
       <Modal.Actions>
-        <Button color='red' onClick={() => setOpen(false)}>
+        <Button color='red' onClick={() => handleCancelClick()}>
           Cancel
         </Button>
         <DeployButton 

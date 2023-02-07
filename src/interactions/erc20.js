@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import activeNetworkContractAddr from "./data/contracts";
 import erc20ABI from '../assets/abis/ERC20.json'
 
 /* TO DO functions
@@ -15,10 +16,8 @@ export const checkTokenSymbol = async (_address) => {
     const symbol = await tokenInstance.connect(signer).symbol()
     
     if (symbol !== '') {
-        console.log('existe')
         return true;
     } else {
-        console.log('no existe')
         return false
     }
 
@@ -26,7 +25,13 @@ export const checkTokenSymbol = async (_address) => {
 }
 
   // debug
-let tempAdminPanelAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+// let tempAdminPanelAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+let network = provider.getNetwork()
+
+const getActiveNetworkContract = async () => {
+    const x = await activeNetworkContractAddr((await network).chainId)
+    return (x)
+}
 
 export const checkBalance = async (account, _contractAddress) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
@@ -37,14 +42,18 @@ export const checkBalance = async (account, _contractAddress) => {
 
 export const checkAllowance = async (account, _contractAddress) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    const check = await tokenInstance.connect(signer).allowance(account, tempAdminPanelAddress)
+    let y = await getActiveNetworkContract()
+
+    const check = await tokenInstance.connect(signer).allowance(account, y)
 
     return (Number(check))
 }
 
-export const approveTokens = async (_contractAddress, tempAdminPanelAddress, amount) => {
+export const approveTokens = async (_account, _contractAddress, amount) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    const approve = (await tokenInstance.connect(signer).approve(tempAdminPanelAddress, Number(amount)))
+    let y = await getActiveNetworkContract()
+
+    const approve = (await tokenInstance.connect(signer).approve(y, Number(amount)))
 
     console.log(`${Number(amount)} es del tipo ${typeof  Number(amount)}`)
 

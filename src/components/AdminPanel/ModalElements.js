@@ -1,8 +1,6 @@
 import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../interactions/erc20';
 import { Button, Form } from 'semantic-ui-react'
 
-import adminPanelAbi from '../../assets/abis/AdminPanel.json'
-
 async function isApprovedAllowance(_accounts, _contractInputValue, _amountInputValue, _setApproved) {
   if (await checkAllowance(_accounts, _contractInputValue) >= Number(_amountInputValue)) {
     _setApproved(true)
