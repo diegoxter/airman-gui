@@ -1,32 +1,22 @@
-import React,{ useState, Component } from 'react'
+import React,{ useState } from 'react'
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
 import { useDebounce } from "use-debounce";
-import { ethers } from "ethers";
-import { checkTokenSymbol } from '../../interactions/erc20';
 import { isSupportedNetwork } from '../Navbar/data/ElementsAndHelpers';
-import activeNetworkContractAddr from '../../interactions/data/contracts'; 
-import { DeployButton } from './DeployButton';
+import { DeployButton, TokenContractInput } from './ModalElements';
 
 const AdminPanelModal = ({ network, accounts }) => {
   const [open, setOpen] = useState(false)
   const [name, changeName] = useState('')
   const [nameInputValue] = useDebounce(name, 1500);
+  const [isValidContract, changeIsValidContract] = useState(undefined)
   const [contract, changeContract] = useState('')
   const [contractInputValue] = useDebounce(contract, 1500);
   const [amount, setAmount] = useState('')
   const [amountInputValue] = useDebounce(amount, 1500);
+  const [isValidAmount, changeIsValidAmount] = useState(undefined)
   const [isApproved, setApproved] = useState(false)
 
   // Testing purposes
-  console.log(nameInputValue + ' test 1')
-
-  if (contractInputValue !== '')
-  {
-    checkTokenSymbol(contractInputValue)
-  }
-
-  console.log(amountInputValue + ' test 3')
-
 
   const handleNameChange = (num ) => {
     console.log(num + ' was typed')
@@ -34,14 +24,13 @@ const AdminPanelModal = ({ network, accounts }) => {
     changeName(num)
   }
 
-  const handleContractChange = ( num ) => {
-    changeContract(num)
-  }
-
   const handleAmountChange = (num) => {
-    console.log(num + ' was typed')
-    console.log('type of num '+ (typeof num))
     setAmount(num)
+    if (!isNaN(num)) {
+      changeIsValidAmount(true)
+    } else {
+      changeIsValidAmount(false)
+    }
   }
 
   const testChange = () => {
@@ -54,8 +43,7 @@ const AdminPanelModal = ({ network, accounts }) => {
 
   // TO DO Draw the content we actually want
   return (
-    true // debug
-    //(isSupportedNetwork(network)) 
+    (isSupportedNetwork(network)) 
     ?
     <Modal
       onClose={() => setOpen(false)}
@@ -95,13 +83,13 @@ const AdminPanelModal = ({ network, accounts }) => {
                 >
                 </Form.Input>
 
-                <Form.Input
-                  label='Token info'       
-                  placeholder='Address: 0x...'
-                  value={contract}
-                  onChange={(e) => handleContractChange(e.target.value)}
-                >
-                </Form.Input>
+                <TokenContractInput 
+                  isValidContract={ isValidContract } 
+                  changeIsValidContract= { changeIsValidContract }
+                  contract={ contract }
+                  changeContract={ changeContract }
+                  contractInputValue={ contractInputValue }
+                />
                 
                 <Form.Input
                   placeholder='Amount to airdrop'
@@ -131,11 +119,14 @@ const AdminPanelModal = ({ network, accounts }) => {
           Cancel
         </Button>
         <DeployButton 
-          isApproved={ isApproved } 
+          isApproved={ isApproved }
+          amount={ amount }
+          amountInputValue={ amountInputValue }
           contractInputValue={ contractInputValue } 
           accounts={ accounts }
+          isValidContract={ isValidContract }
+          isValidAmount={ isValidAmount }
         />
-
       </Modal.Actions>
     </Modal>
     :

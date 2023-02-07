@@ -43,7 +43,7 @@ export function isSupportedNetwork(chainId) {
   }
 }
 
-export const convert = (integer) => {
+export const convertToHex = (integer) => {
   let str = Number(integer).toString(16);
   
   return str.length === 1 ? "0" + str : str;
@@ -54,7 +54,7 @@ export async function handleNetworkChange(chainID) {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x'+ convert(chainID) }],
+      params: [{ chainId: '0x'+ convertToHex(chainID) }],
     });
 
     this.props.changeNetwork(chainID)
@@ -113,7 +113,7 @@ export async function handleNetworkChange(chainID) {
           ],
         });
 
-        this.props.changeNetwork(convert(chainID))
+        this.props.changeNetwork(convertToHex(chainID))
       } catch (addError) {
         // handle "add" error
       }

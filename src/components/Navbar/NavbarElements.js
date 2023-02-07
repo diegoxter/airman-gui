@@ -2,7 +2,7 @@ import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown, Button, Icon } from 'semantic-ui-react'
 import styled from 'styled-components';
-import { networkOptions, isSupportedNetwork, handleNetworkChange, convert } from './data/ElementsAndHelpers';
+import { networkOptions, isSupportedNetwork, handleNetworkChange, convertToHex } from './data/ElementsAndHelpers';
 import React, { Component } from 'react';
 import { ethers } from "ethers";
 
@@ -103,7 +103,7 @@ const NetworkDropdown = ({ network, accounts }) => {
   }
 
   function displayActiveNetwork(_network) {
-    const i = networkOptions.findIndex(e => e.value === '0x'+(convert(_network)));
+    const i = networkOptions.findIndex(e => e.value === '0x'+(convertToHex(_network)));
 
     if (i >= 0 ) {
       return networkOptions[i].value
