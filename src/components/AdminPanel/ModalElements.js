@@ -69,7 +69,13 @@ export const TokenContractInput = ({
 
 
   if (contractInputValue.length === 42) {
-    checkTokenSymbol(contractInputValue)
+    try { 
+      checkTokenSymbol(contractInputValue) 
+    } catch (error) {
+        console.log(error)
+    }
+
+    console.log('falla')
     changeIsValidContract(true)
   } else {
     changeIsValidContract(false)
