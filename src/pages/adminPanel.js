@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Card } from 'semantic-ui-react'
-import AdminPanelModal from '../components/AdminPanelModal';
+import AdminPanelModal from '../components/AdminPanel/Modal';
 
 const AdminPanel = ({ network, accounts }) => {
   // TO DO this Grid needs to be drawn better

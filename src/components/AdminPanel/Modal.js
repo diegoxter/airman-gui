@@ -2,42 +2,10 @@ import React,{ useState, Component } from 'react'
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
 import { useDebounce } from "use-debounce";
 import { ethers } from "ethers";
-import { checkTokenSymbol, checkAllowance } from '../interactions/erc20';
-import { isSupportedNetwork } from './Navbar/data/ElementsAndHelpers';
-import activeNetworkContractAddr from '../interactions/data/contracts'; 
-
-import adminPanelAbi from '../assets/abis/AdminPanel.json'
-
-// TO DO get this into a separate file
-const DeployButton = ({ isApproved, contractInputValue, accounts }) => {
-  
-  const handleClick = () => {
-    checkAllowance(accounts, contractInputValue)
-  }
-
-  if (isApproved) {
-    return (
-      <Button
-        content="Let's do it!"
-        onClick={() => {
-          handleClick();
-        }}
-        positive
-      />
-    )
-  } else {
-    return (
-      <Button
-        color='blue'
-        content="Approve tokens"
-        onClick={() => {
-          handleClick();
-        }}
-      />
-    )
-  }
-}
-
+import { checkTokenSymbol } from '../../interactions/erc20';
+import { isSupportedNetwork } from '../Navbar/data/ElementsAndHelpers';
+import activeNetworkContractAddr from '../../interactions/data/contracts'; 
+import { DeployButton } from './DeployButton';
 
 const AdminPanelModal = ({ network, accounts }) => {
   const [open, setOpen] = useState(false)
@@ -86,7 +54,8 @@ const AdminPanelModal = ({ network, accounts }) => {
 
   // TO DO Draw the content we actually want
   return (
-    (isSupportedNetwork(network)) 
+    true // debug
+    //(isSupportedNetwork(network)) 
     ?
     <Modal
       onClose={() => setOpen(false)}
