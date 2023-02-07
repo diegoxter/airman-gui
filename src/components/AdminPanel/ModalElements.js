@@ -22,8 +22,7 @@ export const DeployButton = ({ isApproved, contractInputValue, accounts, isValid
     disabled
   />
 )
-  
-  if ((isValidContract && amount !== '')) {
+  if (isValidContract && amount !== '') {
     if (isApproved) {
       return (
         <Button
@@ -44,12 +43,12 @@ export const DeployButton = ({ isApproved, contractInputValue, accounts, isValid
           }}
         />
       )
-    } else if (!isValidAmount && amountInputValue === '') {
+    } else if (!isValidAmount) {
       return (
         diabledButton
       )
     }
-  } else if (isValidContract && amount === '') {
+  } else if (!isValidContract || amount === '' || !isValidAmount) {
     return (
       diabledButton
     )
@@ -69,8 +68,7 @@ export const TokenContractInput = ({
   }
 
 
-  if (contractInputValue.length === 42)
-  {
+  if (contractInputValue.length === 42) {
     checkTokenSymbol(contractInputValue)
     changeIsValidContract(true)
   } else {
