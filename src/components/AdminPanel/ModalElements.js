@@ -1,36 +1,77 @@
-import { checkAllowance, checkTokenSymbol } from '../../interactions/erc20';
+import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../interactions/erc20';
 import { Button, Form } from 'semantic-ui-react'
 
 import adminPanelAbi from '../../assets/abis/AdminPanel.json'
 
-export const DeployButton = ({ isApproved, contractInputValue, accounts, isValidContract, amount, amountInputValue, isValidAmount }) => {
+async function isApprovedAllowance(_accounts, _contractInputValue, _amountInputValue, _setApproved) {
+  if (await checkAllowance(_accounts, _contractInputValue) >= Number(_amountInputValue)) {
+    _setApproved(true)
+  } else {
+    _setApproved(false)
+  }
+}
+
+async function checkIfHasEnoughTokens(_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) {
+  if (await checkBalance(_accounts, _contractInputValue) < Number(_amountInputValue)) {
+    _setEnoughTokens(false)
+  } else {
+    _setEnoughTokens(true)
+  }
+}
+
+export const DeployButton = ({ 
+  isApproved, 
+  setApproved, 
+  contractInputValue, 
+  accounts, 
+  isValidContract, 
+  amount, 
+  amountInputValue,
+  hasEnoughTokens,
+  setHasEnoughTokens,
+  isValidAmount 
+}) => {
   
-  const handleClick = () => {
-    checkAllowance(accounts, contractInputValue)
+  const handleLetsDoItClick = () => {
+    console.log('click')
   }
   
   const handleApproveClick = () => {
-    checkAllowance(accounts, contractInputValue)
+    try {
+      approveTokens(accounts, contractInputValue, amountInputValue)
+    } catch (error) {
+      console.loh('Falla al aprobar '+ error)
+    }
+  }
+
+  if (isValidAmount) {
+    isApprovedAllowance(accounts, contractInputValue, amountInputValue, setApproved)
+    checkIfHasEnoughTokens(accounts, contractInputValue, amountInputValue, setHasEnoughTokens)
   }
 
   const diabledButton = (
-  <Button
-    content="Need more information"
-    onClick={() => {
-      handleClick();
-    }}
-    disabled
-  />
-)
+    <Button
+      content="Need more information"
+      disabled
+    />
+  )
+
   if (isValidContract && amount !== '') {
     if (isApproved) {
       return (
         <Button
           content="Let's do it!"
           onClick={() => {
-            handleClick();
+            handleLetsDoItClick();
           }}
           positive
+        />
+      )
+    } else if (Number(amountInputValue) || !hasEnoughTokens) {
+      return (
+        <Button
+          content="Not enough tokens"
+          disabled
         />
       )
     } else if (isValidAmount) {
@@ -74,13 +115,10 @@ export const TokenContractInput = ({
     } catch (error) {
         console.log(error)
     }
-
-    console.log('falla')
     changeIsValidContract(true)
   } else {
     changeIsValidContract(false)
   }
-
 
     return (
         <Form.Input

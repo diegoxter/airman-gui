@@ -12,7 +12,8 @@ const AdminPanelModal = ({ network, accounts }) => {
   const [contract, changeContract] = useState('')
   const [contractInputValue] = useDebounce(contract, 1500);
   const [amount, setAmount] = useState('')
-  const [amountInputValue] = useDebounce(amount, 1500);
+  const [amountInputValue] = useDebounce(amount, 600);
+  const [hasEnoughTokens, setHasEnoughTokens] = useState(false)
   const [isValidAmount, changeIsValidAmount] = useState(undefined)
   const [isApproved, setApproved] = useState(false)
 
@@ -26,7 +27,7 @@ const AdminPanelModal = ({ network, accounts }) => {
 
   const handleAmountChange = (num) => {
     setAmount(num)
-    if (!isNaN(num)) {
+    if ((Number(num) > 0) && !isNaN(num)) {
       changeIsValidAmount(true)
     } else {
       changeIsValidAmount(false)
@@ -120,8 +121,11 @@ const AdminPanelModal = ({ network, accounts }) => {
         </Button>
         <DeployButton 
           isApproved={ isApproved }
+          setApproved={ setApproved }
           amount={ amount }
           amountInputValue={ amountInputValue }
+          hasEnoughTokens={ hasEnoughTokens }
+          setHasEnoughTokens={ setHasEnoughTokens }
           contractInputValue={ contractInputValue } 
           accounts={ accounts }
           isValidContract={ isValidContract }

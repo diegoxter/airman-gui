@@ -28,16 +28,25 @@ export const checkTokenSymbol = async (_address) => {
   // debug
 let tempAdminPanelAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
 
-export const checkAllowance = async (account, _address) => {
-    const tokenInstance = new ethers.Contract(_address, erc20ABI, provider)
-    const check = await tokenInstance.connect(signer).allowance(account, tempAdminPanelAddress)
+export const checkBalance = async (account, _contractAddress) => {
+    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
+    const check = await tokenInstance.connect(signer).balanceOf(account)
 
-    console.log(check)
+    return (Number(check))
 }
 
-export const approveTokens = async (_address, tempAdminPanelAddress, amount) => {
-    const tokenInstance = new ethers.Contract(_address, erc20ABI, provider)
-    const approve = (await tokenInstance.connect(signer).approve(tempAdminPanelAddress, amount))
+export const checkAllowance = async (account, _contractAddress) => {
+    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
+    const check = await tokenInstance.connect(signer).allowance(account, tempAdminPanelAddress)
 
-    console.log(approve)
+    return (Number(check))
+}
+
+export const approveTokens = async (_contractAddress, tempAdminPanelAddress, amount) => {
+    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
+    const approve = (await tokenInstance.connect(signer).approve(tempAdminPanelAddress, Number(amount)))
+
+    console.log(`${Number(amount)} es del tipo ${typeof  Number(amount)}`)
+
+    console.log(await approve)
 }
