@@ -1,13 +1,10 @@
 import { ethers } from "ethers";
 import { waitForConfirmation } from ".";
 import activeNetworkContractAddr from "./data/contracts";
+
 import erc20ABI from '../assets/abis/ERC20.json'
 
-/* TO DO functions
-*
-* Approve tokens
-*
-*/
+
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
 

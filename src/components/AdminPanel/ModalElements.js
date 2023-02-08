@@ -1,5 +1,6 @@
 import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../interactions/erc20';
 import { Button, Form } from 'semantic-ui-react'
+import { useState } from 'react';
 
 async function isApprovedAllowance(_accounts, _contractInputValue, _amountInputValue, _setApproved) {
   if (await checkAllowance(_accounts, _contractInputValue) >= Number(_amountInputValue)) {
@@ -29,6 +30,7 @@ export const DeployButton = ({
   setHasEnoughTokens,
   isValidAmount 
 }) => {
+  const [isLoading, setIsLoading] = useState(false)
   
   const handleLetsDoItClick = () => {
     console.log('click')
@@ -36,9 +38,9 @@ export const DeployButton = ({
   
   const handleApproveClick = () => {
     try {
-      approveTokens(accounts, contractInputValue, amountInputValue)
+      approveTokens(accounts, contractInputValue, amountInputValue, setIsLoading)
     } catch (error) {
-      console.loh('Falla al aprobar '+ error)
+      console.log('Falla al aprobar '+ error)
     }
   }
 
@@ -49,7 +51,7 @@ export const DeployButton = ({
 
   const diabledButton = (
     <Button
-      content="Need more information"
+      content="Verify the information given"
       disabled
     />
   )
@@ -58,9 +60,18 @@ export const DeployButton = ({
     if (Number(amountInputValue) === 0 || !hasEnoughTokens) {
       return (
         <Button
-          content="Not enough tokens"
+          content="Invalid token amount "
           disabled
         />
+      )
+    } else if (isLoading) {
+      return (
+        <Button
+          loading 
+          primary
+          size='medium'>
+            PLACEH
+        </Button>
       )
     } else if (isApproved) {
       return (
@@ -87,7 +98,7 @@ export const DeployButton = ({
         diabledButton
       )
     }
-  } else if (!isValidContract || amount === '' || !isValidAmount) {
+  } else {
     return (
       diabledButton
     )
@@ -111,7 +122,7 @@ export const TokenContractInput = ({
     try { 
       checkTokenSymbol(contractInputValue) 
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
     changeIsValidContract(true)
   } else {

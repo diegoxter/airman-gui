@@ -4,7 +4,7 @@ import { useDebounce } from "use-debounce";
 import { isSupportedNetwork } from '../../interactions';
 import { DeployButton, TokenContractInput } from './ModalElements';
 
-const AdminPanelModal = ({ network, accounts }) => {
+const AdminPanelModal = ({ network, accounts, isConnected }) => {
   const [open, setOpen] = useState(false)
   const [name, changeName] = useState('')
   const [nameInputValue] = useDebounce(name, 1500);
@@ -29,6 +29,7 @@ const AdminPanelModal = ({ network, accounts }) => {
     setAmount(num)
     if ((Number(num) > 0) && !isNaN(num)) {
       changeIsValidAmount(true)
+      setApproved(false)
     } else {
       changeIsValidAmount(false)
     }
@@ -53,7 +54,7 @@ const AdminPanelModal = ({ network, accounts }) => {
 
   // TO DO Draw the content we actually want
   return (
-    (isSupportedNetwork(network)) 
+    (isSupportedNetwork(network) && isConnected) 
     ?
     <Modal
       onClose={() => setOpen(false)}
