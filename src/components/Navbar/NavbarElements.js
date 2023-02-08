@@ -131,7 +131,7 @@ const NetworkDropdown = ({ network, accounts }) => {
         return (
           <Dropdown 
             selection
-            simple option
+            option
             options={networkOptions}
             onChange={handleChange} 
             defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing

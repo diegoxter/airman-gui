@@ -1,5 +1,6 @@
 import { 
-  ETC_ICON_URL, 
+  ETC_ICON_URL,
+  FANTOM_ICON_URL,
   NOVA_ICON_URL, 
   LOCALHOST_ICON_URL 
 } from '../iconURI'
@@ -10,6 +11,12 @@ export const networkOptions = [
       text: 'ETC',
       value: '0x3d',
       image: { className:"ui mini image", src: ETC_ICON_URL },
+    },
+    {
+      key: 'Fantom Testnet',
+      text: 'Fantom Testnet',
+      value: '0xfa2',
+      image: { className:"ui mini image", src: FANTOM_ICON_URL },
     },
     {
       key: 'Nova Network',

@@ -1,7 +1,7 @@
 import activeNetworkContractAddr from "./data/contracts";
 
 export function isSupportedNetwork(chainId) {
-  const supportedNetworks = [ '0x3d', '0x57', '0x7a69' ]
+  const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ]
   let i = undefined
 
   if ((typeof chainId) === 'number') {
