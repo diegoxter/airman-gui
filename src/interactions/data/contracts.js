@@ -8,7 +8,7 @@ export default function activeNetworkAdminPanelContractAddr(network) {
             break;
 
         case 87:
-            adminPanelContract = '0x2c606693e68e5806475ADDE7c80ee09A24B9779F';
+            adminPanelContract = '0xC1E28eBDb3DE89a528f6d7FbF19877EC2e959720';
             break;
 
         case 4002:

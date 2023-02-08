@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { waitForConfirmation } from ".";
 import activeNetworkContractAddr from "./data/contracts";
 import erc20ABI from '../assets/abis/ERC20.json'
 
@@ -49,13 +50,10 @@ export const checkAllowance = async (account, _contractAddress) => {
     return (Number(check))
 }
 
-export const approveTokens = async (_account, _contractAddress, amount) => {
+export const approveTokens = async (_account, _contractAddress, amount, _setIsLoading) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    let y = await getActiveNetworkContract()
-
+    const y = await getActiveNetworkContract()
     const approve = (await tokenInstance.connect(signer).approve(y, Number(amount)))
 
-    console.log(`${Number(amount)} es del tipo ${typeof  Number(amount)}`)
-
-    console.log(await approve)
+    waitForConfirmation(approve.hash, provider, 5000, _setIsLoading)
 }

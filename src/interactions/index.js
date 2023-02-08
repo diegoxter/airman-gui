@@ -95,3 +95,16 @@ export function isSupportedNetwork(chainId) {
       // handle other "switch" errors
     }
   }
+
+  export async function waitForConfirmation(txHash, provider, interval, _setIsLoading) {
+    const receipt = await provider.getTransactionReceipt(txHash);
+    if (receipt === null) {
+      _setIsLoading(true)
+      setTimeout(() => {
+        waitForConfirmation(txHash, provider, interval, _setIsLoading);
+      }, interval);
+    } else {
+      _setIsLoading(false)
+    }
+
+  }
