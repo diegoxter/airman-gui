@@ -113,6 +113,7 @@ export async function waitForConfirmation(txHash, provider, interval, _setIsLoad
     }, interval);
   } else {
     _setIsLoading(false)
+    return true
   }
 
 }

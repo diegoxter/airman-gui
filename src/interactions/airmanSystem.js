@@ -16,7 +16,7 @@ const getFee = async () => {
   return fee
 }
 
-export const deployAirMan = async (_token, amount, _setIsLoading) => {
+export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
   const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
   const fee = await getFee()
   const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
@@ -28,7 +28,10 @@ export const deployAirMan = async (_token, amount, _setIsLoading) => {
     )
   )
 
-  waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
+  const deploy = await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
+  if (deploy) {
+    _setOpen(false)
+  }
 
   return true
 }

@@ -6,15 +6,15 @@ import { DeployButton, TokenContractInput } from './ModalElements';
 
 const AdminPanelModal = ({ network, accounts, isConnected }) => {
   const [open, setOpen] = useState(false)
-  const [name, changeName] = useState('')
+  const [name, setName] = useState('')
   const [nameInputValue] = useDebounce(name, 1500);
-  const [isValidContract, changeIsValidContract] = useState(undefined)
-  const [contract, changeContract] = useState('')
+  const [isValidContract, setIsValidContract] = useState(undefined)
+  const [contract, setContract] = useState('')
   const [contractInputValue] = useDebounce(contract, 1500);
   const [amount, setAmount] = useState('')
   const [amountInputValue] = useDebounce(amount, 600);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false)
-  const [isValidAmount, changeIsValidAmount] = useState(undefined)
+  const [isValidAmount, setIsValidAmount] = useState(undefined)
   const [isApproved, setApproved] = useState(false)
 
   // Testing purposes
@@ -22,16 +22,16 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
   const handleNameChange = (num ) => {
     console.log(num + ' was typed')
     console.log('type of num '+ (typeof num))
-    changeName(num)
+    setName(num)
   }
 
   const handleAmountChange = (num) => {
     setAmount(num)
     if ((Number(num) > 0) && !isNaN(num)) {
-      changeIsValidAmount(true)
+      setIsValidAmount(true)
       setApproved(false)
     } else {
-      changeIsValidAmount(false)
+      setIsValidAmount(false)
     }
   }
 
@@ -45,11 +45,11 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
 
   const handleCancelClick = () => {
     setOpen(false)
-    changeIsValidAmount(false)
+    setIsValidAmount(false)
     setApproved(false)
-    changeContract('')
+    setContract('')
     setAmount('')
-    changeName('')
+    setName('')
   }
 
   // TO DO Draw the content we actually want
@@ -96,9 +96,9 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
 
                 <TokenContractInput 
                   isValidContract={ isValidContract } 
-                  changeIsValidContract= { changeIsValidContract }
+                  setIsValidContract= { setIsValidContract }
                   contract={ contract }
-                  changeContract={ changeContract }
+                  setContract={ setContract }
                   contractInputValue={ contractInputValue }
                 />
                 
