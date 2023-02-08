@@ -26,7 +26,7 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
       </Card>
     </ Grid.Row>
     <Grid.Row>
-      <DeployedAirManList></DeployedAirManList>
+      <DeployedAirManList network={ network } accounts={ accounts }/>
     </Grid.Row>
 
 

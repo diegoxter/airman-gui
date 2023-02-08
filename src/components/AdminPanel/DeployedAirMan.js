@@ -1,4 +1,5 @@
 import { Card, Image, Button } from 'semantic-ui-react'
+import { getDeployedAirManList } from '../../interactions/airmanSystem'
 
 const DeployedAirManCard = ({ projectName, typeOfProject, projectDescription, projectImage }) => {
   return ( 
@@ -27,6 +28,7 @@ const DeployedAirManCard = ({ projectName, typeOfProject, projectDescription, pr
 }
 
 export const DeployedAirManList = ({ network, accounts, isConnected }) => {
+  getDeployedAirManList(accounts) // testing
   return(
     <Card.Group>
       <DeployedAirManCard 

@@ -16,6 +16,13 @@ const getFee = async () => {
   return fee
 }
 
+export const getDeployedAirManList = async (_address) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
+  const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address)
+
+  console.log(await list)
+}
+
 export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
   const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
   const fee = await getFee()

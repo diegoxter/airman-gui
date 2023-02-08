@@ -113,15 +113,14 @@ export const DeployButton = ({
 }
 
 export const TokenContractInput = ({
-  isValidContract, 
-  changeIsValidContract,
+  setIsValidContract,
   contractInputValue,
   contract,
-  changeContract
+  setContract
 }) => {
 
   const handleContractChange = ( num ) => {
-    changeContract(num)
+    setContract(num)
   }
 
 
@@ -131,9 +130,9 @@ export const TokenContractInput = ({
     } catch (error) {
       console.log(error)
     }
-    changeIsValidContract(true)
+    setIsValidContract(true) // TO DO this doesnt work as expected
   } else {
-    changeIsValidContract(false)
+    setIsValidContract(false)
   }
 
     return (
