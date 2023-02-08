@@ -1,4 +1,5 @@
 import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../interactions/erc20';
+import { deployAirMan } from '../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react'
 import { useState } from 'react';
 
@@ -18,7 +19,8 @@ async function checkIfHasEnoughTokens(_accounts, _contractInputValue, _amountInp
   }
 }
 
-export const DeployButton = ({ 
+export const DeployButton = ({
+  setOpen, // TO DO test this
   isApproved, 
   setApproved, 
   contractInputValue, 
@@ -33,12 +35,19 @@ export const DeployButton = ({
   const [isLoading, setIsLoading] = useState(false)
   
   const handleLetsDoItClick = () => {
-    console.log('click')
+    try {
+      if (deployAirMan(contractInputValue, amountInputValue, setIsLoading)) {
+        setOpen(false) // TO DO test this
+      }
+    } catch (error) {
+      console.log('Falla al hacer el deploy de AirMan '+ error)
+    }
+
   }
-  
+
   const handleApproveClick = () => {
     try {
-      approveTokens(accounts, contractInputValue, amountInputValue, setIsLoading)
+      approveTokens(accounts, contractInputValue, Number(amountInputValue), setIsLoading)
     } catch (error) {
       console.log('Falla al aprobar '+ error)
     }

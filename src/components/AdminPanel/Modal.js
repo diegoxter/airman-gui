@@ -129,7 +129,8 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
         <Button color='red' onClick={() => handleCancelClick()}>
           Cancel
         </Button>
-        <DeployButton 
+        <DeployButton
+          setOpen={ setOpen } // TO DO test this
           isApproved={ isApproved }
           setApproved={ setApproved }
           amount={ amount }

@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
-import { waitForConfirmation } from ".";
-import activeNetworkContractAddr from "./data/contracts";
+import { waitForConfirmation, getAdmPanAddress } from ".";
 
 import erc20ABI from '../assets/abis/ERC20.json'
 
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
+let network = provider.getNetwork()
 
 export const checkTokenSymbol = async (_address) => {
     const tokenInstance = new ethers.Contract(_address, erc20ABI, provider)
@@ -18,17 +18,6 @@ export const checkTokenSymbol = async (_address) => {
     } else {
         return false
     }
-
-
-}
-
-  // debug
-// let tempAdminPanelAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
-let network = provider.getNetwork()
-
-const getActiveNetworkContract = async () => {
-    const x = await activeNetworkContractAddr((await network).chainId)
-    return (x)
 }
 
 export const checkBalance = async (account, _contractAddress) => {
@@ -40,17 +29,15 @@ export const checkBalance = async (account, _contractAddress) => {
 
 export const checkAllowance = async (account, _contractAddress) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    let y = await getActiveNetworkContract()
 
-    const check = await tokenInstance.connect(signer).allowance(account, y)
+    const check = await tokenInstance.connect(signer).allowance(account, (await getAdmPanAddress(network)))
 
     return (Number(check))
 }
 
 export const approveTokens = async (_account, _contractAddress, amount, _setIsLoading) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    const y = await getActiveNetworkContract()
-    const approve = (await tokenInstance.connect(signer).approve(y, Number(amount)))
+    const approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)))
 
     waitForConfirmation(approve.hash, provider, 5000, _setIsLoading)
 }

@@ -1,21 +1,37 @@
 import { ethers } from "ethers";
-import activeNetworkContractAddr from "./data/contracts";
-import { waitForConfirmation } from ".";
+import { waitForConfirmation, getAdmPanAddress } from ".";
 
-import adminPanelAbi from '../../assets/abis/AdminPanel.json'
-
+import adminPanelAbi from '../assets/abis/AdminPanel.json'
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
+const network = provider.getNetwork()
 
-/*
-export const approveTokens = async (_account, _contractAddress, amount, _setIsLoading) => {
-  const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-  const y = await getActiveNetworkContract()
-  const approve = (await tokenInstance.connect(signer).approve(y, Number(amount)))
+const getFee = async () => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
+  const fee = await adminPanelInstance.feeInGwei()
+  const feeInEther = ethers.utils.formatEther(fee.toString())
 
-  waitForConfirmation(approve.hash, provider, 5000, _setIsLoading)
-}*/
+  console.log(`The fee is ${fee} Gwei or ${feeInEther} Ether`)
+  return fee
+}
+
+export const deployAirMan = async (_token, amount, _setIsLoading) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
+  const fee = await getFee()
+  const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
+    _token, 
+    Number(amount),
+    {
+      value: fee,
+    }
+    )
+  )
+
+  waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
+
+  return true
+}
 
 
 

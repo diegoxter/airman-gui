@@ -1,186 +1,264 @@
 [
     {
         "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_feeInGwei",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "EtherWithdrawed",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address payable",
-          "name": "managerOwner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "tokenAddress",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "deployedManager",
-          "type": "address"
-        }
-      ],
-      "name": "NewAirdropManagerDeployed",
-      "type": "event"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "deployedManagers",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "instanceAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "instanceToken",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "deployedManagersPerAddress",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "feeInGwei",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "instanceToken",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "initialBalance",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address payable",
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "freeAirManInstace",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "instanceToken",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "initialBalance",
-          "type": "uint256"
-        }
-      ],
-      "name": "newAirdropManagerInstance",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address payable",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "withdrawEther",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "receive"
-    }
+          {
+            "internalType": "uint256",
+            "name": "_feeInGwei",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "EtherWithdrawed",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address payable",
+            "name": "managerOwner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "tokenAddress",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "deployedManager",
+            "type": "address"
+          }
+        ],
+        "name": "NewAirdropManagerDeployed",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "newFee",
+            "type": "uint256"
+          }
+        ],
+        "name": "NewFee",
+        "type": "event"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "fallback"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "deployedByUser",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "instanceAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "instanceToken",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "deployedManagers",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "instanceAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "instanceToken",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "feeInGwei",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_instanceToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_initialBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address payable",
+            "name": "_newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "freeAirManInstace",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "instanceOwner",
+            "type": "address"
+          }
+        ],
+        "name": "getDeployedInstances",
+        "outputs": [
+          {
+            "internalType": "uint256[]",
+            "name": "",
+            "type": "uint256[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "instanceIDs",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_instanceToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_initialBalance",
+            "type": "uint256"
+          }
+        ],
+        "name": "newAirdropManagerInstance",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+          {
+            "internalType": "address payable",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "newFeeInGwei",
+            "type": "uint256"
+          }
+        ],
+        "name": "setFeeInGwei",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "withdrawEther",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
+      }
 ]
