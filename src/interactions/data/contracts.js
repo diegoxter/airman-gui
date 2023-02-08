@@ -1,5 +1,6 @@
-export default function activeNetworkContractAddr(network) {
+export default function activeNetworkAdminPanelContractAddr(network) {
     let adminPanelContract = ''
+    // testTokenContract = '0xd9209ca92E8e468C3f8AD7F3CE6B265AfD92760d'
 
     switch (network) {
         case 61:
@@ -7,7 +8,7 @@ export default function activeNetworkContractAddr(network) {
             break;
 
         case 87:
-            adminPanelContract = '1';
+            adminPanelContract = '0x2c606693e68e5806475ADDE7c80ee09A24B9779F';
             break;
 
         case 4002:
