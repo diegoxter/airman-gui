@@ -9,15 +9,10 @@ const signer = provider.getSigner()
 let network = provider.getNetwork()
 
 export const checkTokenSymbol = async (_address) => {
-    const tokenInstance = new ethers.Contract(_address, erc20ABI, provider)
-    // TO DO rework this to use a try {} catch structure
-    const symbol = await tokenInstance.connect(signer).symbol()
-    
-    if (symbol !== '') {
-        return true;
-    } else {
-        return false
-    }
+    const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
+    const symbol = await tokenInstance.connect(signer).symbol();
+
+    return symbol !== '';
 }
 
 export const checkBalance = async (account, _contractAddress) => {

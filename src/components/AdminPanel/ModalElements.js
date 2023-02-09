@@ -36,6 +36,7 @@ export const DeployButton = ({
   
   const handleLetsDoItClick = () => {
     try {
+      console.log('lanzamiento')
       deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen)
     } catch (error) {
       console.log('Falla al hacer el deploy de AirMan '+ error)

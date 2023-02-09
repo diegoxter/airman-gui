@@ -2,20 +2,12 @@ import activeNetworkContractAddr from "./data/contracts";
 
 export function isSupportedNetwork(chainId) {
   const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ]
-  let i = undefined
 
-  if ((typeof chainId) === 'number') {
-    const inHex = Number(chainId).toString(16).padStart(2, "0");
-    i = supportedNetworks.find(e => e === '0x'+inHex);
-  } else if ((typeof chainId) === 'string') {
-    i = supportedNetworks.find(e => e === chainId);
-  }
+  if (typeof chainId === 'number') {
+    chainId = '0x' + Number(chainId).toString(16).padStart(2, '0');
+  } 
 
-  if (typeof i === 'undefined') {
-    return false
-  } else {
-    return true
-  }
+  return typeof chainId === 'string' && supportedNetworks.includes(chainId);
 }
 
 export const getAdmPanAddress = async (_network) => {
