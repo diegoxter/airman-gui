@@ -112,6 +112,7 @@ export async function waitForConfirmation(txHash, provider, interval, _setIsLoad
       waitForConfirmation(txHash, provider, interval, _setIsLoading);
     }, interval);
   } else {
+    console.log('Terminado')
     _setIsLoading(false)
     return true
   }

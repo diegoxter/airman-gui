@@ -35,6 +35,7 @@ export const DeployButton = ({
   const [isLoading, setIsLoading] = useState(false)
   
   const handleLetsDoItClick = () => {
+    setIsLoading(true)
     try {
       console.log('lanzamiento')
       deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen)

@@ -42,6 +42,7 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
   //const deploy = await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
   waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
   .then(r => {
+    console.log(r)
     _setOpen(false)
     console.log('cerrado')
   })
@@ -50,7 +51,14 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
 
 // Draw functions
 export const getInstanceInformation = async (_address) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer)
   let instances = await getDeployedAirManList(_address)
 
-  console.log(instances + 'checking instances')
+  const instancesInfo = instances.map(async (instance, index) => {
+    let temp = await adminPanelInstance.connect(signer).deployedManagers(instance)
+    console.log(temp)
+   
+  });
+
+  console.log(instances + ' checking instances')
 }
