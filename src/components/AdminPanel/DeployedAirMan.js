@@ -28,7 +28,9 @@ const DeployedAirManCard = ({ projectName, typeOfProject, projectDescription, pr
 }
 
 export const DeployedAirManList = ({ network, accounts, isConnected }) => {
-  getInstanceInformation(accounts) // testing
+  if (accounts !=='' && typeof accounts === 'string') {
+    // getInstanceInformation(accounts) // testing
+  }
   return(
     <Card.Group>
       <DeployedAirManCard 

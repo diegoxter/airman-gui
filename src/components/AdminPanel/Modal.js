@@ -10,7 +10,8 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
   const [nameInputValue] = useDebounce(name, 1500);
   const [isValidContract, setIsValidContract] = useState(undefined)
   const [contract, setContract] = useState('')
-  const [contractInputValue] = useDebounce(contract, 1500);
+  const [contractInputValue] = useDebounce(contract, 1000);
+  const [symbolCheck, setSymbolCheck] = useState(false)
   const [amount, setAmount] = useState('')
   const [amountInputValue] = useDebounce(amount, 600);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false)
@@ -18,6 +19,10 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
   const [isApproved, setApproved] = useState(false)
 
   // Testing purposes
+
+  const testChange = () => {
+    console.log(`test is ${isValidAmount}`)
+  }
 
   const handleNameChange = (num ) => {
     console.log(num + ' was typed')
@@ -32,14 +37,6 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
       setApproved(false)
     } else {
       setIsValidAmount(false)
-    }
-  }
-
-  const testChange = () => {
-    if (isApproved === false) {
-      setApproved(true)
-    } else {
-      setApproved(false)
     }
   }
 
@@ -100,6 +97,8 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
                   contract={ contract }
                   setContract={ setContract }
                   contractInputValue={ contractInputValue }
+                  symbolCheck={ symbolCheck }
+                  setSymbolCheck={ setSymbolCheck }
                 />
                 
                 <Form.Input

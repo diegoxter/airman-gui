@@ -52,5 +52,5 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
 export const getInstanceInformation = async (_address) => {
   let instances = await getDeployedAirManList(_address)
 
-  console.log(instances)
+  console.log(instances + 'checking instances')
 }

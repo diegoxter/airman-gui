@@ -47,6 +47,14 @@ export async function handleNetworkChange(chainID) {
 
               break;
 
+            case '4001' && '0xfa2' :
+              url = 'https://endpoints.omniatech.io/v1/fantom/testnet/public';
+              chainName = 'Fantom Testnet'
+              chainSymbol = 'FTM'
+
+
+              break;
+
             case '57' && '0x57' :
               url = 'https://dev.rpc.novanetwork.io';
               chainName = 'Nova Network'
@@ -99,7 +107,7 @@ export async function handleNetworkChange(chainID) {
 export async function waitForConfirmation(txHash, provider, interval, _setIsLoading) {
   const receipt = await provider.getTransactionReceipt(txHash);
   if (receipt === null) {
-    _setIsLoading(true)
+    console.log('esperando')
     setTimeout(() => {
       waitForConfirmation(txHash, provider, interval, _setIsLoading);
     }, interval);

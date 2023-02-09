@@ -45,6 +45,7 @@ export const DeployButton = ({
   }
 
   const handleApproveClick = () => {
+    setIsLoading(true)
     try {
       approveTokens(accounts, contractInputValue, Number(amountInputValue), setIsLoading)
     } catch (error) {
@@ -52,9 +53,11 @@ export const DeployButton = ({
     }
   }
 
-  if (isValidAmount) {
-    isApprovedAllowance(accounts, contractInputValue, amountInputValue, setApproved)
-    checkIfHasEnoughTokens(accounts, contractInputValue, amountInputValue, setHasEnoughTokens)
+  if (contractInputValue.length === 42 && isValidContract && isValidAmount) {
+    if (typeof accounts === 'string') {
+      isApprovedAllowance(accounts, contractInputValue, amountInputValue, setApproved)
+      checkIfHasEnoughTokens(accounts, contractInputValue, amountInputValue, setHasEnoughTokens)
+    }
   }
 
   const diabledButton = (
@@ -64,11 +67,11 @@ export const DeployButton = ({
     />
   )
 
-  if (isValidContract && amount !== '') {
+  if (isValidContract && amountInputValue !== '') {
     if (Number(amountInputValue) === 0 || !hasEnoughTokens) {
       return (
         <Button
-          content="Invalid token amount "
+          content="Invalid token amount"
           disabled
         />
       )
@@ -117,32 +120,29 @@ export const TokenContractInput = ({
   setIsValidContract,
   contractInputValue,
   contract,
-  setContract
+  setContract,
+  symbolCheck, 
+  setSymbolCheck
 }) => {
 
   const handleContractChange = ( num ) => {
     setContract(num)
-  }
-
-
-  if (contractInputValue.length === 42) {
-    try { 
-      checkTokenSymbol(contractInputValue) 
-    } catch (error) {
-      console.log(error)
-    }
-    setIsValidContract(true) // TO DO this doesnt work as expected
-  } else {
+    setSymbolCheck(false)
     setIsValidContract(false)
   }
 
-    return (
-        <Form.Input
-        label='Token info'       
-        placeholder='Address: 0x...'
-        value={contract}
-        onChange={(e) => handleContractChange(e.target.value)}
-      />
-    )
+
+  if (contractInputValue.length === 42 && !symbolCheck) {
+    checkTokenSymbol(contractInputValue, symbolCheck, setSymbolCheck, setIsValidContract) 
+  }
+
+  return (
+      <Form.Input
+      label='Token info'
+      placeholder='Address: 0x...'
+      value={contract}
+      onChange={(e) => handleContractChange(e.target.value)}
+    />
+  )
   
 }

@@ -8,31 +8,54 @@ const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
 let network = provider.getNetwork()
 
-export const checkTokenSymbol = async (_address) => {
+export const checkTokenSymbol = async (_address, _symbolCheck, _setSymbolCheck, _setIsValidContract) => {
     const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
-    const symbol = await tokenInstance.connect(signer).symbol();
+    let symbol = ''
+
+    console.log('checkSymbol')
+
+    if (!_symbolCheck) {
+        try {
+            symbol = await tokenInstance.connect(signer).symbol();
+        } catch (e) {
+            console.log('hubo error')
+            console.log(e)
+        }
+        _setIsValidContract(symbol !== '')
+        _setSymbolCheck(symbol !== '')
+    }
 
     return symbol !== '';
 }
 
 export const checkBalance = async (account, _contractAddress) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    const check = await tokenInstance.connect(signer).balanceOf(account)
+    console.log('checkBalance')
 
+    const check = await tokenInstance.connect(signer).balanceOf(account)
+    
     return (Number(check))
 }
 
 export const checkAllowance = async (account, _contractAddress) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
+    console.log('checkAllowance')
 
     const check = await tokenInstance.connect(signer).allowance(account, (await getAdmPanAddress(network)))
+    
 
     return (Number(check))
 }
 
 export const approveTokens = async (_account, _contractAddress, amount, _setIsLoading) => {
     const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    const approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)))
+    let approve = ''
+    try {
+        approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)))
+        console.log(approve)
+    } catch (e) {
+        console.log(`fallo ${e}`)
+    }
 
     waitForConfirmation(approve.hash, provider, 5000, _setIsLoading)
 }
