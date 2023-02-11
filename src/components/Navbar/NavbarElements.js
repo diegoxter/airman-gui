@@ -2,7 +2,8 @@ import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import { Dropdown, Button, Icon } from 'semantic-ui-react'
 import styled from 'styled-components';
-import { networkOptions, isSupportedNetwork, handleNetworkChange, convert } from './data/ElementsAndHelpers';
+import { networkOptions } from './data';
+import { isSupportedNetwork, handleNetworkChange, convertToHex } from '../../interactions'
 import React, { Component } from 'react';
 import { ethers } from "ethers";
 
@@ -103,7 +104,7 @@ const NetworkDropdown = ({ network, accounts }) => {
   }
 
   function displayActiveNetwork(_network) {
-    const i = networkOptions.findIndex(e => e.value === '0x'+(convert(_network)));
+    const i = networkOptions.findIndex(e => e.value === '0x'+(convertToHex(_network)));
 
     if (i >= 0 ) {
       return networkOptions[i].value
@@ -116,23 +117,21 @@ const NetworkDropdown = ({ network, accounts }) => {
     return false
   } else {
     if ((isSupportedNetwork(network) === false) && accounts !== '')  {
-      console.log('no soportado')
       return (
         <Dropdown 
-        text='Please use a supported network' 
-        options={networkOptions} 
-        onChange={handleChange}  // TO DO if the user cancels the network change the selected item shouldn't change
-        selection
-        error 
+          text='Please use a supported network' 
+          options={networkOptions} 
+          onChange={handleChange}  // TO DO if the user cancels the network change the selected item shouldn't change
+          selection
+          error 
         />
       )
     } else {
       if (accounts.length !== 0) {
-        console.log('soportado')
         return (
           <Dropdown 
             selection
-            simple option
+            option
             options={networkOptions}
             onChange={handleChange} 
             defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing when the network changed

@@ -29,7 +29,6 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
             <NavLink to='/about' activestyle={true.toString()}>
               About
             </NavLink>
-            
           </NavMenu>
         <Grid>
           <NavBtn>
@@ -37,7 +36,12 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
           </NavBtn>
           <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
           <NavBtn>
-            <Metamask network={ network } changeNetwork={ changeNetwork } isConnected={ isConnected } accounts={ accounts }/>
+            <Metamask 
+              network={ network } 
+              changeNetwork={ changeNetwork } 
+              isConnected={ isConnected } 
+              accounts={ accounts }
+            />
           </NavBtn>
         </Grid>
       </Nav>
