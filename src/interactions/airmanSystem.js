@@ -38,27 +38,26 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
     )
   )
 
-    console.log('comprobando')
-  //const deploy = await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
-  waitForConfirmation(tx.hash, provider, 5000, _setIsLoading)
-  .then(r => {
-    console.log(r)
+  let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+    sleep(2500)
+  }
     _setOpen(false)
-    console.log('cerrado')
-  })
 }
 
 
 // Draw functions
 export const getInstanceInformation = async (_address) => {
   const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer)
-  let instances = await getDeployedAirManList(_address)
+  let instancesData = await getDeployedAirManList(_address)
+  const instances = []
 
-  const instancesInfo = instances.map(async (instance, index) => {
-    let temp = await adminPanelInstance.connect(signer).deployedManagers(instance)
-    console.log(temp)
-   
+  instancesData.map(async (instancesData, index) => {
+    let temp = await adminPanelInstance.connect(signer).deployedManagers(instancesData)
+
+    instances[index] = temp
   });
 
-  console.log(instances + ' checking instances')
+  return instances
 }

@@ -42,16 +42,11 @@ export const DeployButton = ({
     } catch (error) {
       console.log('Falla al hacer el deploy de AirMan '+ error)
     }
-
   }
 
   const handleApproveClick = () => {
     setIsLoading(true)
-    try {
       approveTokens(accounts, contractInputValue, Number(amountInputValue), setIsLoading)
-    } catch (error) {
-      console.log('Falla al aprobar '+ error)
-    }
   }
 
   if (contractInputValue.length === 42 && isValidContract && isValidAmount) {

@@ -2,7 +2,14 @@ import { useState } from 'react'
 import { Card, Image, Button } from 'semantic-ui-react'
 import { getInstanceInformation } from '../../interactions/airmanSystem'
 
-const DeployedAirManCard = ({ projectName, typeOfProject, projectDescription, projectImage }) => {
+const DeployedAirManCard = ({ 
+  projectName, 
+  typeOfProject, 
+  projectDescription, 
+  projectImage,
+  instanceAddress,
+  instanceToken
+}) => {
   return ( 
     <Card>
         <Card.Content>
@@ -28,10 +35,20 @@ const DeployedAirManCard = ({ projectName, typeOfProject, projectDescription, pr
   )
 }
 
+const getInstances = async (_accounts) => {
+  const x = await getInstanceInformation(_accounts)
+
+  console.log(x) // testing
+
+}
+
 export const DeployedAirManList = ({ network, accounts, isConnected, checkedInstances, setCheckedInstances }) => {
+  let instances = []
+  
   if (accounts !=='' && typeof accounts === 'string' && !checkedInstances) {
-    getInstanceInformation(accounts) // testing
-    setCheckedInstances(true)
+    instances = getInstances(accounts)
+
+    //setCheckedInstances(true)
   }
 
   return(
