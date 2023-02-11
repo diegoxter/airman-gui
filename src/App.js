@@ -29,8 +29,7 @@ function App() {
 
   function changeAccounts(address) {
     setAccounts(address)
-    // to do this (see below)
-    if (address.length === 0) { // TO DO this needs to be optimized / can be better handled
+    if (address.length === 0) {
       switchIsConnected(false)
     }
   }
@@ -44,7 +43,6 @@ function App() {
 
   async function checkIfConnected() {
     const x = await window.ethereum.request({ method: 'eth_accounts' })
-    // TO DO and this could be optimized (see above)
     if(x.length > 0) {
       switchIsConnected(true)
       changeAccounts(x[0])

@@ -97,7 +97,6 @@ export const NavBtnLink = styled(Link)`
   }
 `;
 
-// TO DO maybe turn this into a class?
 const NetworkDropdown = ({ network, accounts }) => {
   const handleChange = (e, { value }) => {
     handleNetworkChange(value)
@@ -153,7 +152,6 @@ class Metamask extends Component {
     this.props.changeNetwork(chainId)
   }
 
-  // TO DO Rework this to redraw correctly on network change
   renderMetamask() {
     const connectedMenuOptions = [
       { key: 'aw', value: 'aw', flag: 'aw', text: this.props.network },
@@ -161,22 +159,22 @@ class Metamask extends Component {
     ]
 
     if (this.props.isConnected === false) {
-      return ( // TO DO redraw this if the account is not connected
+      return (
         <div> 
           <Button icon size='large' onClick={() => this.connectToMetamask()}>
             <Icon name='lock'></Icon> Connect wallet
           </Button>
         </div>
       )
-    } else {  // TO DO If the selected network is not supported we should get an error button
-      // As we already have permission there is no confirmation needed
+    } else { 
+      // Note: As we already have permission there is no confirmation needed
       this.connectToMetamask()
 
       if ((isSupportedNetwork(this.props.network)) === false) {
         return (
           <Button negative>Unsupported network</Button>
         )
-      } else { // TO DO dont show this is there is no account 
+      } else {
         return (
           <Dropdown
           button
