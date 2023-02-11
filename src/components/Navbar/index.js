@@ -40,7 +40,8 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
               network={ network } 
               changeNetwork={ changeNetwork } 
               isConnected={ isConnected } 
-              accounts={ accounts }/>
+              accounts={ accounts }
+            />
           </NavBtn>
         </Grid>
       </Nav>
