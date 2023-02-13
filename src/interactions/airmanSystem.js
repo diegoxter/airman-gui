@@ -53,11 +53,14 @@ export const getInstanceInformation = async (_address) => {
   let instancesData = await getDeployedAirManList(_address)
   const instances = []
 
-  instancesData.map(async (instancesData, index) => {
+  instancesData.forEach(async (instancesData, index) => {
     let temp = await adminPanelInstance.connect(signer).deployedManagers(instancesData)
-
     instances[index] = temp
   });
+
+  //console.log(await instances.values())
+  console.log(instances)
+
 
   return instances
 }
