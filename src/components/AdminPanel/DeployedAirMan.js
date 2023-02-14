@@ -16,12 +16,15 @@ export const DeployedAirManList = ({ network, accounts, isConnected }) => {
   const [checkedInstances, setCheckedInstances] = useState(false)
 
 
-  if (!checkedInstances && accounts !== '') {
+  if (!checkedInstances && accounts !== '' && isConnected) {
     fetchData(accounts, setInstances, setCheckedInstances);
     //console.log(`${instances.length} is a test ${checkedInstances}`)
   }
 
-  if (instances.length !== 0) {
+  console.log(checkedInstances)
+  console.log(instances.length+ '')
+
+  if (checkedInstances && instances.length !== 0) {
     return (
       <Card.Group>
         {instances.map((instance) => (
@@ -33,7 +36,7 @@ export const DeployedAirManList = ({ network, accounts, isConnected }) => {
                     size='mini'
                     src='https://react.semantic-ui.com/images/avatar/large/molly.png'
                 />
-                <Card.Header>{Number(instance.id['_hex'])}</Card.Header>
+                <Card.Header>{`AirMan instance #${Number(instance.id['_hex'])}`}</Card.Header>
                 <Card.Meta>{instance.instanceAddress}</Card.Meta>
                 <Card.Description>
                   {instance.instanceToken}
@@ -101,5 +104,4 @@ export const DeployedAirManList = ({ network, accounts, isConnected }) => {
         </Grid>
     )
   }
-
 }

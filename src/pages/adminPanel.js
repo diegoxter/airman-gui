@@ -30,6 +30,7 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
       <DeployedAirManList 
       network={ network } 
       accounts={ accounts }
+      isConnected={ isConnected }
       />
     </Grid.Row>
 
