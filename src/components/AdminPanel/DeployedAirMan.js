@@ -1,28 +1,6 @@
-import { useState, useEffect } from 'react'
 import { Card, Image, Button, Grid, Placeholder, Segment } from 'semantic-ui-react'
-import { getInstanceInformation } from '../../interactions/airmanSystem'
 
-async function fetchData(_accounts , _setInstances, _setCheckedInstances) {
-  const _instances = await getInstanceInformation(_accounts);
-  _setInstances(_instances);
-  console.log(`test ${_instances} test2`)
-  _setCheckedInstances(true)
-
-  return true
-};
-
-export const DeployedAirManList = ({ network, accounts, isConnected }) => {  
-  const [instances, setInstances] = useState([]);
-  const [checkedInstances, setCheckedInstances] = useState(false)
-
-
-  if (!checkedInstances && accounts !== '' && isConnected) {
-    fetchData(accounts, setInstances, setCheckedInstances);
-    //console.log(`${instances.length} is a test ${checkedInstances}`)
-  }
-
-  console.log(checkedInstances)
-  console.log(instances.length+ '')
+export const DeployedAirManList = ({ network, accounts, isConnected, instances, checkedInstances }) => {  
 
   if (checkedInstances && instances.length !== 0) {
     return (

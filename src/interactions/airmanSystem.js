@@ -55,6 +55,7 @@ export const getInstanceInformation = async (_address) => {
 
   instancesData.map(async (instanceData, index) => {
     let temp = await adminPanelInstance.connect(signer).deployedManagers(instanceData)
+
     instances[index] = temp
   });
 
