@@ -77,34 +77,22 @@ async function getSymbol(_tokenContractAddress) {
   return x;
 }
 
-const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
+const NewAirdropModal = ({
+  instanceAddress,
+  instanceToken,
+  tokenBalance,
+  tokenSymbol,
+  isLoading,
+  setIsLoading
+  }) => {
   const [open, setOpen] = useState(false);
-  const [tokenBalance, setTokenBalance] = useState(0);
-  const [tokenSymbol, setTokenSymbol] = useState('');
   const [timeInSeconds, setTimeInSeconds] = useState('');
   const [amountToAirdrop, setAmountToAirdrop] = useState('');
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-
-  if (open && tokenBalance === 0) {
-    checkContractBalance(instanceAddress, instanceToken)
-    .then((value) => {
-      setTokenBalance(value);
-    })
-  }
-
-  if (tokenSymbol === '') {
-    getSymbol(instanceToken)
-    .then((value) => {
-      setTokenSymbol(value);
-    })
-  }
 
   const handleClose = () => {
     setOpen(false);
-    setTokenBalance(0);
   }
 
   const handleCheckboxChange = () => {
@@ -163,7 +151,7 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
     >
-      <Header> Tokens held in AirMan: {tokenBalance}{tokenSymbol}</Header >
+      <Header> Tokens held in AirMan: <u>{tokenBalance} {tokenSymbol}</u></Header >
 
       <Modal.Content>
         <Form>
@@ -213,9 +201,19 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
         <Button color='red' onClick={() => handleClose()}>
           Cancel
         </Button>
+        {(isLoading)
+        ?
+        <Button
+          loading 
+          primary
+          size='medium'>
+            PLACEH
+        </Button>
+        :
         <Button color='green' onClick={() => handleDeployClick()}>
           Deploy
         </Button>
+        }
       </Modal.Actions>
     </Modal>
   );
@@ -231,7 +229,11 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
   const [campaignData, setCampaignData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [tokenBalance, setTokenBalance] = useState('');
+  const [balanceChecked, setBalanceChecked] = useState(false)
+  const [tokenSymbol, setTokenSymbol] = useState('');
 
+// 0x6B76e20c5b7E0570B111618F65c0Ab2224c1C7B7
   if (open) {
     fetchCampaignData(instanceAddress)
     .then((value) => {
@@ -239,19 +241,50 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
     })
   }
 
+  if (open && !balanceChecked) {
+    checkContractBalance(instanceAddress, instanceToken)
+    .then((value) => {
+      setTokenBalance(value);
+      setBalanceChecked(true)
+    })
+  }
+
+  if (tokenSymbol === '') {
+    getSymbol(instanceToken)
+    .then((value) => {
+      setTokenSymbol(value);
+    })
+  }
+
   const handleCreateNewCampaign = () => {
 
+  }
+
+  const handleClose = () => {
+    setTokenBalance(0)
+    setBalanceChecked(false)
+    setTokenSymbol('')
+    setOpen(false)
   }
 
   return (
     <Modal
       //dimmer='blurring'
-      onClose={() => setOpen(false)}
+      onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
       trigger={<Button color='violet'> Manage Airdrop Campaigns </Button>}
     >
-      <Modal.Header>Deployed campaigns</Modal.Header>
+      <Modal.Header>
+      <Grid>
+    <Grid.Column as='h1' floated='left' width={3}>
+      Deployed campaigns
+    </Grid.Column>
+    <Grid.Column floated='right' width={5}>
+      Tokens held in this contract: <br/> <u>{tokenBalance} {tokenSymbol}</u>
+    </Grid.Column>
+  </Grid>
+      </Modal.Header>
       <Modal.Content image scrolling>
         <Card.Group>
           <Card>
@@ -281,12 +314,15 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
         </Card.Group>
       </Modal.Content>
       <Modal.Actions>
-        <Button color='red' onClick={() => setOpen(false)}>
+        <Button color='red' onClick={() => handleClose()}>
           Close
         </Button>
         <NewAirdropModal
           instanceAddress={ instanceAddress } 
-          instanceToken= { instanceToken }
+          instanceToken={ instanceToken }
+          tokenBalance={ tokenBalance }
+          tokenSymbol={ tokenSymbol }
+          setIsLoading={ setIsLoading }
         />
       </Modal.Actions>
     </Modal>

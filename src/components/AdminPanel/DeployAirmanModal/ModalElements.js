@@ -1,4 +1,4 @@
-import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../../interactions/erc20';
+import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens, getTokenSymbol } from '../../../interactions/erc20';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
@@ -17,6 +17,12 @@ async function checkIfHasEnoughTokens(_accounts, _contractInputValue, _amountInp
   } else {
     _setEnoughTokens(true);
   }
+}
+
+async function getSymbol(_tokenContractAddress) {
+  const x = await getTokenSymbol(_tokenContractAddress);
+
+  return x;
 }
 
 export const DeployButton = ({
@@ -118,18 +124,50 @@ export const DeployButton = ({
 }
 
 export const TokenContractInput = ({
+  accounts,
+  isValidContract,
   setIsValidContract,
   contractInputValue,
   contract,
   setContract,
+  tokenSymbol,
+  setTokenSymbol,
   symbolCheck, 
-  setSymbolCheck
+  setSymbolCheck,
+  setTokenAmount
 }) => {
+
+  const tokensHeld = async () => {
+    if (contractInputValue === '') {
+      return '';
+    } else if (isValidContract) {
+      return checkBalance(accounts, contractInputValue)
+      .then((value) => { 
+        let total = value;
+        return ` ${total} ${tokenSymbol}` ;
+      })
+    } else if (!isValidContract) {
+      return ' Invalid token';
+    }
+  }
+
+  if (tokenSymbol === '' && symbolCheck) {
+    getSymbol(contractInputValue)
+    .then((value) => {
+      setTokenSymbol(value);
+    })
+  }
 
   const handleContractChange = ( num ) => {
     setContract(num);
     setSymbolCheck(false);
     setIsValidContract(false);
+    setTokenAmount('');
+  }
+
+  if (isValidContract) {
+    tokensHeld()
+    .then((value) => {setTokenAmount(value)});
   }
 
 
@@ -139,7 +177,7 @@ export const TokenContractInput = ({
 
   return (
       <Form.Input
-      label='Token info'
+      label='Token contract'
       placeholder='Address: 0x...'
       value={contract}
       onChange={(e) => handleContractChange(e.target.value)}

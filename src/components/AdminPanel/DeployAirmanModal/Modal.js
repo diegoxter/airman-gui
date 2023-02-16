@@ -12,8 +12,10 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
   const [contract, setContract] = useState('');
   const [contractInputValue] = useDebounce(contract, 1000);
   const [symbolCheck, setSymbolCheck] = useState(false);
+  const [tokenSymbol, setTokenSymbol] = useState('');
   const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
+  const [tokenAmount, setTokenAmount] = useState('');
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [isApproved, setApproved] = useState(false);
@@ -42,10 +44,12 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
   const handleCancelClick = () => {
     setOpen(false);
     setIsValidAmount(false);
+    setSymbolCheck(false);
     setApproved(false);
     setContract('');
     setAmount('');
     setName('');
+    setTokenSymbol('');
   }
 
   // TO DO Draw the content we actually want
@@ -53,7 +57,7 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
     (isSupportedNetwork(network) && isConnected) 
     ?
     <Modal
-      onClose={() => setOpen(false)}
+      onClose={() => handleCancelClick()}
       onOpen={() => setOpen(true)}
       open={ open }
       trigger={<Button 
@@ -91,17 +95,22 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
                 </Form.Input>
 
                 <TokenContractInput 
+                  accounts={ accounts }
                   isValidContract={ isValidContract } 
                   setIsValidContract= { setIsValidContract }
                   contract={ contract }
                   setContract={ setContract }
                   contractInputValue={ contractInputValue }
                   symbolCheck={ symbolCheck }
+                  tokenSymbol={ tokenSymbol }
+                  setTokenSymbol={ setTokenSymbol }
                   setSymbolCheck={ setSymbolCheck }
+                  setTokenAmount={ setTokenAmount }
                 />
                 
                 <Form.Input
-                  placeholder='Amount to airdrop'
+                  label={'Tokens held: '+ tokenAmount}
+                  placeholder='Amount for AirMan to manage'
                   value={amount}
                   onChange={(e) => handleAmountChange(e.target.value)} 
                   >
