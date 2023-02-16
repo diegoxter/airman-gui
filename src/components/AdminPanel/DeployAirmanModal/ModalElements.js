@@ -1,5 +1,5 @@
-import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../interactions/erc20';
-import { deployAirMan } from '../../interactions/airmanSystem';
+import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../../interactions/erc20';
+import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
 

@@ -1,7 +1,7 @@
-import React,{ useState } from 'react';
+import { useState } from 'react';
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
-import { isSupportedNetwork } from '../../interactions';
+import { isSupportedNetwork } from '../../../interactions';
 import { DeployButton, TokenContractInput } from './ModalElements';
 
 const AdminPanelModal = ({ network, accounts, isConnected }) => {

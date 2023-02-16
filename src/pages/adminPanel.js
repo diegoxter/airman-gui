@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Card } from 'semantic-ui-react'
 import { getInstanceInformation } from '../interactions/airmanSystem'
-import AdminPanelModal from '../components/AdminPanel/Modal';
-import { DeployedAirManList } from '../components/AdminPanel/DeployedAirMan';
+import AdminPanelModal from '../components/AdminPanel/DeployAirmanModal/Modal';
+import { DeployedAirManList } from '../components/AdminPanel/DeployedAirManList';
 
 
 const AdminPanel = ({ network, accounts, isConnected }) => {
@@ -36,7 +36,7 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
               justifyContent: 'Right',
               alignItems: 'Right',
               height: '100%',
-              width: '100%'
+              width: '480px'
           }}>
           <Card.Content>
             <Card.Header>Deploy a new Airdrop Manager</Card.Header>
