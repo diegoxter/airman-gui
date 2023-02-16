@@ -1,36 +1,30 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Card } from 'semantic-ui-react'
 import { getInstanceInformation } from '../interactions/airmanSystem'
 import AdminPanelModal from '../components/AdminPanel/Modal';
 import { DeployedAirManList } from '../components/AdminPanel/DeployedAirMan';
 
-async function fetchData(_accounts , _setInstances, _setCheckedInstances) {
-  const _instances = await getInstanceInformation(_accounts);
-  //console.log(_instances.length)
-  //console.log(_instances)
-
-  if (_instances) {
-    //console.log('exito')
-    _setInstances(_instances);
-    _setCheckedInstances(true)
-    //console.log(`test ${_instances.length} test2`)
-  } else {
-    console.log('fracaso')
-  }
-
-  return true
-};
 
 const AdminPanel = ({ network, accounts, isConnected }) => {
-  const [instances, setInstances] = useState([]);
+  const [instances, setInstances] = useState('');
   const [checkedInstances, setCheckedInstances] = useState(false)
-  
-  if (!checkedInstances && accounts !== '' && isConnected) {
-    fetchData(accounts, setInstances, setCheckedInstances);
-    //console.log(`${instances.length} is a test ${checkedInstances}`)
-    //console.log(instances)
 
-  }
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getInstanceInformation(accounts)
+      console.log(typeof data)
+      return data
+    }
+
+    if (isConnected && accounts !== '') ( 
+      fetchData()
+      .then((value) => {
+        setInstances(value)
+        return true
+      })
+      .then((result) => setCheckedInstances(result))
+  )
+  }, [accounts, checkedInstances, isConnected, network]);
 
   // TO DO this Grid needs to be drawn better
   return (
@@ -52,17 +46,17 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
           </Card.Content>
           <AdminPanelModal network={ network } accounts={ accounts } isConnected={ isConnected }/>  
       </Card>
-    </ Grid.Row>
+    </Grid.Row>
+
     <Grid.Row>
       <DeployedAirManList 
       network={ network } 
       accounts={ accounts }
       isConnected={ isConnected }
-      instances={instances}
-      checkedInstances={checkedInstances}
+      instances={ instances }
+      checkedInstances={ checkedInstances}
       />
     </Grid.Row>
-
 
     </Grid>
   );

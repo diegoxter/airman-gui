@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { waitForConfirmation, getAdmPanAddress } from ".";
 
 import adminPanelAbi from '../assets/abis/AdminPanel.json'
-
+// TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
 const network = provider.getNetwork()
@@ -53,11 +53,10 @@ export const getInstanceInformation = async (_address) => {
   let instancesData = await getDeployedAirManList(_address)
   const instances = []
 
-  instancesData.map(async (instanceData, index) => {
-    let temp = await adminPanelInstance.connect(signer).deployedManagers(instanceData)
-
+  await Promise.all(instancesData.map(async (instanceData, index) => {
+    let temp = await adminPanelInstance.deployedManagers(instanceData)
     instances[index] = temp
-  });
+  }));
 
   return instances
 }
