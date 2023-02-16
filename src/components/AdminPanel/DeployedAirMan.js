@@ -1,4 +1,4 @@
-import { Card, Image, Button, Grid, Placeholder, Segment } from 'semantic-ui-react'
+import { Card, Image, Button, Grid, Placeholder, Segment } from 'semantic-ui-react';
 
 const LoadingAirManList = () => {
   return (
@@ -48,18 +48,23 @@ const LoadingAirManList = () => {
         </Segment>
       </Grid.Column>
     </Grid>
-  )
+  );
 }
 
-export const DeployedAirManList = ({ network, accounts, isConnected, instances, checkedInstances }) => {  
+export const DeployedAirManList = ({ network, accounts, isConnected, instances, checkedInstances }) => {
+  const cleanAddress = (_address) => {
+    let firstHalf = _address.substr(0, 3);
+    let secondHalf = _address.substr(38, 4);
+
+    return firstHalf+'...'+secondHalf;
+  }
 
   if (checkedInstances) {
     if (instances.length > 0) {
       return (
         <Card.Group>
           {instances.map((instance) => (
-            <div key={instance.id}>
-              <Card>
+              <Card key={instance.id}>
                 <Card.Content>
                   <Image
                       floated='right'
@@ -67,9 +72,9 @@ export const DeployedAirManList = ({ network, accounts, isConnected, instances, 
                       src='https://react.semantic-ui.com/images/avatar/large/molly.png'
                   />
                   <Card.Header>{`AirMan instance #${Number(instance.id['_hex'])}`}</Card.Header>
-                  <Card.Meta>{instance.instanceAddress}</Card.Meta>
+                  <Card.Meta>Address: {cleanAddress(instance.instanceAddress)}</Card.Meta>
                   <Card.Description>
-                    {instance.instanceToken}
+                    Token: {cleanAddress(instance.instanceToken)}
                   </Card.Description>
                   </Card.Content>
                   <Card.Content extra>
@@ -80,14 +85,13 @@ export const DeployedAirManList = ({ network, accounts, isConnected, instances, 
                   </div>
                 </Card.Content>
               </Card>        
-            </div>
           ))}
         </Card.Group>
     ); 
   } else { // TO DO there should be some text here like "Deploy your own"
-    return( <LoadingAirManList /> )
+    return( <LoadingAirManList /> );
   }
   } else {
-    return( <LoadingAirManList /> )
+    return( <LoadingAirManList /> );
   }
 }

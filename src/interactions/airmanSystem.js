@@ -3,31 +3,30 @@ import { waitForConfirmation, getAdmPanAddress } from ".";
 
 import adminPanelAbi from '../assets/abis/AdminPanel.json'
 // TO DO this breaks when changing networks
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-const network = provider.getNetwork()
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+const network = provider.getNetwork();
 
 // Getter functions
 const getFee = async () => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
-  const fee = await adminPanelInstance.feeInGwei()
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider);
+  const fee = await adminPanelInstance.feeInGwei();
 
-  return fee
+  return fee;
 }
 
 export const getDeployedAirManList = async (_address) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider)
-  const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address)
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider);
+  const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address);
 
-  return list
+  return list;
 }
 
 
 // Transaction functions
 export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer)
-  const fee = await getFee()
-  console.log('lanzando')
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer);
+  const fee = await getFee();
 
   const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
     _token, 
@@ -36,27 +35,27 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
       value: fee,
     }
     )
-  )
+  );
 
   let sleep = ms => new Promise(r => setTimeout(r, ms));
 
   while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
-    sleep(2500)
+    sleep(2500);
   }
-    _setOpen(false)
+    _setOpen(false);
 }
 
 
 // Draw functions
 export const getInstanceInformation = async (_address) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer)
-  let instancesData = await getDeployedAirManList(_address)
-  const instances = []
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer);
+  let instancesData = await getDeployedAirManList(_address);
+  const instances = [];
 
   await Promise.all(instancesData.map(async (instanceData, index) => {
-    let temp = await adminPanelInstance.deployedManagers(instanceData)
-    instances[index] = temp
+    let temp = await adminPanelInstance.deployedManagers(instanceData);
+    instances[index] = temp;
   }));
 
-  return instances
+  return instances;
 }

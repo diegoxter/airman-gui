@@ -99,21 +99,21 @@ export const NavBtnLink = styled(Link)`
 
 const NetworkDropdown = ({ network, accounts }) => {
   const handleChange = (e, { value }) => {
-    handleNetworkChange(value)
+    handleNetworkChange(value);
   }
 
   function displayActiveNetwork(_network) {
     const i = networkOptions.findIndex(e => e.value === '0x'+(convertToHex(_network)));
 
     if (i >= 0 ) {
-      return networkOptions[i].value
+      return networkOptions[i].value;
     } else {
-      return false
+      return false;
     }
   }
 
   if (network === '') {
-    return false
+    return false;
   } else {
     if ((isSupportedNetwork(network) === false) && accounts !== '')  {
       return (
@@ -124,7 +124,7 @@ const NetworkDropdown = ({ network, accounts }) => {
           selection
           error 
         />
-      )
+      );
     } else {
       if (accounts.length !== 0) {
         return (
@@ -135,7 +135,7 @@ const NetworkDropdown = ({ network, accounts }) => {
             onChange={handleChange} 
             defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing when the network changed
           />
-        )
+        );
       }
     }
   }
@@ -144,19 +144,31 @@ const NetworkDropdown = ({ network, accounts }) => {
 class Metamask extends Component {
 
   async connectToMetamask() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     
     // TO DO This could be optimized
-    const { chainId } = await provider.getNetwork()
-    this.props.changeNetwork(chainId)
+    const { chainId } = await provider.getNetwork();
+    this.props.changeNetwork(chainId);
+  }
+
+  cleanAddress = (_address) => {
+    if (typeof _address === 'string') {
+      console.log(typeof address)
+      let firstHalf = _address.substr(0, 3);
+      let secondHalf = _address.substr(38, 4);
+  
+      return firstHalf+'...'+secondHalf;
+    } else {
+      return 'empty'
+    }
   }
 
   renderMetamask() {
     const connectedMenuOptions = [
-      { key: 'aw', value: 'aw', flag: 'aw', text: this.props.network },
-      { key: 'am', value: 'am', flag: 'am', text: this.props.accounts }, 
-    ]
+      { key: 'network', value: 'string', icon: 'server', text: this.props.network },
+      { key: 'address', value: 'string', icon: 'id card outline', text: this.cleanAddress(this.props.accounts) }, 
+    ];
 
     if (this.props.isConnected === false) {
       return (
@@ -165,16 +177,16 @@ class Metamask extends Component {
             <Icon name='lock'></Icon> Connect wallet
           </Button>
         </div>
-      )
+      );
     } else { 
       // Note: As we already have permission there is no confirmation needed
-      this.connectToMetamask()
+      this.connectToMetamask();
 
       if ((isSupportedNetwork(this.props.network)) === false) {
-        return (
-          <Button negative>Unsupported network</Button>
-        )
+        return ( <Button negative>Unsupported network</Button> );
       } else {
+        console.log(this.props.accounts)
+
         return (
           <Dropdown
           button
@@ -196,7 +208,7 @@ class Metamask extends Component {
       <div>
         {this.renderMetamask()}
       </div>
-    )
+    );
   }
 }
 

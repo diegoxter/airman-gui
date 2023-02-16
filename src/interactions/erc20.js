@@ -1,61 +1,54 @@
 import { ethers } from "ethers";
 import { waitForConfirmation, getAdmPanAddress } from ".";
 
-import erc20ABI from '../assets/abis/ERC20.json'
+import erc20ABI from '../assets/abis/ERC20.json';
 
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-let network = provider.getNetwork()
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+let network = provider.getNetwork();
 
 export const checkTokenSymbol = async (_address, _symbolCheck, _setSymbolCheck, _setIsValidContract) => {
     const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
-    let symbol = ''
-
-    console.log('checkSymbol')
+    let symbol = '';
 
     if (!_symbolCheck) {
         try {
             symbol = await tokenInstance.connect(signer).symbol();
         } catch (e) {
-            console.log('hubo error')
-            console.log(e)
+            console.log('hubo error');
+            console.log(e);
         }
-        _setIsValidContract(symbol !== '')
-        _setSymbolCheck(symbol !== '')
+        _setIsValidContract(symbol !== '');
+        _setSymbolCheck(symbol !== '');
     }
 
     return symbol !== '';
 }
 
 export const checkBalance = async (account, _contractAddress) => {
-    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    console.log('checkBalance')
-
-    const check = await tokenInstance.connect(signer).balanceOf(account)
+    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider);
+    const check = await tokenInstance.connect(signer).balanceOf(account);
     
-    return (Number(check))
+    return (Number(check));
 }
 
 export const checkAllowance = async (account, _contractAddress) => {
-    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    console.log('checkAllowance')
-
-    const check = await tokenInstance.connect(signer).allowance(account, (await getAdmPanAddress(network)))
+    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider);
+    const check = await tokenInstance.connect(signer).allowance(account, (await getAdmPanAddress(network)));
     
-
-    return (Number(check))
+    return (Number(check));
 }
 
 export const approveTokens = async (_account, _contractAddress, amount, _setIsLoading) => {
-    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider)
-    let approve = ''
+    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider);
+    let approve = '';
     try {
-        approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)))
-        console.log(approve)
+        approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)));
+        console.log(approve);
     } catch (e) {
-        console.log(`fallo ${e}`)
+        console.log(`fallo ${e}`);
     }
 
-    waitForConfirmation(approve.hash, provider, 5000, _setIsLoading)
+    waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
 }

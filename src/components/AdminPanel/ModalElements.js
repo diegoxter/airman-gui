@@ -1,21 +1,21 @@
 import { checkBalance, checkAllowance, checkTokenSymbol, approveTokens } from '../../interactions/erc20';
 import { deployAirMan } from '../../interactions/airmanSystem';
-import { Button, Form } from 'semantic-ui-react'
+import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
 
 async function isApprovedAllowance(_accounts, _contractInputValue, _amountInputValue, _setApproved) {
   if (await checkAllowance(_accounts, _contractInputValue) >= Number(_amountInputValue)) {
-    _setApproved(true)
+    _setApproved(true);
   } else {
-    _setApproved(false)
+    _setApproved(false);
   }
 }
 
 async function checkIfHasEnoughTokens(_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) {
   if (await checkBalance(_accounts, _contractInputValue) < Number(_amountInputValue)) {
-    _setEnoughTokens(false)
+    _setEnoughTokens(false);
   } else {
-    _setEnoughTokens(true)
+    _setEnoughTokens(true);
   }
 }
 
@@ -32,27 +32,27 @@ export const DeployButton = ({
   setHasEnoughTokens,
   isValidAmount 
 }) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   
   const handleLetsDoItClick = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      console.log('lanzamiento')
-      deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen)
+      console.log('lanzamiento');
+      deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen);
     } catch (error) {
-      console.log('Falla al hacer el deploy de AirMan '+ error)
+      console.log('Falla al hacer el deploy de AirMan ', error);
     }
   }
 
   const handleApproveClick = () => {
-    setIsLoading(true)
-      approveTokens(accounts, contractInputValue, Number(amountInputValue), setIsLoading)
+    setIsLoading(true);
+    approveTokens(accounts, contractInputValue, Number(amountInputValue), setIsLoading);
   }
 
   if (contractInputValue.length === 42 && isValidContract && isValidAmount) {
     if (typeof accounts === 'string') {
-      isApprovedAllowance(accounts, contractInputValue, amountInputValue, setApproved)
-      checkIfHasEnoughTokens(accounts, contractInputValue, amountInputValue, setHasEnoughTokens)
+      isApprovedAllowance(accounts, contractInputValue, amountInputValue, setApproved);
+      checkIfHasEnoughTokens(accounts, contractInputValue, amountInputValue, setHasEnoughTokens);
     }
   }
 
@@ -70,7 +70,7 @@ export const DeployButton = ({
           content="Invalid token amount"
           disabled
         />
-      )
+      );
     } else if (isLoading) {
       return (
         <Button
@@ -79,7 +79,7 @@ export const DeployButton = ({
           size='medium'>
             PLACEH
         </Button>
-      )
+      );
     } else if (isApproved) {
       return (
         <Button
@@ -89,7 +89,7 @@ export const DeployButton = ({
           }}
           positive
         />
-      )
+      );
     } else if (isValidAmount) {
       return (
         <Button
@@ -99,16 +99,16 @@ export const DeployButton = ({
             handleApproveClick();
           }}
         />
-      )
+      );
     } else if (!isValidAmount) {
       return (
         diabledButton
-      )
+      );
     }
   } else {
     return (
       diabledButton
-    )
+    );
   }
 }
 
@@ -122,14 +122,14 @@ export const TokenContractInput = ({
 }) => {
 
   const handleContractChange = ( num ) => {
-    setContract(num)
-    setSymbolCheck(false)
-    setIsValidContract(false)
+    setContract(num);
+    setSymbolCheck(false);
+    setIsValidContract(false);
   }
 
 
   if (contractInputValue.length === 42 && !symbolCheck) {
-    checkTokenSymbol(contractInputValue, symbolCheck, setSymbolCheck, setIsValidContract) 
+    checkTokenSymbol(contractInputValue, symbolCheck, setSymbolCheck, setIsValidContract);
   }
 
   return (
@@ -139,6 +139,5 @@ export const TokenContractInput = ({
       value={contract}
       onChange={(e) => handleContractChange(e.target.value)}
     />
-  )
-  
+  );
 }

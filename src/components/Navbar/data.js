@@ -3,7 +3,7 @@ import {
   FANTOM_ICON_URL,
   NOVA_ICON_URL, 
   LOCALHOST_ICON_URL 
-} from '../iconURI'
+} from '../iconURI';
 
 export const networkOptions = [
     {
@@ -30,4 +30,4 @@ export const networkOptions = [
       value: '0x7a69',
       image: { className:"ui mini image", src: LOCALHOST_ICON_URL },
     },
-]
+];

@@ -1,52 +1,51 @@
-import React,{ useState } from 'react'
-import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react'
+import React,{ useState } from 'react';
+import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
 import { isSupportedNetwork } from '../../interactions';
 import { DeployButton, TokenContractInput } from './ModalElements';
 
 const AdminPanelModal = ({ network, accounts, isConnected }) => {
-  const [open, setOpen] = useState(false)
-  const [name, setName] = useState('')
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
   const [nameInputValue] = useDebounce(name, 1500);
-  const [isValidContract, setIsValidContract] = useState(undefined)
-  const [contract, setContract] = useState('')
+  const [isValidContract, setIsValidContract] = useState(undefined);
+  const [contract, setContract] = useState('');
   const [contractInputValue] = useDebounce(contract, 1000);
-  const [symbolCheck, setSymbolCheck] = useState(false)
-  const [amount, setAmount] = useState('')
+  const [symbolCheck, setSymbolCheck] = useState(false);
+  const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
-  const [hasEnoughTokens, setHasEnoughTokens] = useState(false)
-  const [isValidAmount, setIsValidAmount] = useState(undefined)
-  const [isApproved, setApproved] = useState(false)
+  const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
+  const [isValidAmount, setIsValidAmount] = useState(undefined);
+  const [isApproved, setApproved] = useState(false);
 
   // Testing purposes
-
   const testChange = () => {
-    console.log(`test is ${isValidAmount}`)
+    console.log(`test is ${isValidAmount}`);
   }
 
   const handleNameChange = (num ) => {
-    console.log(num + ' was typed')
-    console.log('type of num '+ (typeof num))
-    setName(num)
+    console.log(num + ' was typed');
+    console.log('type of num '+ (typeof num));
+    setName(num);
   }
 
   const handleAmountChange = (num) => {
-    setAmount(num)
+    setAmount(num);
     if ((Number(num) > 0) && !isNaN(num)) {
-      setIsValidAmount(true)
-      setApproved(false)
+      setIsValidAmount(true);
+      setApproved(false);
     } else {
-      setIsValidAmount(false)
+      setIsValidAmount(false);
     }
   }
 
   const handleCancelClick = () => {
-    setOpen(false)
-    setIsValidAmount(false)
-    setApproved(false)
-    setContract('')
-    setAmount('')
-    setName('')
+    setOpen(false);
+    setIsValidAmount(false);
+    setApproved(false);
+    setContract('');
+    setAmount('');
+    setName('');
   }
 
   // TO DO Draw the content we actually want
@@ -155,7 +154,7 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
           >
           Not connected
     </Button>
-  )
+  );
 }
 
-export default AdminPanelModal
+export default AdminPanelModal;

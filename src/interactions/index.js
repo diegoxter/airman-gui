@@ -2,7 +2,7 @@ import activeNetworkContractAddr from "./data/contracts";
 
 
 export function isSupportedNetwork(chainId) {
-  const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ]
+  const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ];
   
   if (typeof chainId === 'number') {
     chainId = '0x' + Number(chainId).toString(16).padStart(2, '0');
@@ -37,9 +37,10 @@ export async function handleNetworkChange(chainID) {
     // This error code indicates that the chain has not been added to MetaMask.
     if (switchError.code === 4902) {
       try {
-        let url = ''
-        let chainName = ''
-        let chainSymbol = ''
+        let url = '';
+        let chainName = '';
+        let chainSymbol = '';
+
         switch (chainID) {
           case '3d' && '0x3d':
             url = 'https://www.ethercluster.com/etc';
@@ -110,7 +111,7 @@ export async function waitForConfirmation(txHash, provider, interval, _setIsLoad
     setTimeout(() => {
       waitForConfirmation(txHash, provider, interval, _setIsLoading);
     }, interval);
-    return false
+    return false;
   } else {
     _setIsLoading(false);
     return true;

@@ -19,37 +19,37 @@ export const Content = styled.div`
 function App() {
   
   const [network, setNetwork] = useState('');
-  const [accounts, setAccounts] = useState('') // TO DO this still needs to be better handled
-  const [isConnected, setIsConnected] = useState(false)
+  const [accounts, setAccounts] = useState(''); // TO DO this still needs to be better handled
+  const [isConnected, setIsConnected] = useState(false);
 
 
   function changeNetwork(chainId) {
-    setNetwork(chainId)
+    setNetwork(chainId);
   }
 
   function changeAccounts(address) {
-    setAccounts(address)
+    setAccounts(address);
     if (address.length === 0) {
-      switchIsConnected(false)
+      switchIsConnected(false);
     }
   }
 
   function switchIsConnected(isIt) {
-    setIsConnected(isIt)
+    setIsConnected(isIt);
   }
 
-  window.ethereum.on('chainChanged', (_chainId) => changeNetwork(_chainId))
-  window.ethereum.on('accountsChanged', (_account) => changeAccounts(_account))
+  window.ethereum.on('chainChanged', (_chainId) => changeNetwork(_chainId));
+  window.ethereum.on('accountsChanged', (_account) => changeAccounts(_account));
 
   async function checkIfConnected() {
-    const x = await window.ethereum.request({ method: 'eth_accounts' })
+    const x = await window.ethereum.request({ method: 'eth_accounts' });
     if(x.length > 0) {
-      switchIsConnected(true)
-      changeAccounts(x[0])
+      switchIsConnected(true);
+      changeAccounts(x[0]);
     } 
   }
 
-  checkIfConnected()
+  checkIfConnected();
 
   return (
     <Router>

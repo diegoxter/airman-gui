@@ -7,20 +7,20 @@ import { DeployedAirManList } from '../components/AdminPanel/DeployedAirMan';
 
 const AdminPanel = ({ network, accounts, isConnected }) => {
   const [instances, setInstances] = useState('');
-  const [checkedInstances, setCheckedInstances] = useState(false)
+  const [checkedInstances, setCheckedInstances] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getInstanceInformation(accounts)
-      console.log(typeof data)
-      return data
+      const data = await getInstanceInformation(accounts);
+
+      return data;
     }
 
     if (isConnected && accounts !== '') ( 
       fetchData()
       .then((value) => {
-        setInstances(value)
-        return true
+        setInstances(value);
+        return true;
       })
       .then((result) => setCheckedInstances(result))
   )
