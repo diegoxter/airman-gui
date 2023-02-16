@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getCampaignInformation } from '../../interactions/airmanSystem'
-import { checkBalance } from '../../interactions/erc20';
+import { getCampaignInformation, deployAirdropCampaign } from '../../interactions/airmanSystem';
+import { checkBalance, getTokenSymbol } from '../../interactions/erc20';
 import { 
   Card, 
   Image, 
@@ -71,15 +71,34 @@ async function checkContractBalance(_instanceAddress, _tokenContractAddress) {
   return x;
 }
 
+async function getSymbol(_tokenContractAddress) {
+  const x = await getTokenSymbol(_tokenContractAddress);
+
+  return x;
+}
+
 const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
+  const [tokenSymbol, setTokenSymbol] = useState('');
+  const [timeInSeconds, setTimeInSeconds] = useState('');
+  const [amountToAirdrop, setAmountToAirdrop] = useState('');
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
+  const [amountPerParticipant, setAmountPerParticipant] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
 
   if (open && tokenBalance === 0) {
     checkContractBalance(instanceAddress, instanceToken)
     .then((value) => {
       setTokenBalance(value);
+    })
+  }
+
+  if (tokenSymbol === '') {
+    getSymbol(instanceToken)
+    .then((value) => {
+      setTokenSymbol(value);
     })
   }
 
@@ -96,6 +115,45 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
     }
   }
 
+  const handleTimeChange = (value) => {
+    if (typeof Number(value) === 'number' && Number(value) >= 3600) {
+      setTimeInSeconds(Number(value));
+    }
+  }
+
+  const handleAmountToAirdropChange = (value) => {
+    if (typeof Number(value) === 'number' && Number(value) <= tokenBalance) {
+      setAmountToAirdrop(Number(value));
+    }
+  }
+
+  const handleAmountPerParticipantChange = (value) => {
+    if (typeof Number(value) === 'number' && Number(value) <= amountToAirdrop) {
+      setAmountPerParticipant(Number(value));
+    }
+  }
+
+  const handleDeployClick = () => {
+    setIsLoading(true);
+    try {
+      let parsedAmountPerParticipant = 0;
+
+      if (hasFixedAmount) {
+        parsedAmountPerParticipant = Number(amountPerParticipant);
+      }
+
+      deployAirdropCampaign(
+        instanceAddress, 
+        Number(timeInSeconds), 
+        Number(amountToAirdrop), 
+        hasFixedAmount, 
+        parsedAmountPerParticipant, 
+        setIsLoading)
+    } catch (error) {
+      console.log('Falla al hacer el deploy de AirMan ', error);
+    }
+  }
+
   return (
     <Modal
       closeIcon
@@ -105,7 +163,7 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
     >
-      <Header icon='archive' > Tokens held in AirMan: {tokenBalance}</Header >
+      <Header> Tokens held in AirMan: {tokenBalance}{tokenSymbol}</Header >
 
       <Modal.Content>
         <Form>
@@ -113,7 +171,8 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
           error={{
             content: 'Please enter a valid email address',
             pointing: 'above',
-          }}>
+          }}
+          onChange={(e) => handleTimeChange(e.target.value)}>
             <label>Time (in seconds) to end the campaign:</label>
             <input placeholder='Seconds to end the campaign...' />
           </Form.Field>
@@ -121,7 +180,8 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
           error={{
             content: 'Please enter a valid email address',
             pointing: 'below',
-          }}>
+          }}
+          onChange={(e) => handleAmountToAirdropChange(e.target.value)}>
             <label>Total amount to airdrop</label>
             <input placeholder='Tokens to give...' />
           </Form.Field>
@@ -134,6 +194,7 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
           {(hasFixedAmount)
           ?
           <Form.Field
+          onChange={(e) => handleAmountPerParticipantChange(e.target.value)}
           error={{
             content: 'Please enter a valid email address',
             pointing: 'above',
@@ -152,7 +213,7 @@ const NewAirdropModal = ({ instanceAddress, instanceToken }) => {
         <Button color='red' onClick={() => handleClose()}>
           Cancel
         </Button>
-        <Button color='green' onClick={() => setOpen(false)}>
+        <Button color='green' onClick={() => handleDeployClick()}>
           Deploy
         </Button>
       </Modal.Actions>

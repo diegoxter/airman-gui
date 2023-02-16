@@ -23,7 +23,7 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
     console.log(`test is ${isValidAmount}`);
   }
 
-  const handleNameChange = (num ) => {
+  const handleNameChange = (num) => {
     console.log(num + ' was typed');
     console.log('type of num '+ (typeof num));
     setName(num);

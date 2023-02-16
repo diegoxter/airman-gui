@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { waitForConfirmation, getAdmPanAddress } from ".";
 
-import adminPanelAbi from '../assets/abis/AdminPanel.json'
-import airdropManager from '../assets/abis/AirdropManager.json'
+import adminPanelAbi from '../assets/abis/AdminPanel.json';
+import airdropManagerAbi from '../assets/abis/AirdropManager.json';
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
@@ -53,7 +53,7 @@ export const deployAirdropCampaign = async (
   _hasFixedAmount,
   _amountForEveryUser,
   _setIsLoading ) => {
-  const airManInstance = new ethers.Contract(_instanceAddress, airdropManager, signer);
+  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
 
   const tx = await airManInstance.connect(signer).newAirdropCampaign(
     _endsIn,
@@ -103,9 +103,9 @@ export const getCampaignInformation = async (_instanceAddress) => {
 
 
 export const getCampaignInformation = async (_instanceAddress) => {
-  const airManInstance = new ethers.Contract(_instanceAddress, airdropManager, signer);
+  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
   let airdropsIds = await airManInstance.showDeployedCampaigns();
-  const airdrops = []
+  const airdrops = [];
 
   const getData = async () => {
     for (let i = 0; i < airdropsIds; i++) {
@@ -113,9 +113,9 @@ export const getCampaignInformation = async (_instanceAddress) => {
       airdrops[i] = temp;
     }
   }
-  getData()
+  getData();
 
-  console.log(airdrops)
+  console.log(airdrops);
 
-  return airdrops
+  return airdrops;
 }
