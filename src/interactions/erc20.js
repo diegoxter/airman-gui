@@ -26,8 +26,8 @@ export const checkTokenSymbol = async (_address, _symbolCheck, _setSymbolCheck, 
     return symbol !== '';
 }
 
-export const checkBalance = async (account, _contractAddress) => {
-    const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider);
+export const checkBalance = async (account, _tokenContractAddress) => {
+    const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
     const check = await tokenInstance.connect(signer).balanceOf(account);
     
     return (Number(check));
@@ -45,7 +45,6 @@ export const approveTokens = async (_account, _contractAddress, amount, _setIsLo
     let approve = '';
     try {
         approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)));
-        console.log(approve);
     } catch (e) {
         console.log(`fallo ${e}`);
     }

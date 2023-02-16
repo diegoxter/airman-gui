@@ -44,17 +44,22 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
               Create a new Airdrop Manager for your community!
             </Card.Description>
           </Card.Content>
-          <AdminPanelModal network={ network } accounts={ accounts } isConnected={ isConnected }/>  
+          <AdminPanelModal 
+            network={ network } 
+            accounts={ accounts } 
+            isConnected={ isConnected }
+            setCheckedInstances={ setCheckedInstances }
+          />  
       </Card>
     </Grid.Row>
 
     <Grid.Row>
       <DeployedAirManList 
-      network={ network } 
-      accounts={ accounts }
-      isConnected={ isConnected }
-      instances={ instances }
-      checkedInstances={ checkedInstances}
+        network={ network } 
+        accounts={ accounts }
+        isConnected={ isConnected }
+        instances={ instances }
+        checkedInstances={ checkedInstances }
       />
     </Grid.Row>
 

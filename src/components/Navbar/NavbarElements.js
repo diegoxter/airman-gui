@@ -154,7 +154,6 @@ class Metamask extends Component {
 
   cleanAddress = (_address) => {
     if (typeof _address === 'string') {
-      console.log(typeof address)
       let firstHalf = _address.substr(0, 3);
       let secondHalf = _address.substr(38, 4);
   
@@ -185,8 +184,6 @@ class Metamask extends Component {
       if ((isSupportedNetwork(this.props.network)) === false) {
         return ( <Button negative>Unsupported network</Button> );
       } else {
-        console.log(this.props.accounts)
-
         return (
           <Dropdown
           button

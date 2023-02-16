@@ -30,7 +30,8 @@ export const DeployButton = ({
   amountInputValue,
   hasEnoughTokens,
   setHasEnoughTokens,
-  isValidAmount 
+  isValidAmount,
+  setCheckedInstances
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   
@@ -38,7 +39,11 @@ export const DeployButton = ({
     setIsLoading(true);
     try {
       console.log('lanzamiento');
-      deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen);
+      deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen)
+      .then(() => {
+        new Promise(r => setTimeout(r, 2500))
+        .then(()=> setCheckedInstances(false))
+      })
     } catch (error) {
       console.log('Falla al hacer el deploy de AirMan ', error);
     }

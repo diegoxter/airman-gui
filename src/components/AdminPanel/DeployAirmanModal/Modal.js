@@ -4,7 +4,7 @@ import { useDebounce } from "use-debounce";
 import { isSupportedNetwork } from '../../../interactions';
 import { DeployButton, TokenContractInput } from './ModalElements';
 
-const AdminPanelModal = ({ network, accounts, isConnected }) => {
+const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [nameInputValue] = useDebounce(name, 1500);
@@ -139,6 +139,7 @@ const AdminPanelModal = ({ network, accounts, isConnected }) => {
           accounts={ accounts }
           isValidContract={ isValidContract }
           isValidAmount={ isValidAmount }
+          setCheckedInstances={ setCheckedInstances }
         />
       </Modal.Actions>
     </Modal>
