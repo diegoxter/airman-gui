@@ -9,15 +9,15 @@ const signer = provider.getSigner();
 const network = provider.getNetwork();
 
 // Getter functions
-const getFee = async () => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider);
+const getFee = async (_network) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
   const fee = await adminPanelInstance.feeInGwei();
 
   return fee;
 }
 
-export const getDeployedAirManList = async (_address) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, provider);
+export const getDeployedAirManList = async (_address, _network) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
   const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address);
 
   return list;
@@ -25,9 +25,9 @@ export const getDeployedAirManList = async (_address) => {
 
 
 // Transaction functions
-export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer);
-  const fee = await getFee();
+export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _network) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, signer);
+  const fee = await getFee(_network);
 
   const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
     _token, 
@@ -71,9 +71,9 @@ export const deployAirdropCampaign = async (
 
 
 // Draw functions
-export const getInstanceInformation = async (_address) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(network)), adminPanelAbi, signer);
-  let instancesData = await getDeployedAirManList(_address);
+export const getInstanceInformation = async (_address, _network) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, signer);
+  let instancesData = await getDeployedAirManList(_address, _network);
   const instances = [];
 
   await Promise.all(instancesData.map(async (instanceData, index) => {
@@ -83,24 +83,6 @@ export const getInstanceInformation = async (_address) => {
 
   return instances;
 }
-
-/*
-export const getCampaignInformation = async (_instanceAddress) => {
-  const airManInstance = new ethers.Contract(_instanceAddress, airdropManager, signer);
-  const airdropsIds = await airManInstance.showDeployedCampaigns();
-  const airdrops = [];
-
-  await Promise.all(
-    Array.from({ airdropsIds }, async (_, i) => {
-      const temp = await airManInstance.campaigns(i);
-      airdrops.push(temp);
-    })
-  );
-
-  console.log(airdrops)
-  return airdrops;
-}*/
-
 
 export const getCampaignInformation = async (_instanceAddress) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
@@ -113,9 +95,8 @@ export const getCampaignInformation = async (_instanceAddress) => {
       airdrops[i] = temp;
     }
   }
-  getData();
-
-  //console.log(airdrops);
+  
+  await getData();
 
   return airdrops;
 }

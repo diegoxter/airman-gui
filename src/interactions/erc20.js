@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { waitForConfirmation, getAdmPanAddress } from ".";
+import { waitForConfirmation } from ".";
 
 import erc20ABI from '../assets/abis/ERC20.json';
 
@@ -40,18 +40,30 @@ export const checkBalance = async (account, _tokenContractAddress) => {
   return (Number(check));
 }
 
-export const checkAllowance = async (account, _contractAddress) => {
-  const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider);
-  const check = await tokenInstance.connect(signer).allowance(account, (await getAdmPanAddress(network)));
+export const checkAllowance = async (account, _tokenContractAddress, _targetAddress) => {
+  const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
+  const check = await tokenInstance.connect(signer).allowance(account, _targetAddress);
   
   return (Number(check));
 }
 
-export const approveTokens = async (_account, _contractAddress, amount, _setIsLoading) => {
-  const tokenInstance = new ethers.Contract(_contractAddress, erc20ABI, provider);
+export const approveTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
+  const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
   let approve = '';
   try {
-      approve = (await tokenInstance.connect(signer).approve(await getAdmPanAddress(network), Number(amount)));
+      approve = (await tokenInstance.connect(signer).approve(_targetAddress, Number(amount)));
+  } catch (e) {
+      console.log(`fallo ${e}`);
+  }
+
+  waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+}
+
+export const sendTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
+  const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
+  let approve = '';
+  try {
+      approve = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
   } catch (e) {
       console.log(`fallo ${e}`);
   }

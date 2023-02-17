@@ -13,7 +13,7 @@ export function isSupportedNetwork(chainId) {
 
 
 export const getAdmPanAddress = async (_network) => {
-  const x = await activeNetworkContractAddr((await _network).chainId);
+  const x = await activeNetworkContractAddr(_network);
 
   return x;
 };

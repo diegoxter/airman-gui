@@ -11,12 +11,12 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getInstanceInformation(accounts);
+      const data = await getInstanceInformation(accounts, network);
 
       return data;
     }
 
-    if (isConnected && accounts !== '') ( 
+    if (isConnected && accounts !== '' && network !== '') ( 
       fetchData()
       .then((value) => {
         setInstances(value);

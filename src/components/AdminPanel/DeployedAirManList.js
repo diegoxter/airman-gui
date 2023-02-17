@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDebounce } from "use-debounce";
 import { getCampaignInformation, deployAirdropCampaign } from '../../interactions/airmanSystem';
-import { checkBalance, getTokenSymbol } from '../../interactions/erc20';
+import { checkBalance, getTokenSymbol, sendTokens } from '../../interactions/erc20';
 import { 
   Card, 
   Image, 
@@ -14,6 +15,8 @@ import {
   Checkbox,
   Popup,
   Input,
+  Divider,
+  Accordion
 } from 'semantic-ui-react';
 
 const LoadingAirManList = () => {
@@ -79,19 +82,60 @@ async function getSymbol(_tokenContractAddress) {
   return x;
 }
 
-const SendTokensPopup = () => {
+/*
+async function isApprovedAllowance(_accounts, _contractInputValue, _instanceAddress, _amountInputValue, _setApproved, _network) {
+  if (await checkAllowance(_accounts, _contractInputValue, _instanceAddress) >= Number(_amountInputValue)) {
+    _setApproved(true);
+  } else {
+    _setApproved(false);
+  }
+} */
+
+async function checkIfHasEnoughTokens(_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) {
+  if (await checkBalance(_accounts, _contractInputValue) < Number(_amountInputValue)) {
+    _setEnoughTokens(false);
+  } else {
+    _setEnoughTokens(true);
+  }
+}
+
+const SendTokensPopup = ({ accounts, network, instanceAddress, instanceToken, isLoading, setIsLoading, setBalanceChecked }) => {
+  const [amount, setAmount] = useState('');
+  const [amountInputValue] = useDebounce(amount, 600);
+  const [isValidAmount, setIsValidAmount] = useState(undefined);
+  const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
+
+  const handleAmountChange = (num) => {
+    setAmount(num)
+    setIsValidAmount(!isNaN(num))
+  }
+
+  const handleSendClick = async () => {
+    setIsLoading(true);
+    await sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), setIsLoading)
+    
+    setBalanceChecked(false); // TO DO better handle of this timing 
+  }
+
+  if (isValidAmount) {
+    if (typeof accounts === 'string') {
+      checkIfHasEnoughTokens(accounts, instanceToken, amountInputValue, setHasEnoughTokens);
+    }
+  }
+
   return (
     <Grid divided='vertically'>
       <Grid.Row>
         <Grid.Column>
           <h4>Refill tokens</h4>
-          <Input placeholder='Amount to send...' />
-        </Grid.Column>
-        </Grid.Row>
-       
-        <Grid.Row>
-        <Grid.Column>
-          <Button fluid size='tiny' color='green' content='Send' />
+          <Input fluid placeholder='Amount to send...' onChange={(e) => handleAmountChange(e.target.value)}/>
+          <Divider hidden />
+          {(Number(amountInputValue) === 0 || !hasEnoughTokens || !isValidAmount)
+          ?
+          <Button fluid size='tiny' content="Invalid token amount" disabled />
+          :
+          <Button fluid size='tiny' color='green' content='Send' onClick={() => {handleSendClick();}} />
+          }
         </Grid.Column>
       </Grid.Row>
 
@@ -123,11 +167,14 @@ const NewAirdropModal = ({
   const [open, setOpen] = useState(false);
   const [timeInSeconds, setTimeInSeconds] = useState('');
   const [amountToAirdrop, setAmountToAirdrop] = useState('');
+  const [hasValidAmounts, setHasValidAmounts] = useState(false)
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
 
   const handleClose = () => {
     setOpen(false);
+    setTimeInSeconds('')
+    setAmountToAirdrop('')
   }
 
   const handleCheckboxChange = () => {
@@ -139,21 +186,17 @@ const NewAirdropModal = ({
   }
 
   const handleTimeChange = (value) => {
-    if (typeof Number(value) === 'number' && Number(value) >= 3600) {
-      setTimeInSeconds(Number(value));
-    }
+    setTimeInSeconds(value);
   }
 
   const handleAmountToAirdropChange = (value) => {
-    if (typeof Number(value) === 'number' && Number(value) <= tokenBalance) {
-      setAmountToAirdrop(Number(value));
-    }
+    setAmountToAirdrop(value);
+
   }
 
   const handleAmountPerParticipantChange = (value) => {
-    if (typeof Number(value) === 'number' && Number(value) <= amountToAirdrop) {
-      setAmountPerParticipant(Number(value));
-    }
+    setAmountPerParticipant(value);
+
   }
 
   const handleDeployClick = () => {
@@ -188,6 +231,7 @@ const NewAirdropModal = ({
     }
     console.log(isLoading)
   }
+
 
   return (
     <Modal
@@ -255,16 +299,22 @@ const NewAirdropModal = ({
         {
         (isLoading)
         ?
-        <Button
-          loading 
-          primary
-          size='medium'>
+        <Button loading primary size='medium'>
             PLACEH
         </Button>
         :
-        <Button color='green' onClick={() => handleDeployClick()}>
-          Deploy
-        </Button>
+        (amountToAirdrop === 0 || amountToAirdrop === '' || timeInSeconds === '' || timeInSeconds === 0)
+        ?
+        <Button 
+        color='grey'
+        disabled={true} // TO DO fix this when the form is empty
+        content='Insert amount' />
+        :
+        <Button 
+        color={(amountToAirdrop > tokenBalance)?'red':'green'} 
+        disabled={((amountToAirdrop > tokenBalance)?true:false)} // TO DO fix this when the form is empty
+        content={(amountToAirdrop > tokenBalance)?'Invalid data':'Deploy'} 
+        onClick={() => handleDeployClick()} />
         }
       </Modal.Actions>
     </Modal>
@@ -277,19 +327,22 @@ async function fetchCampaignData(_instanceAddress) {
   return data;
 }
 
-const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
+const DeployedAirdropModal = ({ accounts, network, instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
   const [campaignData, setCampaignData] = useState([]);
+  const [campaignDataChecked, setCampaignDataChecked] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
   const [balanceChecked, setBalanceChecked] = useState(false)
   const [tokenSymbol, setTokenSymbol] = useState('');
 
-// 0x6B76e20c5b7E0570B111618F65c0Ab2224c1C7B7
-  if (open) {
+
+  // 0x6B76e20c5b7E0570B111618F65c0Ab2224c1C7B7
+  if (open && !campaignDataChecked) {
     fetchCampaignData(instanceAddress)
     .then((value) => {
-      // console.log(value);
+      setCampaignData(value);
+      setCampaignDataChecked(true)
     })
   }
 
@@ -313,7 +366,35 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
     setBalanceChecked(false)
     setTokenSymbol('')
     setOpen(false)
+    setCampaignDataChecked(false)
+    setCampaignData([])
   }
+
+  const getHumanDate = (unixtime) => {
+    const date = new Date(unixtime * 1000)
+    const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const dateString = date.toLocaleString('en-US', options);
+
+    return dateString.toString()
+  }
+
+  // TO DO finish this
+  const panels = [
+    {
+      key: 'content',
+      title: {
+        content: 'Lorem ipsum',
+      },
+      content: {
+        content: (
+          <span>
+            dolor sit amet, consectetur adipiscing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </span>
+        ),
+      },
+    },
+  ]
 
   return (
     <Modal
@@ -335,21 +416,67 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
         </Grid>
       </Modal.Header>
 
-      <Modal.Content image scrolling>
-        <Card.Group>
-          <Card>
-            <Card.Content>
-              <Image
-                floated='right'
-                size='mini'
-                src='https://react.semantic-ui.com/images/avatar/large/steve.jpg'
-              />
-            <Card.Header>Steve Sanders</Card.Header>
+      <Modal.Content scrolling>
+        { (campaignData.length === 0)
+        ?
+        <Grid columns={3} stackable>
+            <Grid.Column>
+              <Segment raised>
+                <Placeholder>
+                  <Placeholder.Header image>
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                  </Placeholder.Header>
+                  <Placeholder.Paragraph>
+                    <Placeholder.Line length='medium' />
+                    <Placeholder.Line length='short' />
+                  </Placeholder.Paragraph>
+                </Placeholder>
+              </Segment>
+            </Grid.Column>
 
-            <Card.Meta>Friends of Elliot</Card.Meta>
+            <Grid.Column>
+              <Segment raised>
+                <Placeholder>
+                  <Placeholder.Header image>
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                  </Placeholder.Header>
+                  <Placeholder.Paragraph>
+                    <Placeholder.Line length='medium' />
+                    <Placeholder.Line length='short' />
+                  </Placeholder.Paragraph>
+                </Placeholder>
+              </Segment>
+            </Grid.Column>
+
+            <Grid.Column>
+              <Segment raised>
+                <Placeholder>
+                  <Placeholder.Header image>
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                  </Placeholder.Header>
+                  <Placeholder.Paragraph>
+                    <Placeholder.Line length='medium' />
+                    <Placeholder.Line length='short' />
+                  </Placeholder.Paragraph>
+                </Placeholder>
+              </Segment>
+            </Grid.Column>
+          </Grid>
+        :
+        <Card.Group> 
+        {campaignData.map((campaignInfo) => ( //// aqui
+          <Card key={Number(campaignInfo.campaignID['_hex'])}>
+            <Card.Content>
+
+            <Card.Header>{'Campaign #'+Number(campaignInfo.campaignID['_hex'])}</Card.Header>
+
+            <Card.Meta>{'Amount to airdrop ' + campaignInfo.amountToAirdrop+' '+tokenSymbol}</Card.Meta>
 
             <Card.Description>
-                Steve wants to add you to the group <strong>best friends</strong>
+                End date: <strong>{getHumanDate(Number(campaignInfo.endDate['_hex']))}</strong>
             </Card.Description>
             </Card.Content>
 
@@ -362,16 +489,35 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
                   Decline
                 </Button>
               </div>
-            </Card.Content>
+              <Accordion panels={panels}/>
 
+            </Card.Content>
           </Card>
-        </Card.Group>
+        ))}
+
+      </Card.Group>
+        }
+       
       </Modal.Content>
 
       <Modal.Actions>
         <Popup
-          trigger={ <Button color='yellow' floated='left'>Manage assets</Button> }
-          content={ <SendTokensPopup /> }
+          trigger={ 
+          <Button 
+          disabled={campaignData.length === 0} 
+          color={(campaignData.length === 0)?'grey':'yellow'} 
+          floated='left'>
+            {(campaignData.length === 0)?'No active campaigns':'Manage assets'}
+          </Button> 
+          }
+          content={ <SendTokensPopup 
+            accounts={ accounts } 
+            network={ network } 
+            instanceAddress={ instanceAddress } 
+            instanceToken={ instanceToken }
+            isLoading={ isLoading }
+            setIsLoading={ setIsLoading }
+            setBalanceChecked={ setBalanceChecked } /> }
           on='click'
           position='top right' />
 
@@ -413,7 +559,7 @@ export const DeployedAirManList = ({
     if (instances.length > 0) {
       return (
         <Card.Group>
-          {instances.map((instance) => (
+          {instances.map((instance) => ( // aqui
             <Card key={instance.id}>
               <Card.Content>
                 <Image
@@ -430,6 +576,8 @@ export const DeployedAirManList = ({
                 <Card.Content extra>
                 <div className='button'>
                     <DeployedAirdropModal 
+                    accounts={ accounts }
+                    network={ network }
                     instanceAddress={ instance.instanceAddress } 
                     instanceToken= { instance.instanceToken }
                     />

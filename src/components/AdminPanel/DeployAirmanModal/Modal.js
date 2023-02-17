@@ -137,7 +137,8 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
           Cancel
         </Button>
         <DeployButton
-          setOpen={ setOpen } // TO DO test this
+          network={ network }
+          setOpen={ setOpen }
           isApproved={ isApproved }
           setApproved={ setApproved }
           amount={ amount }
