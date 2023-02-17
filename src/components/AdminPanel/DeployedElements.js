@@ -18,6 +18,56 @@ import {
     Accordion
 } from 'semantic-ui-react';
 
+const LoadingDeployedModalContent = () => {
+  return (
+    <Grid columns={3} stackable>
+    <Grid.Column>
+      <Segment raised>
+        <Placeholder>
+          <Placeholder.Header image>
+            <Placeholder.Line />
+            <Placeholder.Line />
+          </Placeholder.Header>
+          <Placeholder.Paragraph>
+            <Placeholder.Line length='medium' />
+            <Placeholder.Line length='short' />
+          </Placeholder.Paragraph>
+        </Placeholder>
+      </Segment>
+    </Grid.Column>
+
+    <Grid.Column>
+      <Segment raised>
+        <Placeholder>
+          <Placeholder.Header image>
+            <Placeholder.Line />
+            <Placeholder.Line />
+          </Placeholder.Header>
+          <Placeholder.Paragraph>
+            <Placeholder.Line length='medium' />
+            <Placeholder.Line length='short' />
+          </Placeholder.Paragraph>
+        </Placeholder>
+      </Segment>
+    </Grid.Column>
+
+    <Grid.Column>
+      <Segment raised>
+        <Placeholder>
+          <Placeholder.Header image>
+            <Placeholder.Line />
+            <Placeholder.Line />
+          </Placeholder.Header>
+          <Placeholder.Paragraph>
+            <Placeholder.Line length='medium' />
+            <Placeholder.Line length='short' />
+          </Placeholder.Paragraph>
+        </Placeholder>
+      </Segment>
+    </Grid.Column>
+  </Grid>
+  );
+}
 
 export const LoadingAirManList = () => {
   return (
@@ -316,15 +366,10 @@ export const NewAirdropModal = ({
           Cancel
         </Button>
         {
-        (isLoading)
-        ?
-        <Button loading primary size='medium'>
-            PLACEH
-        </Button>
-        :
         (amountToAirdrop === 0 || amountToAirdrop === '' || timeInSeconds === '' || timeInSeconds === 0)
         ?
-        <Button 
+        <Button
+        loading={isLoading}
         color='grey'
         disabled={true} // TO DO fix this when the form is empty
         content='Insert amount' />
@@ -438,52 +483,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
       <Modal.Content scrolling>
         { (campaignData.length === 0)
         ?
-        <Grid columns={3} stackable>
-            <Grid.Column>
-              <Segment raised>
-                <Placeholder>
-                  <Placeholder.Header image>
-                    <Placeholder.Line />
-                    <Placeholder.Line />
-                  </Placeholder.Header>
-                  <Placeholder.Paragraph>
-                    <Placeholder.Line length='medium' />
-                    <Placeholder.Line length='short' />
-                  </Placeholder.Paragraph>
-                </Placeholder>
-              </Segment>
-            </Grid.Column>
-
-            <Grid.Column>
-              <Segment raised>
-                <Placeholder>
-                  <Placeholder.Header image>
-                    <Placeholder.Line />
-                    <Placeholder.Line />
-                  </Placeholder.Header>
-                  <Placeholder.Paragraph>
-                    <Placeholder.Line length='medium' />
-                    <Placeholder.Line length='short' />
-                  </Placeholder.Paragraph>
-                </Placeholder>
-              </Segment>
-            </Grid.Column>
-
-            <Grid.Column>
-              <Segment raised>
-                <Placeholder>
-                  <Placeholder.Header image>
-                    <Placeholder.Line />
-                    <Placeholder.Line />
-                  </Placeholder.Header>
-                  <Placeholder.Paragraph>
-                    <Placeholder.Line length='medium' />
-                    <Placeholder.Line length='short' />
-                  </Placeholder.Paragraph>
-                </Placeholder>
-              </Segment>
-            </Grid.Column>
-          </Grid>
+        <LoadingDeployedModalContent />
         :
         <Card.Group> 
         {campaignData.map((campaignInfo) => ( //// aqui
