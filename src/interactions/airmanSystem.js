@@ -115,7 +115,7 @@ export const getCampaignInformation = async (_instanceAddress) => {
   }
   getData();
 
-  console.log(airdrops);
+  //console.log(airdrops);
 
   return airdrops;
 }

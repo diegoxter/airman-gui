@@ -11,7 +11,9 @@ import {
   Modal,
   Header,
   Form,
-  Checkbox
+  Checkbox,
+  Popup,
+  Input
 } from 'semantic-ui-react';
 
 const LoadingAirManList = () => {
@@ -77,13 +79,33 @@ async function getSymbol(_tokenContractAddress) {
   return x;
 }
 
+const SendTokensPopup = () => {
+  return (
+    <Grid divided='vertically'>
+      <Grid.Row>
+        <Grid.Column>
+          <h4>Amount to send</h4>
+          <Input placeholder='Amount...' />
+        </Grid.Column>
+        </Grid.Row>
+       
+        <Grid.Row>
+        <Grid.Column>
+          <Button fluid size='tiny' color='green' content='Send' />
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
+  )
+}
+
 const NewAirdropModal = ({
   instanceAddress,
   instanceToken,
   tokenBalance,
   tokenSymbol,
   isLoading,
-  setIsLoading
+  setIsLoading,
+  setBalanceChecked
   }) => {
   const [open, setOpen] = useState(false);
   const [timeInSeconds, setTimeInSeconds] = useState('');
@@ -137,9 +159,21 @@ const NewAirdropModal = ({
         hasFixedAmount, 
         parsedAmountPerParticipant, 
         setIsLoading)
+      .then(() => (
+        setBalanceChecked(false)
+      ))
     } catch (error) {
       console.log('Falla al hacer el deploy de AirMan ', error);
     }
+  }
+
+  const toggleLoading = () => {
+    if (isLoading) {
+      setIsLoading(false)
+    } else {
+      setIsLoading(true)
+    }
+    console.log(isLoading)
   }
 
   return (
@@ -156,52 +190,57 @@ const NewAirdropModal = ({
       <Modal.Content>
         <Form>
           <Form.Field      
-          error={{
-            content: 'Please enter a valid email address',
-            pointing: 'above',
-          }}
-          onChange={(e) => handleTimeChange(e.target.value)}>
+            error={{
+              content: 'Please enter a valid email address',
+              pointing: 'above',
+            }}
+            onChange={(e) => handleTimeChange(e.target.value)}>
             <label>Time (in seconds) to end the campaign:</label>
             <input placeholder='Seconds to end the campaign...' />
           </Form.Field>
+
           <Form.Field
-          error={{
-            content: 'Please enter a valid email address',
-            pointing: 'below',
-          }}
-          onChange={(e) => handleAmountToAirdropChange(e.target.value)}>
+            error={{
+              content: 'Please enter a valid email address',
+              pointing: 'below',
+            }}
+            onChange={(e) => handleAmountToAirdropChange(e.target.value)} >
             <label>Total amount to airdrop</label>
             <input placeholder='Tokens to give...' />
           </Form.Field>
+
           <Form.Field>
             <Checkbox 
             label='Has fixed amount per user?'
             onChange={() => handleCheckboxChange()} 
             />
           </Form.Field>
+
           {(hasFixedAmount)
           ?
           <Form.Field
-          onChange={(e) => handleAmountPerParticipantChange(e.target.value)}
-          error={{
-            content: 'Please enter a valid email address',
-            pointing: 'above',
-          }}>
+            onChange={(e) => handleAmountPerParticipantChange(e.target.value)}
+            error={{
+              content: 'Please enter a valid email address',
+              pointing: 'above',
+            }}>
             <label>Amount for each participant</label>
             <input placeholder='Amount...' />
           </Form.Field>
           :
           <Form.Field disabled>
-          <label>Amount for each participant</label>
-          <input placeholder='Amount...' />
+            <label>Amount for each participant</label>
+            <input placeholder='Amount...' />
           </Form.Field>}
         </Form>
       </Modal.Content>
+      
       <Modal.Actions>
         <Button color='red' onClick={() => handleClose()}>
           Cancel
         </Button>
-        {(isLoading)
+        {
+        (isLoading)
         ?
         <Button
           loading 
@@ -237,7 +276,7 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
   if (open) {
     fetchCampaignData(instanceAddress)
     .then((value) => {
-      console.log(value);
+      // console.log(value);
     })
   }
 
@@ -256,10 +295,6 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
     })
   }
 
-  const handleCreateNewCampaign = () => {
-
-  }
-
   const handleClose = () => {
     setTokenBalance(0)
     setBalanceChecked(false)
@@ -273,18 +308,20 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={<Button color='violet'> Manage Airdrop Campaigns </Button>}
-    >
+      trigger={<Button color='violet'> Manage Airdrop Campaigns </Button>} >
+      
       <Modal.Header>
-      <Grid>
-    <Grid.Column as='h1' floated='left' width={3}>
-      Deployed campaigns
-    </Grid.Column>
-    <Grid.Column floated='right' width={5}>
-      Tokens held in this contract: <br/> <u>{tokenBalance} {tokenSymbol}</u>
-    </Grid.Column>
-  </Grid>
+        <Grid>
+          <Grid.Column as='h1' floated='left' width={3}>
+            Deployed campaigns
+          </Grid.Column>
+
+          <Grid.Column floated='right' width={5}>
+            Tokens held in this contract: <br/> <u>{tokenBalance} {tokenSymbol}</u>
+          </Grid.Column>
+        </Grid>
       </Modal.Header>
+
       <Modal.Content image scrolling>
         <Card.Group>
           <Card>
@@ -294,12 +331,15 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
                 size='mini'
                 src='https://react.semantic-ui.com/images/avatar/large/steve.jpg'
               />
-              <Card.Header>Steve Sanders</Card.Header>
-              <Card.Meta>Friends of Elliot</Card.Meta>
-              <Card.Description>
+            <Card.Header>Steve Sanders</Card.Header>
+
+            <Card.Meta>Friends of Elliot</Card.Meta>
+
+            <Card.Description>
                 Steve wants to add you to the group <strong>best friends</strong>
-              </Card.Description>
+            </Card.Description>
             </Card.Content>
+
             <Card.Content extra>
               <div className='ui two buttons'>
                 <Button basic color='green'>
@@ -310,20 +350,32 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
                 </Button>
               </div>
             </Card.Content>
+
           </Card>
         </Card.Group>
       </Modal.Content>
+
       <Modal.Actions>
+        <Popup
+          trigger={ <Button color='yellow' floated='left'>Refill tokens</Button> }
+          content={ <SendTokensPopup /> }
+          on='click'
+          position='top right' />
+
         <Button color='red' onClick={() => handleClose()}>
           Close
         </Button>
+
         <NewAirdropModal
           instanceAddress={ instanceAddress } 
           instanceToken={ instanceToken }
           tokenBalance={ tokenBalance }
           tokenSymbol={ tokenSymbol }
           setIsLoading={ setIsLoading }
+          isLoading={ isLoading }
+          setBalanceChecked={ setBalanceChecked }
         />
+        
       </Modal.Actions>
     </Modal>
   );
@@ -349,28 +401,28 @@ export const DeployedAirManList = ({
       return (
         <Card.Group>
           {instances.map((instance) => (
-              <Card key={instance.id}>
-                <Card.Content>
-                  <Image
-                      floated='right'
-                      size='mini'
-                      src='https://react.semantic-ui.com/images/avatar/large/molly.png'
-                  />
-                  <Card.Header>{`AirMan instance #${Number(instance.id['_hex'])}`}</Card.Header>
-                  <Card.Meta>Address: {cleanAddress(instance.instanceAddress)}</Card.Meta>
-                  <Card.Description>
-                    Token: {cleanAddress(instance.instanceToken)}
-                  </Card.Description>
-                  </Card.Content>
-                  <Card.Content extra>
-                  <div className='button'>
-                      <DeployedAirdropModal 
-                      instanceAddress={ instance.instanceAddress } 
-                      instanceToken= { instance.instanceToken }
-                      />
-                  </div>
+            <Card key={instance.id}>
+              <Card.Content>
+                <Image
+                    floated='right'
+                    size='mini'
+                    src='https://react.semantic-ui.com/images/avatar/large/molly.png'
+                />
+                <Card.Header>{`AirMan instance #${Number(instance.id['_hex'])}`}</Card.Header>
+                <Card.Meta>Address: {cleanAddress(instance.instanceAddress)}</Card.Meta>
+                <Card.Description>
+                  Token: {cleanAddress(instance.instanceToken)}
+                </Card.Description>
                 </Card.Content>
-              </Card>        
+                <Card.Content extra>
+                <div className='button'>
+                    <DeployedAirdropModal 
+                    instanceAddress={ instance.instanceAddress } 
+                    instanceToken= { instance.instanceToken }
+                    />
+                </div>
+              </Card.Content>
+            </Card>        
           ))}
         </Card.Group>
     ); 
