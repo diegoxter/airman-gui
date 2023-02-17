@@ -71,27 +71,61 @@ export const LoadingAirManList = () => {
 }
 
 
-export const SendTokensPopup = ({ accounts, network, instanceAddress, instanceToken, isLoading, setIsLoading, setBalanceChecked }) => {
+export const SendTokensPopup = ({
+  setPopUpOpen,
+  accounts,
+  instanceAddress,
+  instanceToken,
+  setIsLoading,
+  setBalanceChecked }) => {
   const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawAmountInputValue] = useDebounce(withdrawAmount, 600);
+  const [isValidWithdrawAmount, setIsValidWithdrawAmount] = useState(undefined);
+  const [instanceHasEnoughTokens, setInstanceHasEnoughTokens] = useState(false);
 
   const handleAmountChange = (num) => {
-    setAmount(num)
-    setIsValidAmount(!isNaN(num))
+    setAmount(num);
+    setIsValidAmount(!isNaN(num));
   }
 
-  const handleSendClick = async () => {
+  const handleSendClick = () => {
     setIsLoading(true);
-    await sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), setIsLoading)
-    
-    setBalanceChecked(false); // TO DO better handle of this timing 
+    sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), setIsLoading)
+    .then(() => {
+      setPopUpOpen(false);
+      let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+      sleep(3500)
+      .then(() => setBalanceChecked(false))
+    })
+  }
+
+  const handleWithdrawChange = (num) => {
+    setWithdrawAmount(num);
+    setIsValidWithdrawAmount(!isNaN(num));
+  }
+
+  const handleWithdrawClick = () => {
+    console.log('withdraw tokens test');
+  }
+
+  const handleWithdrawEtherClick = () => {
+    console.log('withdraw ether test');
   }
 
   if (isValidAmount) {
     if (typeof accounts === 'string') {
       checkIfHasEnoughTokens(accounts, instanceToken, amountInputValue, setHasEnoughTokens);
+    }
+  }
+
+  if (isValidWithdrawAmount) {
+    if (typeof accounts === 'string') {
+      checkIfHasEnoughTokens(instanceAddress, instanceToken, withdrawAmountInputValue, setInstanceHasEnoughTokens);
     }
   }
 
@@ -113,14 +147,24 @@ export const SendTokensPopup = ({ accounts, network, instanceAddress, instanceTo
 
       <Grid.Row>
         <Grid.Column>
-          <h4>Ether in contract</h4>
-            <Segment>Lorem Ipsum</Segment>
+          <h4>Withdraw tokens</h4>
+          <Input fluid placeholder='Amount to withdraw...' onChange={(f) => handleWithdrawChange(f.target.value)}/>
+          <Divider hidden />
+          {(Number(withdrawAmountInputValue) === 0 || !instanceHasEnoughTokens || !isValidWithdrawAmount)
+          ?
+          <Button fluid size='tiny' content="Invalid token amount" disabled />
+          :
+          <Button fluid size='tiny' color='red' content='Withdraw' onClick={() => {handleWithdrawClick()}} />
+          }
         </Grid.Column>
       </Grid.Row>
-       
-        <Grid.Row>
+
+      <Grid.Row>
         <Grid.Column>
-          <Button fluid size='tiny' color='orange' content='Withdraw Ether' />
+          <h4>Ether in contract</h4>
+            <Segment>Lorem Ipsum</Segment>
+            <Divider hidden />
+          <Button fluid size='tiny' color='orange' content='Withdraw Ether' onClick={handleWithdrawEtherClick}/>
         </Grid.Column>
       </Grid.Row>
     </Grid>
@@ -132,22 +176,26 @@ export const NewAirdropModal = ({
   instanceAddress,
   instanceToken,
   tokenBalance,
+  setTokenBalance,
   tokenSymbol,
   isLoading,
   setIsLoading,
-  setBalanceChecked
+  setBalanceChecked,
+  setCampaignDataChecked
   }) => {
   const [open, setOpen] = useState(false);
   const [timeInSeconds, setTimeInSeconds] = useState('');
+  const [hasValidTimeAmounts, setHasValidTimeAmounts] = useState(false);
   const [amountToAirdrop, setAmountToAirdrop] = useState('');
-  const [hasValidAmounts, setHasValidAmounts] = useState(false)
+  const [hasValidAmounts, setHasValidAmounts] = useState(false);
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
 
   const handleClose = () => {
     setOpen(false);
-    setTimeInSeconds('')
-    setAmountToAirdrop('')
+    setTimeInSeconds('');
+    setAmountToAirdrop('');
+    setTokenBalance('');
   }
 
   const handleCheckboxChange = () => {
@@ -160,10 +208,22 @@ export const NewAirdropModal = ({
 
   const handleTimeChange = (value) => {
     setTimeInSeconds(value);
+
+    if (!isNaN(value) || value === '') {
+      setHasValidTimeAmounts(false);
+    } else {
+      setHasValidTimeAmounts(true);
+    }
   }
 
   const handleAmountToAirdropChange = (value) => {
     setAmountToAirdrop(value);
+
+    if (!isNaN(value) || value === '') {
+      setHasValidAmounts(false);
+    } else {
+      setHasValidAmounts(true);
+    }
 
   }
 
@@ -188,23 +248,15 @@ export const NewAirdropModal = ({
         hasFixedAmount, 
         parsedAmountPerParticipant, 
         setIsLoading)
-      .then(() => (
-        setBalanceChecked(false)
-      ))
+      .then(() => {
+        setBalanceChecked(false);
+        handleClose();
+        setCampaignDataChecked(false);
+      })
     } catch (error) {
       console.log('Falla al hacer el deploy de AirMan ', error);
     }
   }
-
-  const toggleLoading = () => {
-    if (isLoading) {
-      setIsLoading(false)
-    } else {
-      setIsLoading(true)
-    }
-    console.log(isLoading)
-  }
-
 
   return (
     <Modal
@@ -220,20 +272,14 @@ export const NewAirdropModal = ({
       <Modal.Content>
         <Form>
           <Form.Field      
-            error={{
-              content: 'Please enter a valid email address',
-              pointing: 'above',
-            }}
+            error={(hasValidTimeAmounts)}
             onChange={(e) => handleTimeChange(e.target.value)}>
             <label>Time (in seconds) to end the campaign:</label>
             <input placeholder='Seconds to end the campaign...' />
           </Form.Field>
 
           <Form.Field
-            error={{
-              content: 'Please enter a valid email address',
-              pointing: 'below',
-            }}
+            error={(hasValidAmounts)}
             onChange={(e) => handleAmountToAirdropChange(e.target.value)} >
             <label>Total amount to airdrop</label>
             <input placeholder='Tokens to give...' />
@@ -297,6 +343,7 @@ export const NewAirdropModal = ({
 
 export const DeployedAirdropModal = ({ accounts, network, instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
+  const [popUpOpen, setPopUpOpen] = useState(false);
   const [campaignData, setCampaignData] = useState([]);
   const [campaignDataChecked, setCampaignDataChecked] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
@@ -304,21 +351,25 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
   const [balanceChecked, setBalanceChecked] = useState(false)
   const [tokenSymbol, setTokenSymbol] = useState('');
 
+  let sleep = ms => new Promise(r => setTimeout(r, ms));
 
   // 0x6B76e20c5b7E0570B111618F65c0Ab2224c1C7B7
   if (open && !campaignDataChecked) {
     fetchCampaignData(instanceAddress)
     .then((value) => {
       setCampaignData(value);
-      setCampaignDataChecked(true)
+      setCampaignDataChecked(true);
     })
   }
 
   if (open && !balanceChecked) {
-    checkBalance(instanceAddress, instanceToken)
-    .then((value) => {
-      setTokenBalance(value);
-      setBalanceChecked(true)
+    sleep(2500)
+    .then(() => {
+      checkBalance(instanceAddress, instanceToken)
+      .then((value) => {
+        setTokenBalance(value);
+        setBalanceChecked(true);
+      })
     })
   }
 
@@ -330,20 +381,20 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
   }
 
   const handleClose = () => {
-    setTokenBalance(0)
-    setBalanceChecked(false)
-    setTokenSymbol('')
-    setOpen(false)
-    setCampaignDataChecked(false)
-    setCampaignData([])
+    setTokenBalance(0);
+    setBalanceChecked(false);
+    setTokenSymbol('');
+    setOpen(false);
+    setCampaignDataChecked(false);
+    setCampaignData([]);
   }
 
   const getHumanDate = (unixtime) => {
-    const date = new Date(unixtime * 1000)
+    const date = new Date(unixtime * 1000);
     const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', second: 'numeric' };
     const dateString = date.toLocaleString('en-US', options);
 
-    return dateString.toString()
+    return dateString.toString();
   }
 
   // TO DO finish this
@@ -362,7 +413,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
         ),
       },
     },
-  ]
+  ];
 
   return (
     <Modal
@@ -379,7 +430,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
           </Grid.Column>
 
           <Grid.Column floated='right' width={5}>
-            Tokens held in this contract: <br/> <Segment textAlign='center'><u>{tokenBalance} {tokenSymbol}</u></Segment>
+            Tokens held in this contract: <br/> <Segment textAlign='center'><u>{tokenBalance} {(tokenBalance)?tokenSymbol:''}</u></Segment>
           </Grid.Column>
         </Grid>
       </Modal.Header>
@@ -470,6 +521,9 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
 
       <Modal.Actions>
         <Popup
+          open={ popUpOpen }
+          onClose={() => setPopUpOpen(false)}
+          onOpen={() => setPopUpOpen(true)}
           trigger={ 
           <Button 
           disabled={campaignData.length === 0} 
@@ -478,7 +532,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
             {(campaignData.length === 0)?'No active campaigns':'Manage assets'}
           </Button> 
           }
-          content={ <SendTokensPopup 
+          content={ <SendTokensPopup
+            setPopUpOpen={ setPopUpOpen }
             accounts={ accounts } 
             network={ network } 
             instanceAddress={ instanceAddress } 
@@ -497,10 +552,12 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
           instanceAddress={ instanceAddress } 
           instanceToken={ instanceToken }
           tokenBalance={ tokenBalance }
+          setTokenBalance={ setTokenBalance }
           tokenSymbol={ tokenSymbol }
           setIsLoading={ setIsLoading }
           isLoading={ isLoading }
           setBalanceChecked={ setBalanceChecked }
+          setCampaignDataChecked={ setCampaignDataChecked }
         />
         
       </Modal.Actions>

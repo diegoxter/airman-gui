@@ -6,7 +6,6 @@ import airdropManagerAbi from '../assets/abis/AirdropManager.json';
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-const network = provider.getNetwork();
 
 // Getter functions
 const getFee = async (_network) => {
