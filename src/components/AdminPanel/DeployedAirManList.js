@@ -13,7 +13,7 @@ import {
   Form,
   Checkbox,
   Popup,
-  Input
+  Input,
 } from 'semantic-ui-react';
 
 const LoadingAirManList = () => {
@@ -84,14 +84,27 @@ const SendTokensPopup = () => {
     <Grid divided='vertically'>
       <Grid.Row>
         <Grid.Column>
-          <h4>Amount to send</h4>
-          <Input placeholder='Amount...' />
+          <h4>Refill tokens</h4>
+          <Input placeholder='Amount to send...' />
         </Grid.Column>
         </Grid.Row>
        
         <Grid.Row>
         <Grid.Column>
           <Button fluid size='tiny' color='green' content='Send' />
+        </Grid.Column>
+      </Grid.Row>
+
+      <Grid.Row>
+        <Grid.Column>
+          <h4>Ether in contract</h4>
+            <Segment>Lorem Ipsum</Segment>
+        </Grid.Column>
+      </Grid.Row>
+       
+        <Grid.Row>
+        <Grid.Column>
+          <Button fluid size='tiny' color='orange' content='Withdraw Ether' />
         </Grid.Column>
       </Grid.Row>
     </Grid>
@@ -317,7 +330,7 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
           </Grid.Column>
 
           <Grid.Column floated='right' width={5}>
-            Tokens held in this contract: <br/> <u>{tokenBalance} {tokenSymbol}</u>
+            Tokens held in this contract: <br/> <Segment textAlign='center'><u>{tokenBalance} {tokenSymbol}</u></Segment>
           </Grid.Column>
         </Grid>
       </Modal.Header>
@@ -357,7 +370,7 @@ const DeployedAirdropModal = ({ instanceAddress, instanceToken }) => {
 
       <Modal.Actions>
         <Popup
-          trigger={ <Button color='yellow' floated='left'>Refill tokens</Button> }
+          trigger={ <Button color='yellow' floated='left'>Manage assets</Button> }
           content={ <SendTokensPopup /> }
           on='click'
           position='top right' />
