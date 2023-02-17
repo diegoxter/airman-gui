@@ -23,6 +23,12 @@ export const getDeployedAirManList = async (_address, _network) => {
   return list;
 }
 
+export const fetchCampaignData = async (_instanceAddress) => {
+  const data = await getCampaignInformation(_instanceAddress);
+
+  return data;
+}
+
 
 // Transaction functions
 export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _network) => {

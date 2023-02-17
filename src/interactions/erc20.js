@@ -6,14 +6,6 @@ import erc20ABI from '../assets/abis/ERC20.json';
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-let network = provider.getNetwork();
-
-export const getTokenSymbol = async (_address) => {
-  const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
-  const symbol = await tokenInstance.connect(signer).symbol();
-
-  return symbol;
-}
 
 export const checkTokenSymbol = async (_address, _symbolCheck, _setSymbolCheck, _setIsValidContract) => {
   const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
@@ -31,6 +23,13 @@ export const checkTokenSymbol = async (_address, _symbolCheck, _setSymbolCheck, 
   }
 
   return symbol !== '';
+}
+
+export const getTokenSymbol = async (_address) => {
+  const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
+  const symbol = await tokenInstance.connect(signer).symbol();
+
+  return symbol;
 }
 
 export const checkBalance = async (account, _tokenContractAddress) => {
@@ -69,4 +68,12 @@ export const sendTokens = async (_account, _tokenContractAddress, _targetAddress
   }
 
   waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+}
+
+export const checkIfHasEnoughTokens = async (_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) => {
+  if (await checkBalance(_accounts, _contractInputValue) < Number(_amountInputValue)) {
+    _setEnoughTokens(false);
+  } else {
+    _setEnoughTokens(true);
+  }
 }

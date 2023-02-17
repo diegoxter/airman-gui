@@ -3,39 +3,20 @@ import {
   checkAllowance,
   checkTokenSymbol,
   approveTokens,
-  getTokenSymbol 
+  getTokenSymbol,
+  checkIfHasEnoughTokens 
 } from '../../../interactions/erc20';
 import { getAdmPanAddress } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
 
-async function getAdmPanAddr(_network) {
-  const x = await getAdmPanAddress(_network)
-
-  return x
-}
-
-async function isApprovedAllowance(_accounts, _contractInputValue, _amountInputValue, _setApproved, _network) {
-  if (await checkAllowance(_accounts, _contractInputValue, getAdmPanAddr(_network)) >= Number(_amountInputValue)) {
+const isApprovedAllowance = async (_accounts, _tokenContract, _amount, _setApproved, _network) => {
+  if (await checkAllowance(_accounts, _tokenContract, await getAdmPanAddress(_network)) >= Number(_amount)) {
     _setApproved(true);
   } else {
     _setApproved(false);
   }
-}
-
-async function checkIfHasEnoughTokens(_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) {
-  if (await checkBalance(_accounts, _contractInputValue) < Number(_amountInputValue)) {
-    _setEnoughTokens(false);
-  } else {
-    _setEnoughTokens(true);
-  }
-}
-
-async function getSymbol(_tokenContractAddress) {
-  const x = await getTokenSymbol(_tokenContractAddress);
-
-  return x;
 }
 
 export const DeployButton = ({
@@ -71,7 +52,7 @@ export const DeployButton = ({
 
   const handleApproveClick = async () => {
     setIsLoading(true);
-    approveTokens(accounts, contractInputValue, getAdmPanAddr(network), Number(amountInputValue), setIsLoading);
+    approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), Number(amountInputValue), setIsLoading);
   }
 
   if (contractInputValue.length === 42 && isValidContract && isValidAmount) {
@@ -166,7 +147,7 @@ export const TokenContractInput = ({
   }
 
   if (tokenSymbol === '' && symbolCheck) {
-    getSymbol(contractInputValue)
+    getTokenSymbol(contractInputValue)
     .then((value) => {
       setTokenSymbol(value);
     })
