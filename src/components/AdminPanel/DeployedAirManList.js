@@ -40,6 +40,7 @@ export const DeployedAirManList = ({
                     <DeployedAirdropModal 
                     accounts={ accounts }
                     network={ network }
+                    instanceNumer={ Number(instance.id) }
                     instanceAddress={ instance.instanceAddress } 
                     instanceToken= { instance.instanceToken }
                     />

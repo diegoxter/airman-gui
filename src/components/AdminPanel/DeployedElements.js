@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDebounce } from "use-debounce";
-import { deployAirdropCampaign, fetchCampaignData } from '../../interactions/airmanSystem';
+import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance } from '../../interactions/airmanSystem';
 import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../interactions/erc20';
 import { 
     Card, 
@@ -123,12 +123,14 @@ export const LoadingAirManList = () => {
 
 export const SendTokensPopup = ({
   setPopUpOpen,
+  network,
   accounts,
   instanceAddress,
   instanceToken,
   setIsLoading,
   setBalanceChecked }) => {
   const [amount, setAmount] = useState('');
+  const [etherBalance, setEtherBalance] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
@@ -165,6 +167,13 @@ export const SendTokensPopup = ({
 
   const handleWithdrawEtherClick = () => {
     console.log('withdraw ether test');
+  }
+
+  if (etherBalance === '') {
+    fetchEtherBalance(instanceAddress)
+    .then((value) => {
+      setEtherBalance(Number(value['_hex']))
+    })
   }
 
   if (isValidAmount) {
@@ -212,7 +221,7 @@ export const SendTokensPopup = ({
       <Grid.Row>
         <Grid.Column>
           <h4>Ether in contract</h4>
-            <Segment>Lorem Ipsum</Segment>
+            <Segment>{etherBalance} ETH</Segment>
             <Divider hidden />
           <Button fluid size='tiny' color='orange' content='Withdraw Ether' onClick={handleWithdrawEtherClick}/>
         </Grid.Column>
@@ -279,7 +288,6 @@ export const NewAirdropModal = ({
 
   const handleAmountPerParticipantChange = (value) => {
     setAmountPerParticipant(value);
-
   }
 
   const handleDeployClick = () => {
@@ -304,7 +312,7 @@ export const NewAirdropModal = ({
         setCampaignDataChecked(false);
       })
     } catch (error) {
-      console.log('Falla al hacer el deploy de AirMan ', error);
+      console.log('Falla al hacer el deploy de AirMan ');
     }
   }
 
@@ -369,12 +377,12 @@ export const NewAirdropModal = ({
         (amountToAirdrop === 0 || amountToAirdrop === '' || timeInSeconds === '' || timeInSeconds === 0)
         ?
         <Button
-        loading={isLoading}
         color='grey'
         disabled={true} // TO DO fix this when the form is empty
         content='Insert amount' />
         :
-        <Button 
+        <Button
+        loading={isLoading}
         color={(amountToAirdrop > tokenBalance)?'red':'green'} 
         disabled={((amountToAirdrop > tokenBalance)?true:false)} // TO DO fix this when the form is empty
         content={(amountToAirdrop > tokenBalance)?'Invalid data':'Deploy'} 
@@ -386,7 +394,7 @@ export const NewAirdropModal = ({
 }
 
 
-export const DeployedAirdropModal = ({ accounts, network, instanceAddress, instanceToken }) => {
+export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
   const [popUpOpen, setPopUpOpen] = useState(false);
   const [campaignData, setCampaignData] = useState([]);
@@ -397,6 +405,13 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
   const [tokenSymbol, setTokenSymbol] = useState('');
 
   let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  const cleanAddress = (_address) => {
+    let firstHalf = _address.substr(0, 5);
+    let secondHalf = _address.substr(34, 6);
+
+    return firstHalf+'...'+secondHalf;
+  }
 
   // 0x6B76e20c5b7E0570B111618F65c0Ab2224c1C7B7
   if (open && !campaignDataChecked) {
@@ -460,18 +475,27 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
     },
   ];
 
+  //console.log(campaignData)
+
+  const isCampaignActive = (campaignInfo) => {
+    return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
+  }
+
   return (
     <Modal
       //dimmer='blurring'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={<Button color='violet'> Manage Airdrop Campaigns </Button>} >
+      trigger={<Button fluid color='violet'> Manage Airdrop Campaigns </Button>} >
       
       <Modal.Header>
         <Grid>
-          <Grid.Column as='h1' floated='left' width={3}>
-            Deployed campaigns
+          <Grid.Column as='h1' floated='left' width={7}>
+            Instance #{instanceNumer} <br/>Deployed campaigns
+            <br/> <p style={{
+              fontSize: '12px',
+              marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress)} </p>
           </Grid.Column>
 
           <Grid.Column floated='right' width={5}>
@@ -490,12 +514,27 @@ export const DeployedAirdropModal = ({ accounts, network, instanceAddress, insta
           <Card key={Number(campaignInfo.campaignID['_hex'])}>
             <Card.Content>
 
-            <Card.Header>{'Campaign #'+Number(campaignInfo.campaignID['_hex'])}</Card.Header>
+            <Card.Header>
+              {
+                (isCampaignActive(campaignInfo))
+                ?
+                `Campaign #${Number(campaignInfo.campaignID['_hex'])}`
+                :
+                <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
+              }
+            </Card.Header>
 
-            <Card.Meta>{'Amount to airdrop ' + campaignInfo.amountToAirdrop+' '+tokenSymbol}</Card.Meta>
+            <Card.Meta>{`Amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
+            <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
 
             <Card.Description>
-                End date: <strong>{getHumanDate(Number(campaignInfo.endDate['_hex']))}</strong>
+            {
+                (isCampaignActive(campaignInfo))
+                ?
+                `End date: ${getHumanDate(Number(campaignInfo.endDate['_hex']))}`
+                :
+                `End date: Expired`
+            }
             </Card.Description>
             </Card.Content>
 

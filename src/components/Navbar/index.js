@@ -11,6 +11,7 @@ import {
 } from './NavbarElements';
 import 'semantic-ui-css/semantic.min.css'
 
+// check the css properties for fixed bar
 
 const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
   return (

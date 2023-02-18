@@ -48,26 +48,32 @@ export const checkAllowance = async (account, _tokenContractAddress, _targetAddr
 
 export const approveTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
-  let approve = '';
-  try {
-      approve = (await tokenInstance.connect(signer).approve(_targetAddress, Number(amount)));
-  } catch (e) {
-      console.log(`fallo ${e}`);
-  }
 
-  waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+  try {
+      const approve = (await tokenInstance.connect(signer).approve(_targetAddress, Number(amount)));
+
+      waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+  } catch (e) {
+    if (e.code === 'ACTION_REJECTED') {
+        console.log(`rejected transaction`);
+        _setIsLoading(false);
+    } else {
+      console.log(`error was ${e.code}`);
+      _setIsLoading(false);
+    }
+  }
 }
 
 export const sendTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
-  let approve = '';
-  try {
-      approve = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
-  } catch (e) {
-      console.log(`fallo ${e}`);
-  }
 
-  waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+  try {
+      const approve = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
+
+      waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+  } catch (e) {
+      console.log(`erro while sending tokens`);
+  }
 }
 
 export const checkIfHasEnoughTokens = async (_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) => {

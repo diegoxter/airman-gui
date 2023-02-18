@@ -38,16 +38,12 @@ export const DeployButton = ({
   
   const handleLetsDoItClick = () => {
     setIsLoading(true);
-    try {
-      console.log('lanzamiento');
-      deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen, network)
-      .then(() => {
-        new Promise(r => setTimeout(r, 2500))
-        .then(()=> setCheckedInstances(false))
-      })
-    } catch (error) {
-      console.log('Falla al hacer el deploy de AirMan ', error);
-    }
+
+    deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen, network)
+    .then(() => {
+      new Promise(r => setTimeout(r, 2500))
+      .then(()=> setCheckedInstances(false))
+    })
   }
 
   const handleApproveClick = async () => {

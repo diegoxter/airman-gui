@@ -22,6 +22,13 @@ export const getDeployedAirManList = async (_address, _network) => {
   return list;
 }
 
+export const fetchEtherBalance = async (_instanceAddress) => {
+  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, provider);
+  const balance = await airManInstance.getEtherBalance();
+
+  return balance;
+}
+
 export const fetchCampaignData = async (_instanceAddress) => {
   const data = await getCampaignInformation(_instanceAddress);
 
@@ -34,21 +41,26 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
   const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, signer);
   const fee = await getFee(_network);
 
-  const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
-    _token, 
-    Number(amount),
-    {
-      value: fee,
+  try {
+    const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
+      _token, 
+      Number(amount),
+      {
+        value: fee,
+      }
+      )
+    );
+  
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+  
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
     }
-    )
-  );
-
-  let sleep = ms => new Promise(r => setTimeout(r, ms));
-
-  while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
-    sleep(2500);
+      _setOpen(false);
+  } catch (error) {
+    console.log('Falla al hacer el deploy de AirMan ');
+    _setIsLoading(false)
   }
-    _setOpen(false);
 }
 
 export const deployAirdropCampaign = async (
@@ -60,17 +72,22 @@ export const deployAirdropCampaign = async (
   _setIsLoading ) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
 
-  const tx = await airManInstance.connect(signer).newAirdropCampaign(
-    _endsIn,
-    _amountForCampaign,
-    _hasFixedAmount,
-    _amountForEveryUser
-  )
+  try {
+    const tx = await airManInstance.connect(signer).newAirdropCampaign(
+      _endsIn,
+      _amountForCampaign,
+      _hasFixedAmount,
+      _amountForEveryUser
+    )
 
-  let sleep = ms => new Promise(r => setTimeout(r, ms));
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
-    sleep(2500);
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+  } catch (error) {
+    console.log('campaign deploy failed')
+    _setIsLoading(false)
   }
 }
 
