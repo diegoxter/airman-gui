@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
 import { isSupportedNetwork } from '../../interactions';
-import { DeployButton, TokenContractInput } from './Modal Elements/DeployModalElements';
+import { DeployButton, TokenContractInput } from './ModalElements/DeployModalElements';
 
 const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }) => {
   const [open, setOpen] = useState(false);

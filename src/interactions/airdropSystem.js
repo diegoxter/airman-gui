@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
-import { waitForConfirmation } from "../components/Navbar";
+import { waitForConfirmation } from ".";
 import { getDeployedAirmanListInformation } from "./airmanSystem";
+//import { fetchAirdropCampaignData } from "./multicall";
 
 import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json'
 
@@ -8,7 +9,22 @@ import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json'
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-export const getAirdropCampaignData = async (_network) => {
+// Getter functions
+export const getWhitelistFee = async (_campaignAddress) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  const fee = await airdropCampaignInstance.whitelistFee();
+
+  return fee;
+}
+/*
+export const testMulticall = async (_network) => {
+  const airdropList = await getDeployedAirmanListInformation(_network)
+  const tx = await fetchAirdropCampaignData(_network, airdropList, airdropCampaignAbi)
+
+  return tx
+}
+*/
+export const getAirdropCampaignData = async (_network, _account) => {
   const airdropList = await getDeployedAirmanListInformation(_network)
   const airdropListData = [{
     campaignAddress: '',
@@ -21,8 +37,9 @@ export const getAirdropCampaignData = async (_network) => {
     tokenAmount: '',
     amountForEachUser: ''
   }];
+  const airdropParticipantData = [{ campaignAddress: '', address: '', canReceive: '', claimed: '' }];
 
-  try {
+  try {  // TO DO optimize this with https://github.com/makerdao/multicall/blob/master/src/Multicall2.sol
     await Promise.all(airdropList.map(async (instanceAddress, index) => {
       const airdropCampaignInstance = new ethers.Contract(instanceAddress, airdropCampaignAbi, provider);
 
@@ -38,10 +55,42 @@ export const getAirdropCampaignData = async (_network) => {
         amountForEachUser: await airdropCampaignInstance.amountForEachUser()
       };
 
+      airdropParticipantData[index] = {
+        campaignAddress: instanceAddress,
+        address: (await airdropCampaignInstance.participantInfo(_account))['ParticipantAddress'],
+        canReceive: (await airdropCampaignInstance.participantInfo(_account))['canReceive'],
+        claimed: (await airdropCampaignInstance.participantInfo(_account))['claimed']
+      }
+
     }));
   } catch (e) {
-    console.log('Error getting Airdrop campaign info')
+    console.log(e)
   }
 
-  return airdropListData
+  return [ airdropListData, airdropParticipantData ]
+}
+
+// Transaction functions
+
+export const joinAirdrop = async (_campaignAddress, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+console.log(_campaignAddress)
+  try {
+    const tx = (await airdropCampaignInstance.connect(signer).addToPayableWhitelist(
+      {
+        value: await getWhitelistFee(_campaignAddress),
+      }
+      )
+    );
+  
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+  
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+  } catch (error) {
+    console.log(error);
+    _setIsLoading(false)
+  }
+
 }

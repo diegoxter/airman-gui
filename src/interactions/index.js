@@ -1,6 +1,3 @@
-import activeNetworkContractAddr from "./data/contracts";
-
-
 export function isSupportedNetwork(chainId) {
   const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ];
   
@@ -13,12 +10,63 @@ export function isSupportedNetwork(chainId) {
 
 
 export const getAdmPanAddress = async (_network) => {
-  const x = await activeNetworkContractAddr(_network);
+  let adminPanelContract = '';
 
-  return x;
+  switch (_network) {
+      case 61:
+          adminPanelContract = '0';
+          break;
+
+      case 4002:
+          // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
+          adminPanelContract = '0x10D2B5Bc907a0e0D8EC535e6FD14b0943A52820b'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+          break;
+
+      case 87:
+          // testTokenContract = 0xd9209ca92E8e468C3f8AD7F3CE6B265AfD92760d
+          adminPanelContract = '0x0536e5eEa687CB7d3B27DF258167581724658297'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
+          break;
+
+      case 31337: // This is for testing/debugging purposes
+          adminPanelContract = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+          break;
+
+      default:
+          adminPanelContract = 'unsupported';
+          break;
+  }   
+
+  return adminPanelContract;
 };
+/*
+export const getMulticallAddress = (_network) => {
+  let multicallContract = '';
 
-  
+  switch (_network) {
+      case 61:
+        multicallContract = '0';
+          break;
+
+      case 4002:
+          multicallContract = '0xcBD78C108821Fd7c51750874681401D1e449a70E';
+          break;
+
+      case 87:
+          multicallContract = '1';
+          break;
+
+      case 31337: // This is for testing/debugging purposes
+        multicallContract = '2';
+          break;
+
+      default:
+          multicallContract = 'unsupported';
+          break;
+  }   
+
+  return multicallContract;
+};
+*/
 export const convertToHex = (integer) => {
   let str = Number(integer).toString(16);
 

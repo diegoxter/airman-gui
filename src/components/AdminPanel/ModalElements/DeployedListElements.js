@@ -136,7 +136,6 @@ export const ManageAssetsPopup = ({
   if (isValidAmount && amountInputValue > 0 && amountInputValue !== '') {
     if (typeof accounts === 'string') {
       checkIfHasEnoughTokens(accounts, instanceToken, amountInputValue, setHasEnoughTokens);
-      console.log('test')
     }
   }
 

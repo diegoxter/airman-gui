@@ -1,5 +1,5 @@
 import { Card, Image } from 'semantic-ui-react';
-import { DeployedAirdropModal, LoadingCardGroup } from './Modal Elements/DeployedListElements'
+import { DeployedAirdropModal, LoadingCardGroup } from './ModalElements/DeployedListElements'
 
 
 export const DeployedAirManList = ({ 
