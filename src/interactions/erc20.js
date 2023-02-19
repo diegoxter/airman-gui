@@ -7,8 +7,8 @@ import erc20ABI from '../assets/abis/ERC20.json';
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-export const checkTokenSymbol = async (_address, _symbolCheck, _setSymbolCheck, _setIsValidContract) => {
-  const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
+export const checkTokenSymbol = async (_tokenAddress, _symbolCheck, _setSymbolCheck, _setIsValidContract) => {
+  const tokenInstance = new ethers.Contract(_tokenAddress, erc20ABI, provider);
   let symbol = '';
 
   if (!_symbolCheck) {
@@ -32,9 +32,9 @@ export const getTokenSymbol = async (_address) => {
   return symbol;
 }
 
-export const checkBalance = async (account, _tokenContractAddress) => {
+export const checkBalance = async (_targetAddress, _tokenContractAddress) => {
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
-  const check = await tokenInstance.connect(signer).balanceOf(account);
+  const check = await tokenInstance.connect(signer).balanceOf(_targetAddress);
   
   return (Number(check));
 }
@@ -68,16 +68,16 @@ export const sendTokens = async (_account, _tokenContractAddress, _targetAddress
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
 
   try {
-      const approve = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
+      const tx = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
 
-      waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+      waitForConfirmation(tx.hash, provider, 5000, _setIsLoading);
   } catch (e) {
       console.log(`erro while sending tokens`);
   }
 }
 
-export const checkIfHasEnoughTokens = async (_accounts, _contractInputValue, _amountInputValue, _setEnoughTokens) => {
-  if (await checkBalance(_accounts, _contractInputValue) < Number(_amountInputValue)) {
+export const checkIfHasEnoughTokens = async (_ownerAddress, _targetAddress, _amountInputValue, _setEnoughTokens) => {
+  if (await checkBalance(_ownerAddress, _targetAddress) < Number(_amountInputValue)) {
     _setEnoughTokens(false);
   } else {
     _setEnoughTokens(true);

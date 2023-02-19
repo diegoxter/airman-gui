@@ -134,12 +134,15 @@ export const ManageAssetsPopup = ({
   const [amount, setAmount] = useState('');
   const [etherBalance, setEtherBalance] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
-  const [isValidAmount, setIsValidAmount] = useState(undefined);
+  const [isValidAmount, setIsValidAmount] = useState(false);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   const handleAmountChange = (num) => {
     setAmount(num);
-    setIsValidAmount(!isNaN(num));
+    setIsValidAmount(!isNaN(num) && num > 0);
+    setHasEnoughTokens(false);
   }
 
   const handleSendClick = () => {
@@ -147,7 +150,6 @@ export const ManageAssetsPopup = ({
     sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), setIsLoading)
     .then(() => {
       setPopUpOpen(false);
-      let sleep = ms => new Promise(r => setTimeout(r, ms));
 
       sleep(3500)
       .then(() => setBalanceChecked(false))
@@ -158,7 +160,6 @@ export const ManageAssetsPopup = ({
     manageAirmanFunds(instanceAddress, 1, setIsLoading)
     .then(() => {
       setPopUpOpen(false);
-      let sleep = ms => new Promise(r => setTimeout(r, ms));
 
       sleep(3500)
       .then(() => setBalanceChecked(false))
@@ -183,9 +184,10 @@ export const ManageAssetsPopup = ({
     })
   }
 
-  if (isValidAmount) {
+  if (isValidAmount && amountInputValue > 0 && amountInputValue !== '') {
     if (typeof accounts === 'string') {
       checkIfHasEnoughTokens(accounts, instanceToken, amountInputValue, setHasEnoughTokens);
+      console.log('test')
     }
   }
 

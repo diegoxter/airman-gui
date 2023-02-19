@@ -98,7 +98,6 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
     const tx = (await airManInstance.connect(signer).manageFunds(_option));
 
     await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading);
-    
   } catch (error) {
     console.log('Failure to withdraw tokens');
     _setIsLoading(false)
@@ -111,10 +110,15 @@ export const getInstanceInformation = async (_address, _network) => {
   let instancesData = await getDeployedAirManList(_address, _network);
   const instances = [];
 
-  await Promise.all(instancesData.map(async (instanceData, index) => {
-    let temp = await adminPanelInstance.deployedManagers(instanceData);
-    instances[index] = temp;
-  }));
+  try {
+    await Promise.all(instancesData.map(async (instanceData, index) => {
+      let temp = await adminPanelInstance.deployedManagers(instanceData);
+      instances[index] = temp;
+    }));
+  } catch (e) {
+    console.log('Failure while getting instance information')
+  }
+
 
   return instances;
 }
