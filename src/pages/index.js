@@ -1,27 +1,24 @@
 import React from 'react';
+import { Image, Segment, Grid } from 'semantic-ui-react'
 import AirdropList from '../components/AirdropList';
 
-const Home = ({ network }) => {
-
-// TO DO bring the list here
-
-/*
-  const NoContent = () => (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'Center',
-        alignItems: 'Right',
-        height: '100vh'
-      }}
-    >
-      <h1>GeeksforGeeks is a Computer Science portal for geeks.</h1>
-    </div>
-  )
-*/
+const Home = ({ isConnected, network, accounts }) => {
 
   return (
-    <AirdropList network={ network }/>
+    <Grid divided='vertically'>
+      <Grid.Row>
+        Placeholder
+      </Grid.Row>
+
+      <Grid.Row>
+      <Segment loading={!isConnected}>
+          <AirdropList 
+          network={ network }
+          accounts={ accounts }
+          />
+        </Segment>
+      </Grid.Row>
+    </Grid>
   );
 };
   

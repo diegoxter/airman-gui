@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Card } from 'semantic-ui-react'
-import { getInstanceInformation } from '../interactions/airmanSystem'
+import { getInstanceInformationByOwner } from '../interactions/airmanSystem'
 import AdminPanelModal from '../components/AdminPanel/DeployAirmanModal/Modal';
 import { DeployedAirManList } from '../components/AdminPanel/DeployedAirManList';
 
@@ -11,7 +11,7 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getInstanceInformation(accounts, network);
+      const data = await getInstanceInformationByOwner(accounts, network);
 
       return data;
     }

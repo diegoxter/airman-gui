@@ -15,7 +15,7 @@ const getFee = async (_network) => {
   return fee;
 }
 
-export const getDeployedAirManList = async (_address, _network) => {
+export const getDeployedAirManByOwnerList = async (_address, _network) => {
   const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
   const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address);
 
@@ -33,6 +33,43 @@ export const fetchCampaignData = async (_instanceAddress) => {
   const data = await getCampaignInformation(_instanceAddress);
 
   return data;
+}
+
+export const getDeployedAirmanListInformation = async (_network) => {
+  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
+  const deployedAirManAmount = await adminPanelInstance.instanceIDs();
+  const airMansAddressess = []
+  const airdropCampaignsList = []
+
+  const getAirManAddressData = async () => {
+    for (let i = 0; i < deployedAirManAmount; i++) {
+      let temp = await adminPanelInstance.deployedManagers(i);
+      airMansAddressess[i] = temp.instanceAddress;
+    }
+  }
+  await getAirManAddressData();
+
+  try {
+    let g = 0
+    await Promise.all(airMansAddressess.map(async (airmanAddress, index) => {
+      const airManInstance = new ethers.Contract(airmanAddress, airdropManagerAbi, signer);
+      const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
+
+      if (airManInstanceCampaignList > 0){
+        for (let i = 0; i < airManInstanceCampaignList; i++) {
+          let temp = await airManInstance.campaigns(i);
+          airdropCampaignsList[g] = temp.campaignAddress;
+
+          g++
+        }
+      }
+
+    }));
+  } catch (e) {
+    console.log('falla')
+  }
+
+  return airdropCampaignsList
 }
 
 
@@ -105,9 +142,9 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
 }
 
 // Draw functions
-export const getInstanceInformation = async (_address, _network) => {
+export const getInstanceInformationByOwner = async (_address, _network) => {
   const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, signer);
-  let instancesData = await getDeployedAirManList(_address, _network);
+  let instancesData = await getDeployedAirManByOwnerList(_address, _network);
   const instances = [];
 
   try {

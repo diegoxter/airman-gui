@@ -411,8 +411,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   let sleep = ms => new Promise(r => setTimeout(r, ms));
 
   const cleanAddress = (_address) => {
-    let firstHalf = _address.substr(0, 5);
-    let secondHalf = _address.substr(34, 6);
+    let firstHalf = _address.substr(0, 4);
+    let secondHalf = _address.substr(38, 4);
 
     return firstHalf+'...'+secondHalf;
   }
