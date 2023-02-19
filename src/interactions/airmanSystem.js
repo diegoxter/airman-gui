@@ -91,6 +91,19 @@ export const deployAirdropCampaign = async (
   }
 }
 
+export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading) => {
+  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
+
+  try {
+    const tx = (await airManInstance.connect(signer).manageFunds(_option));
+
+    await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading);
+    
+  } catch (error) {
+    console.log('Failure to withdraw tokens');
+    _setIsLoading(false)
+  }
+}
 
 // Draw functions
 export const getInstanceInformation = async (_address, _network) => {

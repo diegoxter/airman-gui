@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance } from '../../interactions/airmanSystem';
+import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../interactions/airmanSystem';
 import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../interactions/erc20';
 import { 
     Card, 
@@ -121,23 +122,20 @@ export const LoadingAirManList = () => {
 }
 
 
-export const SendTokensPopup = ({
+export const ManageAssetsPopup = ({
   setPopUpOpen,
   network,
   accounts,
   instanceAddress,
   instanceToken,
   setIsLoading,
+  tokenBalance,
   setBalanceChecked }) => {
   const [amount, setAmount] = useState('');
   const [etherBalance, setEtherBalance] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
-  const [withdrawAmount, setWithdrawAmount] = useState('');
-  const [withdrawAmountInputValue] = useDebounce(withdrawAmount, 600);
-  const [isValidWithdrawAmount, setIsValidWithdrawAmount] = useState(undefined);
-  const [instanceHasEnoughTokens, setInstanceHasEnoughTokens] = useState(false);
 
   const handleAmountChange = (num) => {
     setAmount(num);
@@ -156,17 +154,26 @@ export const SendTokensPopup = ({
     })
   }
 
-  const handleWithdrawChange = (num) => {
-    setWithdrawAmount(num);
-    setIsValidWithdrawAmount(!isNaN(num));
-  }
+  const handleWithdrawTokensClick = () => {
+    manageAirmanFunds(instanceAddress, 1, setIsLoading)
+    .then(() => {
+      setPopUpOpen(false);
+      let sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  const handleWithdrawClick = () => {
-    console.log('withdraw tokens test');
+      sleep(3500)
+      .then(() => setBalanceChecked(false))
+    })
   }
 
   const handleWithdrawEtherClick = () => {
-    console.log('withdraw ether test');
+    manageAirmanFunds(instanceAddress, 0, setIsLoading)
+    .then(() => {
+      setPopUpOpen(false);
+      let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+      sleep(3500)
+      .then(() => setEtherBalance(''))
+    })    
   }
 
   if (etherBalance === '') {
@@ -179,12 +186,6 @@ export const SendTokensPopup = ({
   if (isValidAmount) {
     if (typeof accounts === 'string') {
       checkIfHasEnoughTokens(accounts, instanceToken, amountInputValue, setHasEnoughTokens);
-    }
-  }
-
-  if (isValidWithdrawAmount) {
-    if (typeof accounts === 'string') {
-      checkIfHasEnoughTokens(instanceAddress, instanceToken, withdrawAmountInputValue, setInstanceHasEnoughTokens);
     }
   }
 
@@ -207,13 +208,12 @@ export const SendTokensPopup = ({
       <Grid.Row>
         <Grid.Column>
           <h4>Withdraw tokens</h4>
-          <Input fluid placeholder='Amount to withdraw...' onChange={(f) => handleWithdrawChange(f.target.value)}/>
           <Divider hidden />
-          {(Number(withdrawAmountInputValue) === 0 || !instanceHasEnoughTokens || !isValidWithdrawAmount)
+          {(tokenBalance > 0)
           ?
-          <Button fluid size='tiny' content="Invalid token amount" disabled />
+          <Button fluid size='tiny' color='red' content='Withdraw' onClick={() => {handleWithdrawTokensClick()}} />
           :
-          <Button fluid size='tiny' color='red' content='Withdraw' onClick={() => {handleWithdrawClick()}} />
+          <Button fluid size='tiny' content="No tokens to withdraw" disabled />
           }
         </Grid.Column>
       </Grid.Row>
@@ -221,9 +221,11 @@ export const SendTokensPopup = ({
       <Grid.Row>
         <Grid.Column>
           <h4>Ether in contract</h4>
-            <Segment>{etherBalance} ETH</Segment>
-            <Divider hidden />
-          <Button fluid size='tiny' color='orange' content='Withdraw Ether' onClick={handleWithdrawEtherClick}/>
+            <Segment>
+              {(etherBalance > 0)?ethers.utils.formatEther(etherBalance.toString())+' ETH': '0 ETH'} 
+            </Segment>
+          <Divider hidden />
+          <Button fluid size='tiny' color={(etherBalance === 0 || etherBalance==='')?'grey':'orange'} content='Withdraw Ether' onClick={handleWithdrawEtherClick} disabled={(etherBalance === 0 || etherBalance === '')}/>
         </Grid.Column>
       </Grid.Row>
     </Grid>
@@ -441,7 +443,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   }
 
   const handleClose = () => {
-    setTokenBalance(0);
+    setTokenBalance('');
     setBalanceChecked(false);
     setTokenSymbol('');
     setOpen(false);
@@ -499,7 +501,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           </Grid.Column>
 
           <Grid.Column floated='right' width={5}>
-            Tokens held in this contract: <br/> <Segment textAlign='center'><u>{tokenBalance} {(tokenBalance)?tokenSymbol:''}</u></Segment>
+            Tokens held in this contract: <br/> <Segment textAlign='center'><u>{(tokenBalance > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
           </Grid.Column>
         </Grid>
       </Modal.Header>
@@ -571,7 +573,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             {(campaignData.length === 0)?'No active campaigns':'Manage assets'}
           </Button> 
           }
-          content={ <SendTokensPopup
+          content={ <ManageAssetsPopup
             setPopUpOpen={ setPopUpOpen }
             accounts={ accounts } 
             network={ network } 
@@ -579,6 +581,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             instanceToken={ instanceToken }
             isLoading={ isLoading }
             setIsLoading={ setIsLoading }
+            tokenBalance= { tokenBalance }
             setBalanceChecked={ setBalanceChecked } /> }
           on='click'
           position='top right' />
