@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../interactions/airmanSystem';
-import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../interactions/erc20';
+import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
+import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../../interactions/erc20';
 import { 
     Card, 
     Button, 
@@ -287,7 +287,6 @@ export const NewAirdropModal = ({
     } else {
       setHasValidAmounts(true);
     }
-
   }
 
   const handleAmountPerParticipantChange = (value) => {
@@ -514,7 +513,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
         <LoadingDeployedModalContent />
         :
         <Card.Group> 
-        {campaignData.map((campaignInfo) => ( //// aqui
+        {campaignData.map((campaignInfo) => (
           <Card key={Number(campaignInfo.campaignID['_hex'])}>
             <Card.Content>
 

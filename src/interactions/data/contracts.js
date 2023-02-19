@@ -8,7 +8,7 @@ export default function activeNetworkAdminPanelContractAddr(network) {
 
         case 4002:
             // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
-            adminPanelContract = '0x21f77B2eE7040Bc6647f36517463fB8F628061D2'; // previous '0xC06Ae46528874d7903C70292fBc15950a1956b20';
+            adminPanelContract = '0x28b179a188944AE3f434E6Fb5f0d4587d529BB27'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
             break;
 
         case 87:

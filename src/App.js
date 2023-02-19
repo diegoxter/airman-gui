@@ -60,7 +60,7 @@ function App() {
         accounts={ accounts }/>
         <Content>
             <Routes>
-              <Route path='/' exact element={<Home isConnected={ isConnected } network={ network } accounts={ accounts } />} />
+              <Route path='/' exact element={<Home network={ network } accounts={ accounts } isConnected={ isConnected }/>} />
               <Route path='/about' element={<About />} />
               <Route path='/adminPanel' element={<AdminPanel network={ network } accounts={ accounts } isConnected={ isConnected }/>} />
               <Route path='/annual' element={<AnnualReport />} />

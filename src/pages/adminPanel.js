@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Card } from 'semantic-ui-react'
 import { getInstanceInformationByOwner } from '../interactions/airmanSystem'
-import AdminPanelModal from '../components/AdminPanel/DeployAirmanModal/Modal';
+import AdminPanelModal from '../components/AdminPanel/Modal';
 import { DeployedAirManList } from '../components/AdminPanel/DeployedAirManList';
 
 
