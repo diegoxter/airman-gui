@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react'
 import { getAirdropCampaignData } from '../interactions/airdropSystem';
-import { LoadingAirManList } from './AdminPanel/DeployAirmanModal/DeployedAirManElements'
+import { LoadingCardGroup } from './AdminPanel/Modal Elements/DeployedListElements'
 
 export const JoinCampaignModal = ({ campaignInfo, isCampaignActive }) => {
   const [open, setOpen] = useState(false)
@@ -107,8 +107,19 @@ const AirdropCampaignCard = ({ campaignInfo }) => {
 
       </Card.Header>
 
-      <Card.Meta>Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress)}</b></Card.Meta>
-      <Card.Meta>Campaign address <br/><b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
+      <Card.Meta>
+        <Image
+          floated='right'
+          size='tiny'
+          src='https://react.semantic-ui.com/images/avatar/large/molly.png'
+        />
+        Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress)}</b>
+      </Card.Meta>
+
+      <Card.Meta>
+        Campaign address <br/><b>{cleanAddress(campaignInfo.campaignAddress)}</b>
+      </Card.Meta>
+      
       <Card.Meta>
         End date: <br/><b>{getHumanDate(Number(campaignInfo.claimableSince['_hex']))}</b><br/>
       </Card.Meta>
@@ -154,7 +165,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
       style={{width:'96%'}}>
       { (campaignData.length === 0)
       ?
-        <LoadingAirManList />      
+        <LoadingCardGroup />      
       :
         <Card.Group itemsPerRow={2}>
 

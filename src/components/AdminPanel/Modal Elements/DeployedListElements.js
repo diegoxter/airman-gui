@@ -19,58 +19,7 @@ import {
     Accordion
 } from 'semantic-ui-react';
 
-const LoadingDeployedModalContent = () => {
-  return (
-    <Grid columns={3} stackable>
-    <Grid.Column>
-      <Segment raised>
-        <Placeholder>
-          <Placeholder.Header image>
-            <Placeholder.Line />
-            <Placeholder.Line />
-          </Placeholder.Header>
-          <Placeholder.Paragraph>
-            <Placeholder.Line length='medium' />
-            <Placeholder.Line length='short' />
-          </Placeholder.Paragraph>
-        </Placeholder>
-      </Segment>
-    </Grid.Column>
-
-    <Grid.Column>
-      <Segment raised>
-        <Placeholder>
-          <Placeholder.Header image>
-            <Placeholder.Line />
-            <Placeholder.Line />
-          </Placeholder.Header>
-          <Placeholder.Paragraph>
-            <Placeholder.Line length='medium' />
-            <Placeholder.Line length='short' />
-          </Placeholder.Paragraph>
-        </Placeholder>
-      </Segment>
-    </Grid.Column>
-
-    <Grid.Column>
-      <Segment raised>
-        <Placeholder>
-          <Placeholder.Header image>
-            <Placeholder.Line />
-            <Placeholder.Line />
-          </Placeholder.Header>
-          <Placeholder.Paragraph>
-            <Placeholder.Line length='medium' />
-            <Placeholder.Line length='short' />
-          </Placeholder.Paragraph>
-        </Placeholder>
-      </Segment>
-    </Grid.Column>
-  </Grid>
-  );
-}
-
-export const LoadingAirManList = () => {
+export const LoadingCardGroup = () => {
   return (
     <Grid columns={3} stackable>
       <Grid.Column>
@@ -510,7 +459,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       <Modal.Content scrolling>
         { (campaignData.length === 0)
         ?
-        <LoadingDeployedModalContent />
+        <LoadingCardGroup />
         :
         <Card.Group> 
         {campaignData.map((campaignInfo) => (

@@ -1,5 +1,5 @@
 import { Card, Image } from 'semantic-ui-react';
-import { DeployedAirdropModal, LoadingAirManList } from './DeployAirmanModal/DeployedAirManElements'
+import { DeployedAirdropModal, LoadingCardGroup } from './Modal Elements/DeployedListElements'
 
 
 export const DeployedAirManList = ({ 
@@ -51,9 +51,9 @@ export const DeployedAirManList = ({
         </Card.Group>
     ); 
   } else { // TO DO there should be some text here like "Deploy your own"
-    return( <LoadingAirManList /> );
+    return( <LoadingCardGroup /> );
   }
   } else {
-    return( <LoadingAirManList /> );
+    return( <LoadingCardGroup /> );
   }
 }
