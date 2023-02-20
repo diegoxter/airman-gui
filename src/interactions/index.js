@@ -24,7 +24,7 @@ export const getAdmPanAddress = async (_network) => {
 
       case 87:
           // testTokenContract = 0xd9209ca92E8e468C3f8AD7F3CE6B265AfD92760d
-          adminPanelContract = '0x0536e5eEa687CB7d3B27DF258167581724658297'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
+          adminPanelContract = '0xfC166fEdAA29f6DCAb2392e1430D12DFc4a0F833'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
           break;
 
       case 31337: // This is for testing/debugging purposes
@@ -161,6 +161,7 @@ export async function waitForConfirmation(txHash, provider, interval, _setIsLoad
     }, interval);
     return false;
   } else {
+    setTimeout(() => {}, interval);
     _setIsLoading(false);
     return true;
   }

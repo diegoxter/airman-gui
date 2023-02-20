@@ -94,3 +94,9 @@ console.log(_campaignAddress)
   }
 
 }
+
+// Helper functions
+
+export const isCampaignActive = (_campaignInfo_claimableSince) => {
+  return (Number(_campaignInfo_claimableSince) * 1000 > Date.now())
+}

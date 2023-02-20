@@ -1,26 +1,26 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react'
-import { getAirdropCampaignData, joinAirdrop, getWhitelistFee } from '../interactions/airdropSystem';
+import { getAirdropCampaignData, joinAirdrop, getWhitelistFee, isCampaignActive } from '../interactions/airdropSystem';
 import { LoadingCardGroup } from './AdminPanel/ModalElements/DeployedListElements'
 
-export const CampaignModal = ({ accounts, campaignInfo, isCampaignActive, participantData }) => {
+export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, participantData }) => {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const [fee, setFee] = useState('')
   const [hasJoined, setHasJoined] = useState('')
   const [checkedHasJoined, setCheckedHasJoined] = useState(false)
 
-  if (fee === '' && campaignInfo !== '') {
-    getWhitelistFee(campaignInfo.campaignAddress).then((value) => setFee(Number(value['_hex'])))
+  if (fee === '' && campaignAddress !== '') {
+    getWhitelistFee(campaignAddress).then((value) => setFee(Number(value['_hex'])))
   }
 
-  console.log(participantData.address === accounts)
+  console.log(participantData.address)
 
   if (!checkedHasJoined || hasJoined === '') {
     setHasJoined(participantData.address === accounts)
     setCheckedHasJoined(true)
   }
-  const test = (campaignInfo.campaignAddress)
+  const test = (campaignAddress)
 
   const handleJoinClick = () => {
     setIsLoading(true)
@@ -46,14 +46,14 @@ export const CampaignModal = ({ accounts, campaignInfo, isCampaignActive, partic
       trigger={
         (hasJoined) ?
       <Button
-        color={(isCampaignActive(campaignInfo))?'green':'red'}
-        content={(isCampaignActive(campaignInfo))?'Manage':'Claim'}
+        color={(isCampaignActive(campaignEndDate))?'green':'red'}
+        content={(isCampaignActive(campaignEndDate))?'Manage':'Claim'}
       />
       :
       <Button
-        disabled={!(isCampaignActive(campaignInfo))} 
-        color={isCampaignActive(campaignInfo)?'green':'grey'}
-        content={isCampaignActive(campaignInfo)?'Check Campaign':'Campaign Expired'}
+        disabled={!(isCampaignActive(campaignEndDate))} 
+        color={isCampaignActive(campaignEndDate)?'green':'grey'}
+        content={isCampaignActive(campaignEndDate)?'Check Campaign':'Campaign Expired'}
       />
       }
     >
@@ -132,10 +132,6 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
     return dateString.toString();
   }
 
-  const isCampaignActive = (_campaignInfo) => {
-    return (Number(_campaignInfo.claimableSince['_hex']) * 1000 > Date.now())
-  }
-
   return(
     <Card style={{
       width:'250px'
@@ -145,7 +141,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
       <Card.Header>
 
         {
-          (isCampaignActive(campaignInfo))
+          (isCampaignActive(campaignInfo.claimableSince['_hex']))
           ?
           `Placeholder`
           :
@@ -186,7 +182,11 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
 
       <Card.Content extra>
         <div className='ui two buttons'>
-          <CampaignModal accounts={ accounts } campaignInfo={ campaignInfo } isCampaignActive={ isCampaignActive } participantData={ participantData } /> 
+          <CampaignModal 
+          accounts={ accounts } 
+          campaignAddress={ campaignInfo.campaignAddress } 
+          campaignEndDate={ campaignInfo.claimableSince['_hex'] }
+          participantData={ participantData } /> 
         </div>
         <Accordion panels={panels}/>
 
@@ -206,7 +206,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
     .then((result) => {
       setCampaignData(result[0])
       setCampaignDataChecked(true)
-      console.log(result[1])
+      //console.log(result[1])
       setParticipantData(result[1])
       setParticipantDataChecked(true)
     })
@@ -222,7 +222,11 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
         <Card.Group itemsPerRow={2}>
 
         {campaignData.map((campaignInfo, index) => (
-          <AirdropCampaignCard key={ campaignInfo.campaignAddress } accounts={ accounts } campaignInfo={ campaignInfo } participantData={ participantData[index] } />
+          <AirdropCampaignCard 
+          key={ campaignInfo.campaignAddress }
+          accounts={ accounts }
+          campaignInfo={ campaignInfo }
+          participantData={ participantData[index] } />
         ))}
         </Card.Group> }
     </Segment>
