@@ -16,9 +16,8 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
   const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [tokenAmount, setTokenAmount] = useState('');
-  const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
   const [isValidAmount, setIsValidAmount] = useState(undefined);
-  const [isApproved, setApproved] = useState(false);
+  const [allowance, setAllowance] = useState('')
 
   // Testing purposes
   const testChange = () => {
@@ -33,19 +32,14 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
 
   const handleAmountChange = (num) => {
     setAmount(num);
-    if ((Number(num) > 0) && !isNaN(num)) {
-      setIsValidAmount(true);
-      setApproved(false);
-    } else {
-      setIsValidAmount(false);
-    }
+    setIsValidAmount((Number(num) > 0) && !isNaN(num));
   }
 
   const handleCancelClick = () => {
     setOpen(false);
     setIsValidAmount(false);
     setSymbolCheck(false);
-    setApproved(false);
+    setAllowance('')
     setContract('');
     setAmount('');
     setName('');
@@ -139,17 +133,16 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
         <DeployButton
           network={ network }
           setOpen={ setOpen }
-          isApproved={ isApproved }
-          setApproved={ setApproved }
           amount={ amount }
           amountInputValue={ amountInputValue }
-          hasEnoughTokens={ hasEnoughTokens }
-          setHasEnoughTokens={ setHasEnoughTokens }
           contractInputValue={ contractInputValue } 
           accounts={ accounts }
           isValidContract={ isValidContract }
           isValidAmount={ isValidAmount }
           setCheckedInstances={ setCheckedInstances }
+          allowance={ allowance }
+          setAllowance={ setAllowance }
+          handleCancelClick={ handleCancelClick }
         />
       </Modal.Actions>
     </Modal>

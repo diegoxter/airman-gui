@@ -3,36 +3,25 @@ import {
   checkAllowance,
   checkTokenSymbol,
   approveTokens,
-  getTokenSymbol,
-  checkIfHasEnoughTokens 
+  getTokenSymbol, 
 } from '../../../interactions/erc20';
 import { getAdmPanAddress } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
 
-const isApprovedAllowance = async (_accounts, _tokenContract, _amount, _setApproved, _network) => {
-  if (await checkAllowance(_accounts, _tokenContract, await getAdmPanAddress(_network)) >= Number(_amount)) {
-    _setApproved(true);
-  } else {
-    _setApproved(false);
-  }
-}
-
 export const DeployButton = ({
   network,
   setOpen, 
-  isApproved, 
-  setApproved, 
   contractInputValue, 
   accounts, 
   isValidContract, 
-  amount, 
   amountInputValue,
-  hasEnoughTokens,
-  setHasEnoughTokens,
   isValidAmount,
-  setCheckedInstances
+  setCheckedInstances,
+  allowance,
+  setAllowance,
+  handleCancelClick
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   
@@ -40,21 +29,36 @@ export const DeployButton = ({
     setIsLoading(true);
 
     deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen, network)
-    .then(() => {
-      new Promise(r => setTimeout(r, 2500))
-      .then(()=> setCheckedInstances(false))
-    })
+    .then((value) => {  console.log(value)
+      if (value === true) {
+        handleCancelClick()
+        setCheckedInstances(false)
+      } else {
+        console.log('Not deployed')
+        return false
+      }}
+    )
   }
 
   const handleApproveClick = async () => {
     setIsLoading(true);
-    approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), Number(amountInputValue), setIsLoading);
+    approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), Number(amountInputValue), setIsLoading)
+      .then((value) => {
+        if (value === true) {
+          setAllowance(Number(amountInputValue))
+        } else {
+          console.log('Not approved')
+        }
+    })
   }
 
   if (contractInputValue.length === 42 && isValidContract && isValidAmount) {
-    if (typeof accounts === 'string') {
-      isApprovedAllowance(accounts, contractInputValue, amountInputValue, setApproved, network);
-      checkIfHasEnoughTokens(accounts, contractInputValue, amountInputValue, setHasEnoughTokens);
+    if (typeof accounts === 'string' && allowance === '') {
+      getAdmPanAddress(network)
+      .then((value) => {
+       checkAllowance(accounts, contractInputValue, value)
+          .then((value) => setAllowance(value))
+        })
     }
   }
 
@@ -66,7 +70,7 @@ export const DeployButton = ({
   )
 
   if (isValidContract && amountInputValue !== '') {
-    if (Number(amountInputValue) === 0 || !hasEnoughTokens) {
+    if (Number(amountInputValue) === 0  || contractInputValue === '') {
       return (
         <Button
           content="Invalid token amount"
@@ -82,7 +86,7 @@ export const DeployButton = ({
             PLACEH
         </Button>
       );
-    } else if (isApproved && network !== '') {
+    } else if (Number(allowance) >= Number(amountInputValue) && network !== '') {
       return (
         <Button
           content="Let's do it!"

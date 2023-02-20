@@ -3,7 +3,7 @@ import { waitForConfirmation } from ".";
 
 import erc20ABI from '../assets/abis/ERC20.json';
 
-
+let sleep = ms => new Promise(r => setTimeout(r, ms));
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
@@ -15,8 +15,7 @@ export const checkTokenSymbol = async (_tokenAddress, _symbolCheck, _setSymbolCh
       try {
           symbol = await tokenInstance.connect(signer).symbol();
       } catch (e) {
-          console.log('hubo error');
-          console.log(e);
+          console.log('Error getting the token symbol');
       }
       _setIsValidContract(symbol !== '');
       _setSymbolCheck(symbol !== '');
@@ -50,9 +49,13 @@ export const approveTokens = async (_account, _tokenContractAddress, _targetAddr
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
 
   try {
-      const approve = (await tokenInstance.connect(signer).approve(_targetAddress, Number(amount)));
+      const tx = (await tokenInstance.connect(signer).approve(_targetAddress, Number(amount)));
 
-      waitForConfirmation(approve.hash, provider, 5000, _setIsLoading);
+      while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+        sleep(2500);
+      }
+
+      return true
   } catch (e) {
     if (e.code === 'ACTION_REJECTED') {
         console.log(`rejected transaction`);
@@ -61,6 +64,7 @@ export const approveTokens = async (_account, _tokenContractAddress, _targetAddr
       console.log(`error was ${e.code}`);
       _setIsLoading(false);
     }
+    return false
   }
 }
 

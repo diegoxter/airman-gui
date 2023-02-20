@@ -94,9 +94,12 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
       sleep(2500);
     }
       _setOpen(false);
+      
+      return true;
   } catch (error) {
     console.log('Falla al hacer el deploy de AirMan ');
     _setIsLoading(false)
+    return false
   }
 }
 
