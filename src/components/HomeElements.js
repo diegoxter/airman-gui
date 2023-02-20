@@ -219,7 +219,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
             <Icon name='circle notched' loading />
             <Message.Content style={{textAlign: 'center'}}>
               <Message.Header>Just one second</Message.Header>
-              We are fetching that content for you.
+              Fetching blockchain content.
             </Message.Content>
           </Message>
         <LoadingCardGroup />   

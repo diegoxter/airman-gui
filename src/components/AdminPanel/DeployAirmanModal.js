@@ -46,6 +46,16 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
     setTokenSymbol('');
   }
 
+  const divStyle = {
+    marginLeft: '10px',
+    marginTop: '9px',
+  };
+
+  const buttonStyle = {
+    marginLeft: '25%',
+    marginTop: '8px',
+  };
+
   // TO DO Draw the content we actually want
   return (
     (isSupportedNetwork(network) && isConnected) 
@@ -54,74 +64,66 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
       onClose={() => handleCancelClick()}
       onOpen={() => setOpen(true)}
       open={ open }
-      trigger={<Button 
-          style={{
-              width: '20%',
-              position: 'absolute',
-              top: '19px',
-              right: '22px',
-            }}
-              basic color='green'
-          >
-          Deploy
-          </Button>
+      trigger={<Button style={divStyle} color='yellow' content='Deploy'/>
       }
     >
       <Modal.Header>Lorem Ipsum</Modal.Header>
       <Modal.Content image>
 
-        <Grid columns={2} divided>
+        <Grid columns={3} divided>
           <Grid.Row>
-            <Grid.Column>
+            <Grid.Column >
               <Image size='medium' src='https://react.semantic-ui.com/images/avatar/large/rachel.png' wrapped />
+              <Button style={buttonStyle} content='Attach token logo' />
             </Grid.Column>
 
             <Grid.Column>
               <Form>
                 <Grid.Row>
-                
-                <Form.Input
-                  label='Project name'       
-                  placeholder='Enter name'
-                  value={name}
-                  onChange={(e) => handleNameChange(e.target.value)}
-                >
-                </Form.Input>
+                  <Form.Input
+                    label='Project name'       
+                    placeholder='Enter name'
+                    value={name}
+                    onChange={(e) => handleNameChange(e.target.value)}
+                  />
 
-                <TokenContractInput 
-                  accounts={ accounts }
-                  isValidContract={ isValidContract } 
-                  setIsValidContract= { setIsValidContract }
-                  contract={ contract }
-                  setContract={ setContract }
-                  contractInputValue={ contractInputValue }
-                  symbolCheck={ symbolCheck }
-                  tokenSymbol={ tokenSymbol }
-                  setTokenSymbol={ setTokenSymbol }
-                  setSymbolCheck={ setSymbolCheck }
-                  setTokenAmount={ setTokenAmount }
-                />
+                  <TokenContractInput 
+                    accounts={ accounts }
+                    isValidContract={ isValidContract } 
+                    setIsValidContract= { setIsValidContract }
+                    contract={ contract }
+                    setContract={ setContract }
+                    contractInputValue={ contractInputValue }
+                    symbolCheck={ symbolCheck }
+                    tokenSymbol={ tokenSymbol }
+                    setTokenSymbol={ setTokenSymbol }
+                    setSymbolCheck={ setSymbolCheck }
+                    setTokenAmount={ setTokenAmount }
+                  />
                 
-                <Form.Input
-                  label={'Tokens held: '+ tokenAmount}
-                  placeholder='Amount for AirMan to manage'
-                  value={amount}
-                  onChange={(e) => handleAmountChange(e.target.value)} 
-                  >
-                </Form.Input>
-                <Form.Field>
-                  <Checkbox label='I agree to the Terms and Conditions' />
-                </Form.Field>
-                  <Button 
-                    type='submit'
-                    onClick={testChange}
-                    >
-                      Submit
-                  </Button>
+                  <Form.Input
+                    label={'Tokens held: '+ tokenAmount}
+                    placeholder='Amount for AirMan to manage'
+                    value={amount}
+                    onChange={(e) => handleAmountChange(e.target.value)} 
+                  />
+
+                  <Form.Field>
+                    <Checkbox label='Placeholder' />
+                  </Form.Field>
+
+                  <Button type='submit' onClick={testChange} content='Submit' />
 
                 </Grid.Row>
               </Form>
             </Grid.Column>
+
+            <Grid.Column>
+              <Form>
+                <Form.Field label='Project description' control='textarea' rows='12' />
+              </Form>
+            </Grid.Column>
+
 
             </Grid.Row>
         </Grid>
@@ -147,17 +149,16 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
       </Modal.Actions>
     </Modal>
     :
-    <Button 
-          style={{
-              width: '20%',
-              position: 'absolute',
-              top: '19px',
-              right: '22px',
-            }}
-              color='red'
-          >
-          Not connected
-    </Button>
+    <div>
+      <Button 
+            style={{
+                right: '22px',
+              }}
+                color='red'
+            >
+            Not connected
+      </Button>
+    </div>
   );
 }
 

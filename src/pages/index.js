@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, Grid, Card, Message } from 'semantic-ui-react'
+import { Checkbox, Grid, Card, Message, Segment } from 'semantic-ui-react';
 import { LoadingCardGroup } from '../components/CommonComponents';
 import { AirdropList } from '../components/HomeElements';
 
@@ -26,11 +26,7 @@ const Home = ({ isConnected, network, accounts }) => {
       <Grid.Row centered>
         <Grid columns='equal'>
           <Grid.Column >
-            <Checkbox toggle label='Placeholder'/>
-          </Grid.Column>
-          
-          <Grid.Column >
-            <Checkbox toggle label='Placeholder'/>
+            <Checkbox toggle label='Show expired'/>
           </Grid.Column>
           
           <Grid.Column >
@@ -55,6 +51,7 @@ const Home = ({ isConnected, network, accounts }) => {
           />
           :
           <Grid.Column >
+            <Segment style={{width:'96%'}}>
             <Message negative style={{textAlign: 'center'}}>
               <Message.Header >
                 Not Connected
@@ -62,8 +59,8 @@ const Home = ({ isConnected, network, accounts }) => {
               <p>Please connect your wallet</p>
             </Message>
             <LoadingCardGroup />
+            </Segment>
           </Grid.Column>
-
         }
 
       </Grid.Row>
