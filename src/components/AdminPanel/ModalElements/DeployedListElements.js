@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
+import { deployAirdropCampaign, getCampaignInfo, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
 import { 
@@ -33,14 +33,12 @@ export const ManageAssetsPopup = ({
   const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [isValidAmount, setIsValidAmount] = useState(false);
-  const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   const handleAmountChange = (num) => {
     setAmount(num);
     setIsValidAmount(!isNaN(num) && num > 0);
-    setHasEnoughTokens(false);
   }
 
   const handleSendClick = () => {
@@ -294,7 +292,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [balanceChecked, setBalanceChecked] = useState(false)
   const [tokenSymbol, setTokenSymbol] = useState('');
 
-  let sleep = ms => new Promise(r => setTimeout(r, ms));
+  //let sleep = ms => new Promise(r => setTimeout(r, ms));
 
   const cleanAddress = (_address) => {
     let firstHalf = _address.substr(0, 4);
@@ -316,8 +314,9 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   }
 
   if (open && !campaignDataChecked) {
-    fetchCampaignData(instanceAddress)
+    getCampaignInfo(network, instanceAddress)
     .then((value) => {
+      console.log(value)
       setCampaignData(value);
       setCampaignDataChecked(true);
     })
@@ -465,10 +464,10 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           onOpen={() => setPopUpOpen(true)}
           trigger={ 
           <Button 
-          disabled={campaignData.length === 0} 
-          color={(campaignData.length === 0)?'grey':'yellow'} 
+          disabled={tokenBalance === 0 && etherBalance === 0} 
+          color={(tokenBalance === 0 && etherBalance === 0)?'grey':'yellow'} 
           floated='left'>
-            {(campaignData.length === 0)?'No active campaigns':'Manage assets'}
+            {(tokenBalance === 0 && etherBalance === 0)?'No assets to manage':'Manage assets'}
           </Button> 
           }
           content={ <ManageAssetsPopup

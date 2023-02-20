@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Grid, Card, Segment, Header } from 'semantic-ui-react';
-import { getInstanceInformationByOwner, getInstanceInfoByOwner } from '../interactions/airmanSystem';
+import { getInstanceInfoByOwner } from '../interactions/airmanSystem';
 import { LoadingCardGroup, NotConnectedMessage } from '../components/CommonComponents';
 import AdminPanelModal from '../components/AdminPanel/DeployAirmanModal';
 import { DeployedAirManList } from '../components/AdminPanel/DeployedAirManList';

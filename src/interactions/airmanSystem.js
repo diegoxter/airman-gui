@@ -31,12 +31,6 @@ export const fetchEtherBalance = async (_instanceAddress) => {
   return balance;
 }
 
-export const fetchCampaignData = async (_instanceAddress) => {
-  const data = await getCampaignInformation(_instanceAddress);
-
-  return data;
-}
-
 export const getDeployedAirmanListInformation = async (_network) => {
   const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
   const deployedAirManAmount = await adminPanelInstance.instanceIDs();
@@ -170,42 +164,26 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
     return airManListDataRaw
 }
 
-export const getCampaignInfo = async (_instanceAddress) => {
-}
-
-
-// Deprecated
-export const getInstanceInformationByOwner = async (_address, _network) => {
-  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
-  let instancesData = await getDeployedAirManByOwnerList(_address, _network);
-  const instances = [];
-
-  try {
-    await Promise.all(instancesData.map(async (instanceData, index) => {
-      let temp = await adminPanelInstance.deployedManagers(instanceData);
-      instances[index] = temp;
-    }));
-  } catch (e) {
-    console.log('Failure while getting instance information')
-  }
-
-
-  return instances;
-}
-
-export const getCampaignInformation = async (_instanceAddress) => {
+export const getCampaignInfo = async (_network, _instanceAddress) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
   let airdropsIds = await airManInstance.showDeployedCampaigns();
-  const airdrops = [];
+  const calls = [];
 
-  const getData = async () => {
-    for (let i = 0; i < airdropsIds; i++) {
-      let temp = await airManInstance.campaigns(i);
-      airdrops[i] = temp;
-    }
+  for (let i = 0; i < airdropsIds; i++) {
+    const getAirDropList = {
+      abi: airdropManagerAbi,
+      address: _instanceAddress,
+      name: 'campaigns',
+      params: [i],
+    };
+
+    calls[i] = getAirDropList;
   }
-  
-  await getData();
 
-  return airdrops;
+  const airdropInfoDataRaw = await multicall(
+    airdropManagerAbi,
+    calls,
+    _network)
+
+    return airdropInfoDataRaw
 }
