@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, Segment, Message, Header } from 'semantic-ui-react';
+import { Grid, Card, Segment, Header } from 'semantic-ui-react';
 import { getInstanceInformationByOwner } from '../interactions/airmanSystem';
-import { LoadingCardGroup } from '../components/CommonComponents';
+import { LoadingCardGroup, NotConnectedMessage } from '../components/CommonComponents';
 import AdminPanelModal from '../components/AdminPanel/DeployAirmanModal';
 import { DeployedAirManList } from '../components/AdminPanel/DeployedAirManList';
 
@@ -71,12 +71,7 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
       :
       <Grid.Column >
         <Segment style={{width:'96%'}}>
-          <Message negative style={{textAlign: 'center'}}>
-            <Message.Header >
-              Not Connected
-            </Message.Header>
-            <p>Please connect your wallet</p>
-          </Message>
+          <NotConnectedMessage />
           <LoadingCardGroup />
         </Segment>
       </Grid.Column>

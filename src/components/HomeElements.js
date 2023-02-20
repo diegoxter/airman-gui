@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, Button, Accordion, Segment, Modal, Image, Header, Message, Icon } from 'semantic-ui-react';
+import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
 import { getAirdropCampaignData, joinAirdrop, getWhitelistFee, isCampaignActive } from '../interactions/airdropSystem';
-import { LoadingCardGroup, FetchingData } from './CommonComponents';
+import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from './CommonComponents';
 
 export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, participantData }) => {
   const [open, setOpen] = useState(false)
@@ -216,14 +216,9 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
   if (campaignDataChecked === false) {
     return(
       <Segment style={{width:'96%'}}>
-          <Message icon>
-            <Icon name='circle notched' loading />
-            <Message.Content style={{textAlign: 'center'}}>
-              <Message.Header>Just one second</Message.Header>
-              Fetching blockchain content.
-            </Message.Content>
-          </Message>
-        <LoadingCardGroup />   
+        <FetchingDataMessage />
+        <LoadingCardGroup />  
+
       </Segment>   
     );
   } else {
@@ -233,7 +228,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
         (campaignData.length === 0)
         ?
         <div>
-          <FetchingData />
+          <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
           <LoadingCardGroup />
         </div> 
         :

@@ -70,7 +70,7 @@ export const DeployButton = ({
   )
 
   if (isValidContract && amountInputValue !== '') {
-    if (Number(amountInputValue) === 0  || contractInputValue === '') {
+    if (Number(amountInputValue) === 0 || contractInputValue === '') {
       return (
         <Button
           content="Invalid token amount"

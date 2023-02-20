@@ -1,5 +1,5 @@
-import { Card, Image, Segment, Message, Icon } from 'semantic-ui-react';
-import { LoadingCardGroup, FetchingData } from '../CommonComponents';
+import { Card, Image, Segment, Divider } from 'semantic-ui-react';
+import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from '../CommonComponents';
 import { DeployedAirdropModal } from './ModalElements/DeployedListElements';
 
 
@@ -37,12 +37,12 @@ export const DeployedAirManList = ({
               <Card.Content extra>
                 <div className='button'>
                   <DeployedAirdropModal 
-                  accounts={ accounts }
-                  network={ network }
-                  instanceNumer={ Number(instance.id) }
-                  instanceAddress={ instance.instanceAddress } 
-                  instanceToken= { instance.instanceToken }
-                  />
+                    accounts={ accounts }
+                    network={ network }
+                    instanceNumer={ Number(instance.id) }
+                    instanceAddress={ instance.instanceAddress } 
+                    instanceToken= { instance.instanceToken }
+                    />
                 </div>
               </Card.Content>
             </Card>        
@@ -52,14 +52,9 @@ export const DeployedAirManList = ({
     } else {
       return( 
         <Segment style={{width:'100%'}}>
-          <Message warning icon style={{textAlign: 'center'}}>
-            <Icon name='exclamation'/>
-            <Message.Content>
-              <Message.Header>No airdrop managers found!</Message.Header>
-              <p>How about deploying one today? ;)</p>
-            </Message.Content>
-          </Message>
 
+          <NoElementsFoundMessage whatIsBeingLookedFor='Airdrop Managers'/>
+          <Divider hidden/>
           <LoadingCardGroup /> 
 
         </Segment>
@@ -68,7 +63,7 @@ export const DeployedAirManList = ({
   } else {
     return ( 
       <Segment style={{width:'96%'}}>
-        <FetchingData />
+        <FetchingDataMessage />
         <LoadingCardGroup />  
       </Segment> 
     )

@@ -1,4 +1,3 @@
-
 import { 
     Grid, 
     Placeholder, 
@@ -8,6 +7,7 @@ import {
 } from 'semantic-ui-react';
 
 export const LoadingCardGroup = () => {
+
     return (
       <Grid columns={3} stackable>
         <Grid.Column>
@@ -58,7 +58,7 @@ export const LoadingCardGroup = () => {
     );
   }
 
-export const FetchingData = () => {
+export const FetchingDataMessage = () => {
 
   return(
     <div>
@@ -71,6 +71,35 @@ export const FetchingData = () => {
       </Message>
 
       <LoadingCardGroup />  
+    </div>
+  )
+}
+
+export const NotConnectedMessage = () => {
+
+  return (
+    <div>
+      <Message negative style={{textAlign: 'center'}}>
+        <Message.Header >
+          Not Connected
+        </Message.Header>
+        <p>Please connect your wallet</p>
+      </Message>
+    </div>
+  )
+}
+
+export const NoElementsFoundMessage = ({whatIsBeingLookedFor}) => {
+
+  return(
+    <div>
+      <Message warning icon style={{textAlign: 'center'}}>
+        <Icon name='exclamation'/>
+        <Message.Content>
+          <Message.Header>No {whatIsBeingLookedFor} found!</Message.Header>
+          <p>How about deploying one today? ;)</p>
+        </Message.Content>
+      </Message>
     </div>
   )
 }

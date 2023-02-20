@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../../interactions/erc20';
-import { LoadingCardGroup } from '../../CommonComponents';
+import { LoadingCardGroup, NoElementsFoundMessage } from '../../CommonComponents';
 import { 
     Card, 
     Button, 
@@ -405,7 +405,12 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       <Modal.Content scrolling>
         { (campaignData.length === 0)
         ?
-        <LoadingCardGroup />
+        <Segment style={{width:'96%'}}>
+          <NoElementsFoundMessage whatIsBeingLookedFor='Airdrop Campaigns'/>
+          <Divider hidden/>
+          <LoadingCardGroup />
+        </Segment>
+
         :
         <Card.Group> 
         {campaignData.map((campaignInfo) => (
