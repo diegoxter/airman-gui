@@ -9,7 +9,7 @@ export function isSupportedNetwork(chainId) {
 };
 
 
-export const getAdmPanAddress = async (_network) => {
+export const getAdmPanAddress = (_network) => {
   let adminPanelContract = '';
 
   switch (_network) {
@@ -38,7 +38,7 @@ export const getAdmPanAddress = async (_network) => {
 
   return adminPanelContract;
 };
-/*
+
 export const getMulticallAddress = (_network) => {
   let multicallContract = '';
 
@@ -66,7 +66,7 @@ export const getMulticallAddress = (_network) => {
 
   return multicallContract;
 };
-*/
+
 export const convertToHex = (integer) => {
   let str = Number(integer).toString(16);
 

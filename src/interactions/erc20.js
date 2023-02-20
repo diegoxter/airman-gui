@@ -26,7 +26,7 @@ export const checkTokenSymbol = async (_tokenAddress, _symbolCheck, _setSymbolCh
 }
 
 export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress, _network) => {
-console.log(_targetAddress)
+
   const getSymbol = {
     abi: erc20ABI,
     address: _tokenContractAddress,
@@ -59,7 +59,7 @@ console.log(_targetAddress)
     const allowance = tokenInfoDataRaw[1]
     const balance = tokenInfoDataRaw[2]
 
-    console.log(symbol, allowance, balance)
+    return {symbol, allowance, balance}
 }
 
 export const getTokenSymbol = async (_address) => {

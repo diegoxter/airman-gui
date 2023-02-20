@@ -43,6 +43,7 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
     setContract('');
     setAmount('');
     setName('');
+    setTokenAmount('');
     setTokenSymbol('');
   }
 
@@ -89,20 +90,20 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
 
                   <TokenContractInput 
                     accounts={ accounts }
-                    isValidContract={ isValidContract } 
+                    network={ network }
                     setIsValidContract= { setIsValidContract }
                     contract={ contract }
                     setContract={ setContract }
                     contractInputValue={ contractInputValue }
                     symbolCheck={ symbolCheck }
-                    tokenSymbol={ tokenSymbol }
+                    setAllowance= { setAllowance }
                     setTokenSymbol={ setTokenSymbol }
                     setSymbolCheck={ setSymbolCheck }
                     setTokenAmount={ setTokenAmount }
                   />
                 
                   <Form.Input
-                    label={'Tokens held: '+ tokenAmount}
+                    label={`Tokens held: ${tokenAmount} ${tokenSymbol}`}
                     placeholder='Amount for AirMan to manage'
                     value={amount}
                     onChange={(e) => handleAmountChange(e.target.value)} 

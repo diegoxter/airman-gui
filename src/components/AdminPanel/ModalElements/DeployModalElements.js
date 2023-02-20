@@ -1,9 +1,6 @@
 import {
-  checkBalance,
-  checkAllowance,
-  checkTokenSymbol,
   approveTokens,
-  getTokenSymbol, 
+  getTokenInfo
 } from '../../../interactions/erc20';
 import { getAdmPanAddress } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
@@ -24,7 +21,7 @@ export const DeployButton = ({
   handleCancelClick
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleLetsDoItClick = () => {
     setIsLoading(true);
 
@@ -50,16 +47,6 @@ export const DeployButton = ({
           console.log('Not approved')
         }
     })
-  }
-
-  if (contractInputValue.length === 42 && isValidContract && isValidAmount) {
-    if (typeof accounts === 'string' && allowance === '') {
-      getAdmPanAddress(network)
-      .then((value) => {
-       checkAllowance(accounts, contractInputValue, value)
-          .then((value) => setAllowance(value))
-        })
-    }
   }
 
   const diabledButton = (
@@ -120,54 +107,46 @@ export const DeployButton = ({
 
 export const TokenContractInput = ({
   accounts,
-  isValidContract,
+  network,
   setIsValidContract,
   contractInputValue,
   contract,
   setContract,
-  tokenSymbol,
+  setAllowance,
   setTokenSymbol,
   symbolCheck, 
   setSymbolCheck,
   setTokenAmount
 }) => {
 
-  const tokensHeld = async () => {
-    if (contractInputValue === '') {
-      return '';
-    } else if (isValidContract) {
-      return checkBalance(accounts, contractInputValue)
-      .then((value) => { 
-        let total = value;
-        return ` ${total} ${tokenSymbol}` ;
-      })
-    } else if (!isValidContract) {
-      return ' Invalid token';
-    }
-  }
-
-  if (tokenSymbol === '' && symbolCheck) {
-    getTokenSymbol(contractInputValue)
-    .then((value) => {
-      setTokenSymbol(value);
-    })
-  }
-
   const handleContractChange = ( num ) => {
     setContract(num);
     setSymbolCheck(false);
+    setTokenSymbol('')
+    setAllowance('')
     setIsValidContract(false);
     setTokenAmount('');
   }
 
-  if (isValidContract) {
-    tokensHeld()
-    .then((value) => {setTokenAmount(value)});
-  }
-
-
   if (contractInputValue.length === 42 && !symbolCheck) {
-    checkTokenSymbol(contractInputValue, symbolCheck, setSymbolCheck, setIsValidContract);
+    let admPanelAddress = getAdmPanAddress(network)
+
+    getTokenInfo(accounts, contractInputValue, admPanelAddress, network)
+    .then((value) => {
+    if (typeof value === 'object' && value.symbol !== '' || typeof value.symbol !== 'undefined') {
+      setIsValidContract(true)
+      setTokenSymbol(value.symbol[0])
+      setSymbolCheck(true)
+      setTokenAmount(Number(value.balance))
+      setAllowance(Number(value.allowance))
+    } else {
+      setIsValidContract(false)
+      setSymbolCheck(true)
+      setTokenAmount('')
+      setTokenSymbol('')
+      setAllowance('')
+    }
+    })
   }
 
   return (
