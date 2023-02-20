@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { waitForConfirmation } from ".";
+import { multicall } from "./multicall";
 
 import erc20ABI from '../assets/abis/ERC20.json';
 
@@ -22,6 +23,43 @@ export const checkTokenSymbol = async (_tokenAddress, _symbolCheck, _setSymbolCh
   }
 
   return symbol !== '';
+}
+
+export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress, _network) => {
+console.log(_targetAddress)
+  const getSymbol = {
+    abi: erc20ABI,
+    address: _tokenContractAddress,
+    name: 'symbol',
+    params: [],
+  };
+  const getAllowance = {
+    abi: erc20ABI,
+    address: _tokenContractAddress,
+    name: 'allowance',
+    params: [_owner, _targetAddress],
+  };
+  const getBalance = {
+    abi: erc20ABI,
+    address: _tokenContractAddress,
+    name: 'balanceOf',
+    params: [_owner],
+  };
+
+  const tokenInfoDataRaw = await multicall(
+    erc20ABI,
+    [
+      getSymbol, 
+      getAllowance, 
+      getBalance, 
+    ],
+    _network)
+
+    const symbol = tokenInfoDataRaw[0]
+    const allowance = tokenInfoDataRaw[1]
+    const balance = tokenInfoDataRaw[2]
+
+    console.log(symbol, allowance, balance)
 }
 
 export const getTokenSymbol = async (_address) => {

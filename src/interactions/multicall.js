@@ -6,51 +6,25 @@ import multicallAbi from './../assets/abis/MulticallV2.json'
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
-/*
-const multicall = async (abi, calls, chainId) => {
+
+export const multicall = async (abi, calls, chainId) => {
     const multi = new ethers.Contract(await getMulticallAddress(chainId), multicallAbi, provider)
     const itf = new ethers.utils.Interface(abi);
-    const calldata = []
-    const callNames = []
 
-    for (const call of calls) {
-        callNames.push(call[0].name)
-    }
-
-    try {
-        Promise.all(calls.map(async (call) => {
-    //console.log(call)
-
-        for (const element of call) {
-            calldata.push({
-                target: element.address.toLowerCase(),
-                callData: itf.encodeFunctionData(element.name, element.params)
-            })
-        }
-        }));
-    } catch (e) {
-        console.log('Error while getting the calldata information')
-    }
+    const calldata = calls.map((call) => (
+      //console.log(call),
+      {
+      target: call.address.toLowerCase(),
+      callData: itf.encodeFunctionData(call.name, call.params)
+    }));
 
     const { returnData } = await multi.callStatic.aggregate(calldata);
-    console.log(returnData)
-
-    let g = 0
-    const res = returnData.map((call, i) => {
-        // itf.decodeFunctionResult(calls[i].name, call)
-        if (g<callNames.length) {
-            //console.log(g)
-
-            g++
-        }}
-    );
-
-    //return res;
+    const res = returnData.map((call, i) => itf.decodeFunctionResult(calls[i].name, call));
+    return res;
 };
   
-
+/*
 export const fetchAirdropCampaignData = async (_network, _airdropList, _airdropCampaignAbi) => {
-    //const multicallInstance = new ethers.Contract(await getMulticallAddress(_network), multicallAbi, provider);
 
     const tokenAddressCalls = _airdropList.map((airdropCampaignAddress) => ({
       abi: _airdropCampaignAbi,
