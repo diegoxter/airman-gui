@@ -316,7 +316,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   if (open && !campaignDataChecked) {
     getCampaignInfo(network, instanceAddress)
     .then((value) => {
-      console.log(value)
       setCampaignData(value);
       setCampaignDataChecked(true);
     })
