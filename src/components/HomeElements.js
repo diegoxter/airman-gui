@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react'
+import { Card, Button, Accordion, Segment, Modal, Image, Header, Message, Icon } from 'semantic-ui-react'
 import { getAirdropCampaignData, joinAirdrop, getWhitelistFee, isCampaignActive } from '../interactions/airdropSystem';
-import { LoadingCardGroup } from './AdminPanel/ModalElements/DeployedListElements'
+import { LoadingCardGroup } from './CommonComponents';
 
 export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, participantData }) => {
   const [open, setOpen] = useState(false)
@@ -212,15 +212,40 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
     })
   }
 
-  return(
-    <Segment loading={!isConnected}
-      style={{width:'96%'}}>
-      { (campaignData.length === 0)
-      ?
-        <LoadingCardGroup />      
-      :
-        <Card.Group itemsPerRow={2}>
+  if (campaignDataChecked === false) {
+    return(
+      <Segment style={{width:'96%'}}>
+          <Message icon>
+            <Icon name='circle notched' loading />
+            <Message.Content style={{textAlign: 'center'}}>
+              <Message.Header>Just one second</Message.Header>
+              We are fetching that content for you.
+            </Message.Content>
+          </Message>
+        <LoadingCardGroup />   
+      </Segment>   
+    )
+  } else {
+    return(
+      <Segment style={{width:'96%'}}>
+        { 
+        (campaignData.length === 0)
+        ?
+        <div>
+          <Message warning icon style={{textAlign: 'center'}}>
+            <Icon name='exclamation'/>
+            <Message.Content>
 
+            <Message.Header>No active campaigns!</Message.Header>
+            <p>Maybe you can create your own? ;)</p>
+            </Message.Content>
+
+          </Message>
+          <LoadingCardGroup />
+        </div> 
+        :
+        <Card.Group itemsPerRow={2}>
+  
         {campaignData.map((campaignInfo, index) => (
           <AirdropCampaignCard 
           key={ campaignInfo.campaignAddress }
@@ -228,7 +253,10 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
           campaignInfo={ campaignInfo }
           participantData={ participantData[index] } />
         ))}
-        </Card.Group> }
-    </Segment>
-  )
-}
+        </Card.Group>
+        }
+      </Segment>
+    )
+  }
+  }
+

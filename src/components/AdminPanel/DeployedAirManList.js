@@ -1,14 +1,13 @@
 import { Card, Image } from 'semantic-ui-react';
-import { DeployedAirdropModal, LoadingCardGroup } from './ModalElements/DeployedListElements'
+import { LoadingCardGroup } from '../CommonComponents';
+import { DeployedAirdropModal } from './ModalElements/DeployedListElements'
 
 
 export const DeployedAirManList = ({ 
   network, 
   accounts, 
-  isConnected, 
   instances, 
   checkedInstances, 
-  setCheckedInstances 
 }) => {
   const cleanAddress = (_address) => {
     let firstHalf = _address.substr(0, 3);

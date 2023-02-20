@@ -3,11 +3,11 @@ import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../../interactions/erc20';
+import { LoadingCardGroup } from '../../CommonComponents';
 import { 
     Card, 
     Button, 
     Grid, 
-    Placeholder, 
     Segment,
     Modal,
     Header,
@@ -19,61 +19,8 @@ import {
     Accordion
 } from 'semantic-ui-react';
 
-export const LoadingCardGroup = () => {
-  return (
-    <Grid columns={3} stackable>
-      <Grid.Column>
-        <Segment raised>
-          <Placeholder>
-            <Placeholder.Header image>
-              <Placeholder.Line />
-              <Placeholder.Line />
-            </Placeholder.Header>
-            <Placeholder.Paragraph>
-              <Placeholder.Line length='medium' />
-              <Placeholder.Line length='short' />
-            </Placeholder.Paragraph>
-          </Placeholder>
-        </Segment>
-      </Grid.Column>
-  
-      <Grid.Column>
-        <Segment raised>
-          <Placeholder>
-            <Placeholder.Header image>
-              <Placeholder.Line />
-              <Placeholder.Line />
-            </Placeholder.Header>
-            <Placeholder.Paragraph>
-              <Placeholder.Line length='medium' />
-              <Placeholder.Line length='short' />
-            </Placeholder.Paragraph>
-          </Placeholder>
-        </Segment>
-      </Grid.Column>
-  
-      <Grid.Column>
-        <Segment raised>
-          <Placeholder>
-            <Placeholder.Header image>
-              <Placeholder.Line />
-              <Placeholder.Line />
-            </Placeholder.Header>
-            <Placeholder.Paragraph>
-              <Placeholder.Line length='medium' />
-              <Placeholder.Line length='short' />
-            </Placeholder.Paragraph>
-          </Placeholder>
-        </Segment>
-      </Grid.Column>
-    </Grid>
-  );
-}
-
-
 export const ManageAssetsPopup = ({
   setPopUpOpen,
-  network,
   accounts,
   instanceAddress,
   instanceToken,
