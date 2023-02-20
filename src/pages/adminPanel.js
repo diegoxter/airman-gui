@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Card, Segment, Header } from 'semantic-ui-react';
-import { getInstanceInformationByOwner } from '../interactions/airmanSystem';
+import { getInstanceInformationByOwner, getInstanceInfoByOwner } from '../interactions/airmanSystem';
 import { LoadingCardGroup, NotConnectedMessage } from '../components/CommonComponents';
 import AdminPanelModal from '../components/AdminPanel/DeployAirmanModal';
 import { DeployedAirManList } from '../components/AdminPanel/DeployedAirManList';
@@ -10,22 +10,13 @@ const AdminPanel = ({ network, accounts, isConnected }) => {
   const [instances, setInstances] = useState('');
   const [checkedInstances, setCheckedInstances] = useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
-      const data = await getInstanceInformationByOwner(accounts, network);
-
-      return data;
-    }
-
-    if (isConnected && accounts !== '' && network !== '') ( 
-      fetchData()
-      .then((value) => {
-        setInstances(value);
-        return true;
-      })
-      .then((result) => setCheckedInstances(result))
-  )
-  }, [accounts, checkedInstances, isConnected, network]);
+  if (network !== '' && accounts !== '' && checkedInstances === false) {
+    getInstanceInfoByOwner(network, accounts)
+    .then((value) => {
+      setInstances(value);
+      setCheckedInstances(true);
+    })
+  }
 
   // TO DO this Grid needs to be drawn better
   return (

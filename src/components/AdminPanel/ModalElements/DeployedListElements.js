@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, fetchCampaignData, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
-import { checkBalance, getTokenSymbol, checkIfHasEnoughTokens, sendTokens } from '../../../interactions/erc20';
-import { LoadingCardGroup, NoElementsFoundMessage } from '../../CommonComponents';
+import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
+import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
 import { 
     Card, 
     Button, 
@@ -25,10 +25,12 @@ export const ManageAssetsPopup = ({
   instanceAddress,
   instanceToken,
   setIsLoading,
+  userTokenBalance,
   tokenBalance,
+  etherBalance,
+  setEtherBalance,
   setBalanceChecked }) => {
   const [amount, setAmount] = useState('');
-  const [etherBalance, setEtherBalance] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [isValidAmount, setIsValidAmount] = useState(false);
   const [hasEnoughTokens, setHasEnoughTokens] = useState(false);
@@ -73,18 +75,6 @@ export const ManageAssetsPopup = ({
     })    
   }
 
-  if (etherBalance === '') {
-    fetchEtherBalance(instanceAddress)
-    .then((value) => {
-      setEtherBalance(Number(value['_hex']))
-    })
-  }
-
-  if (isValidAmount && amountInputValue > 0 && amountInputValue !== '') {
-    if (typeof accounts === 'string') {
-      checkIfHasEnoughTokens(accounts, instanceToken, amountInputValue, setHasEnoughTokens);
-    }
-  }
 
   return (
     <Grid divided='vertically'>
@@ -93,7 +83,7 @@ export const ManageAssetsPopup = ({
           <h4>Refill tokens</h4>
           <Input fluid placeholder='Amount to send...' onChange={(e) => handleAmountChange(e.target.value)}/>
           <Divider hidden />
-          {(Number(amountInputValue) === 0 || !hasEnoughTokens || !isValidAmount)
+          {(Number(amountInputValue) === 0 || userTokenBalance < Number(amountInputValue) || !isValidAmount)
           ?
           <Button fluid size='tiny' content="Invalid token amount" disabled />
           :
@@ -298,6 +288,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [campaignData, setCampaignData] = useState([]);
   const [campaignDataChecked, setCampaignDataChecked] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
+  const [userTokenBalance, setUserTokenBalance] = useState('')
+  const [etherBalance, setEtherBalance] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
   const [balanceChecked, setBalanceChecked] = useState(false)
   const [tokenSymbol, setTokenSymbol] = useState('');
@@ -311,36 +303,36 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     return firstHalf+'...'+secondHalf;
   }
 
-  // 0x6B76e20c5b7E0570B111618F65c0Ab2224c1C7B7
+  if (etherBalance === '') {
+    fetchEtherBalance(instanceAddress)
+    .then((value) => {
+      setEtherBalance(Number(value['_hex']))
+    })
+  }
+
+  if (userTokenBalance === '') {
+    checkBalance(accounts, instanceToken)
+    .then((value) => {setUserTokenBalance(value)})
+  }
+
   if (open && !campaignDataChecked) {
     fetchCampaignData(instanceAddress)
     .then((value) => {
       setCampaignData(value);
       setCampaignDataChecked(true);
     })
-  }
-
-  if (open && !balanceChecked) {
-    sleep(2500)
-    .then(() => {
-      checkBalance(instanceAddress, instanceToken)
+    if (tokenBalance === '' || tokenSymbol === '') {
+      getTokenInfo(instanceAddress, instanceToken, instanceAddress, network)
       .then((value) => {
-        setTokenBalance(value);
-        setBalanceChecked(true);
+        setTokenBalance(Number(value.balance));
+        setTokenSymbol(value.symbol[0]);
       })
-    })
-  }
-
-  if (tokenSymbol === '') {
-    getTokenSymbol(instanceToken)
-    .then((value) => {
-      setTokenSymbol(value);
-    })
+    }
   }
 
   const handleClose = () => {
     setTokenBalance('');
-    setBalanceChecked(false);
+    setUserTokenBalance('');
     setTokenSymbol('');
     setOpen(false);
     setCampaignDataChecked(false);
@@ -373,8 +365,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     },
   ];
 
-  //console.log(campaignData)
-
   const isCampaignActive = (campaignInfo) => {
     return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
   }
@@ -403,58 +393,65 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       </Modal.Header>
 
       <Modal.Content scrolling>
-        { (campaignData.length === 0)
-        ?
+        { (!campaignDataChecked)
+        ? //           
         <Segment style={{width:'96%'}}>
-          <NoElementsFoundMessage whatIsBeingLookedFor='Airdrop Campaigns'/>
+          <FetchingDataMessage />
           <Divider hidden/>
           <LoadingCardGroup />
         </Segment>
-
         :
         <Card.Group> 
-        {campaignData.map((campaignInfo) => (
-          <Card key={Number(campaignInfo.campaignID['_hex'])}>
-            <Card.Content>
+        {(campaignData.length === 0)
+        ?
+          <Segment style={{width:'96%'}}>
+            <NoElementsFoundMessage whatIsBeingLookedFor='Airdrop Campaigns'/>
+              <Divider hidden/>
+            <LoadingCardGroup />
+          </Segment>
+        :
+          campaignData.map((campaignInfo) => (
+            <Card key={Number(campaignInfo.campaignID['_hex'])}>
+              <Card.Content>
 
-            <Card.Header>
+              <Card.Header>
+                {
+                  (isCampaignActive(campaignInfo))
+                  ?
+                  `Campaign #${Number(campaignInfo.campaignID['_hex'])}`
+                  :
+                  <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
+                }
+              </Card.Header>
+
+              <Card.Meta>{`Amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
+              <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
+
+              <Card.Description>
               {
-                (isCampaignActive(campaignInfo))
-                ?
-                `Campaign #${Number(campaignInfo.campaignID['_hex'])}`
-                :
-                <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
+                  (isCampaignActive(campaignInfo))
+                  ?
+                  `End date: ${getHumanDate(Number(campaignInfo.endDate['_hex']))}`
+                  :
+                  `End date: Expired`
               }
-            </Card.Header>
+              </Card.Description>
+              </Card.Content>
 
-            <Card.Meta>{`Amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
-            <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
+              <Card.Content extra>
+                <div className='ui two buttons'>
+                  <Button basic color='green'>
+                    Approve
+                  </Button>
+                  <Button basic color='red'>
+                    Decline
+                  </Button>
+                </div>
+                <Accordion panels={panels}/>
 
-            <Card.Description>
-            {
-                (isCampaignActive(campaignInfo))
-                ?
-                `End date: ${getHumanDate(Number(campaignInfo.endDate['_hex']))}`
-                :
-                `End date: Expired`
-            }
-            </Card.Description>
-            </Card.Content>
-
-            <Card.Content extra>
-              <div className='ui two buttons'>
-                <Button basic color='green'>
-                  Approve
-                </Button>
-                <Button basic color='red'>
-                  Decline
-                </Button>
-              </div>
-              <Accordion panels={panels}/>
-
-            </Card.Content>
-          </Card>
-        ))}
+              </Card.Content>
+            </Card>
+          ))}
 
       </Card.Group>
         }
@@ -482,6 +479,9 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             instanceToken={ instanceToken }
             isLoading={ isLoading }
             setIsLoading={ setIsLoading }
+            etherBalance={ etherBalance }
+            setEtherBalance={ setEtherBalance }
+            userTokenBalance={ userTokenBalance }
             tokenBalance= { tokenBalance }
             setBalanceChecked={ setBalanceChecked } /> }
           on='click'

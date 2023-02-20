@@ -1,7 +1,4 @@
-import {
-  approveTokens,
-  getTokenInfo
-} from '../../../interactions/erc20';
+import { approveTokens, getTokenInfo } from '../../../interactions/erc20';
 import { getAdmPanAddress } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';

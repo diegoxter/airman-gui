@@ -70,11 +70,16 @@ export const sendTokens = async (_account, _tokenContractAddress, _targetAddress
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
 
   try {
-      const tx = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
+    const tx = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
 
-      waitForConfirmation(tx.hash, provider, 5000, _setIsLoading);
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true;
   } catch (e) {
       console.log(`erro while sending tokens`);
+      return false;
   }
 }
 
@@ -84,6 +89,13 @@ export const checkIfHasEnoughTokens = async (_ownerAddress, _targetAddress, _amo
   } else {
     _setEnoughTokens(true);
   }
+}
+
+export const checkBalance = async (_targetAddress, _tokenContractAddress) => {
+  const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
+  const check = await tokenInstance.connect(signer).balanceOf(_targetAddress);
+  
+  return (Number(check));
 }
 
 
@@ -109,13 +121,6 @@ export const getTokenSymbol = async (_address) => {
   const symbol = await tokenInstance.connect(signer).symbol();
 
   return symbol;
-}
-
-export const checkBalance = async (_targetAddress, _tokenContractAddress) => {
-  const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
-  const check = await tokenInstance.connect(signer).balanceOf(_targetAddress);
-  
-  return (Number(check));
 }
 
 export const checkAllowance = async (account, _tokenContractAddress, _targetAddress) => {

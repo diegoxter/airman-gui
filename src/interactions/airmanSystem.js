@@ -1,22 +1,24 @@
 import { ethers } from "ethers";
 import { waitForConfirmation, getAdmPanAddress } from ".";
+import { multicall } from "./multicall";
 
 import adminPanelAbi from '../assets/abis/AdminPanel.json';
 import airdropManagerAbi from '../assets/abis/AirdropManager.json';
+
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
 // Getter functions
 const getFee = async (_network) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
   const fee = await adminPanelInstance.feeInGwei();
 
   return fee;
 }
 
 export const getDeployedAirManByOwnerList = async (_address, _network) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
   const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address);
 
   return list;
@@ -36,7 +38,7 @@ export const fetchCampaignData = async (_instanceAddress) => {
 }
 
 export const getDeployedAirmanListInformation = async (_network) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, provider);
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
   const deployedAirManAmount = await adminPanelInstance.instanceIDs();
   const airMansAddressess = []
   const airdropCampaignsList = []
@@ -75,7 +77,7 @@ export const getDeployedAirmanListInformation = async (_network) => {
 
 // Transaction functions
 export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _network) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, signer);
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
   const fee = await getFee(_network);
 
   try {
@@ -145,8 +147,36 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
 }
 
 // Draw functions
+export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
+  const instancesData = await getDeployedAirManByOwnerList(_ownerAddress, _network);
+  const calls = []
+
+  instancesData.map(async (instanceData, index) => {
+    const getAirmanList = {
+      abi: adminPanelAbi,
+      address: getAdmPanAddress(_network),
+      name: 'deployedManagers',
+      params: [instanceData],
+    };
+
+    calls[index] = getAirmanList;
+  })
+
+  const airManListDataRaw = await multicall(
+    adminPanelAbi,
+    calls,
+    _network)
+
+    return airManListDataRaw
+}
+
+export const getCampaignInfo = async (_instanceAddress) => {
+}
+
+
+// Deprecated
 export const getInstanceInformationByOwner = async (_address, _network) => {
-  const adminPanelInstance = new ethers.Contract((await getAdmPanAddress(_network)), adminPanelAbi, signer);
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
   let instancesData = await getDeployedAirManByOwnerList(_address, _network);
   const instances = [];
 
