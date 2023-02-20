@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, Button, Accordion, Segment, Modal, Image, Header, Message, Icon } from 'semantic-ui-react'
+import { Card, Button, Accordion, Segment, Modal, Image, Header, Message, Icon } from 'semantic-ui-react';
 import { getAirdropCampaignData, joinAirdrop, getWhitelistFee, isCampaignActive } from '../interactions/airdropSystem';
-import { LoadingCardGroup } from './CommonComponents';
+import { LoadingCardGroup, FetchingData } from './CommonComponents';
 
 export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, participantData }) => {
   const [open, setOpen] = useState(false)
@@ -11,29 +11,29 @@ export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, part
   const [checkedHasJoined, setCheckedHasJoined] = useState(false)
 
   if (fee === '' && campaignAddress !== '') {
-    getWhitelistFee(campaignAddress).then((value) => setFee(Number(value['_hex'])))
+    getWhitelistFee(campaignAddress).then((value) => setFee(Number(value['_hex'])));
   }
 
   console.log(participantData.address)
 
   if (!checkedHasJoined || hasJoined === '') {
-    setHasJoined(participantData.address === accounts)
-    setCheckedHasJoined(true)
+    setHasJoined(participantData.address === accounts);
+    setCheckedHasJoined(true);
   }
-  const test = (campaignAddress)
+  //const test = (campaignAddress)
 
   const handleJoinClick = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     joinAirdrop(test, setIsLoading)
     .then(() =>{
       new Promise(r => setTimeout(r, 2500))
       .then(()=> setCheckedHasJoined(false))
     })
-    console.log('Test join click')
+    console.log('Test join click');
   }
 
   const handleRetireClick = () => {
-    console.log('Test retire click')
+    console.log('Test retire click');
   }
 
   return (
@@ -43,7 +43,8 @@ export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, part
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger={
+      trigger=
+      {
         (hasJoined) ?
       <Button
         color={(isCampaignActive(campaignEndDate))?'green':'red'}
@@ -192,23 +193,23 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
 
       </Card.Content>
     </Card>
-  )
+  );
 }
 
 export const AirdropList = ({ network, accounts, isConnected }) => {
   const [campaignData, setCampaignData] = useState([]);
-  const [campaignDataChecked, setCampaignDataChecked] = useState(false)
+  const [campaignDataChecked, setCampaignDataChecked] = useState(false);
   const [participantData, setParticipantData] = useState([]);
-  const [participantDataChecked, setParticipantDataChecked] = useState(false)
+  const [participantDataChecked, setParticipantDataChecked] = useState(false);
 
   if (network !== '' && accounts !== '' && campaignDataChecked === false && participantDataChecked === false) {
     getAirdropCampaignData(network, accounts)
     .then((result) => {
-      setCampaignData(result[0])
-      setCampaignDataChecked(true)
+      setCampaignData(result[0]);
+      setCampaignDataChecked(true);
       //console.log(result[1])
-      setParticipantData(result[1])
-      setParticipantDataChecked(true)
+      setParticipantData(result[1]);
+      setParticipantDataChecked(true);
     })
   }
 
@@ -224,7 +225,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
           </Message>
         <LoadingCardGroup />   
       </Segment>   
-    )
+    );
   } else {
     return(
       <Segment style={{width:'96%'}}>
@@ -232,15 +233,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
         (campaignData.length === 0)
         ?
         <div>
-          <Message warning icon style={{textAlign: 'center'}}>
-            <Icon name='exclamation'/>
-            <Message.Content>
-
-            <Message.Header>No active campaigns!</Message.Header>
-            <p>Maybe you can create your own? ;)</p>
-            </Message.Content>
-
-          </Message>
+          <FetchingData />
           <LoadingCardGroup />
         </div> 
         :
@@ -256,7 +249,7 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
         </Card.Group>
         }
       </Segment>
-    )
+    );
   }
-  }
+}
 

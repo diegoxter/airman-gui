@@ -2,7 +2,9 @@
 import { 
     Grid, 
     Placeholder, 
-    Segment
+    Segment,
+    Message,
+    Icon
 } from 'semantic-ui-react';
 
 export const LoadingCardGroup = () => {
@@ -55,3 +57,20 @@ export const LoadingCardGroup = () => {
       </Grid>
     );
   }
+
+export const FetchingData = () => {
+
+  return(
+    <div>
+      <Message icon>
+        <Icon name='circle notched' loading />
+        <Message.Content style={{textAlign: 'center'}}>
+          <Message.Header>Just one second</Message.Header>
+          Fetching blockchain content.
+        </Message.Content>
+      </Message>
+
+      <LoadingCardGroup />  
+    </div>
+  )
+}

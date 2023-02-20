@@ -1,6 +1,6 @@
 import { Card, Image, Segment, Message, Icon } from 'semantic-ui-react';
-import { LoadingCardGroup } from '../CommonComponents';
-import { DeployedAirdropModal } from './ModalElements/DeployedListElements'
+import { LoadingCardGroup, FetchingData } from '../CommonComponents';
+import { DeployedAirdropModal } from './ModalElements/DeployedListElements';
 
 
 export const DeployedAirManList = ({ 
@@ -65,5 +65,12 @@ export const DeployedAirManList = ({
         </Segment>
       );
     }
+  } else {
+    return ( 
+      <Segment style={{width:'96%'}}>
+        <FetchingData />
+        <LoadingCardGroup />  
+      </Segment> 
+    )
   }
 }
