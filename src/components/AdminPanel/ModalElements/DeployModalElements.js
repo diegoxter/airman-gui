@@ -133,7 +133,7 @@ export const TokenContractInput = ({
 
     getTokenInfo(accounts, contractInputValue, admPanelAddress, network)
     .then((value) => {
-    if (typeof value === 'object' && value.symbol !== '' || typeof value.symbol !== 'undefined') {
+    if ((typeof value === 'object' && value.symbol !== '') || typeof value.symbol !== 'undefined') {
       setIsValidContract(true)
       setTokenSymbol(value.symbol[0])
       setSymbolCheck(true)

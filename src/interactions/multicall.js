@@ -5,14 +5,12 @@ import multicallAbi from './../assets/abis/MulticallV2.json'
 
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
 
 export const multicall = async (abi, calls, chainId) => {
     const multi = new ethers.Contract(getMulticallAddress(chainId), multicallAbi, provider)
     const itf = new ethers.utils.Interface(abi);
 
     const calldata = calls.map((call) => (
-      //console.log(call),
       {
       target: call.address.toLowerCase(),
       callData: itf.encodeFunctionData(call.name, call.params)
