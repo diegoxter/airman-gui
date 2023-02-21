@@ -54,17 +54,18 @@ export const CampaignModal = ({
       open={open}
       trigger=
       {
-        (hasJoined) ?
-      <Button
-        color={(isActive)?'green':'red'}
-        content={(isActive)?'Manage':'Claim'}
-      />
-      :
-      <Button
-        disabled={!isActive} 
-        color={isActive?'green':'grey'}
-        content={isActive?'Check Campaign':'Campaign Expired'}
-      />
+        (hasJoined) 
+        ?
+          <Button
+            color={(isActive)?'green':'red'}
+            content={(isActive)?'Manage':'Claim'}
+          />
+        :
+          <Button
+            disabled={!isActive} 
+            color={isActive?'green':'grey'}
+            content={isActive?'Check Campaign':'Campaign Expired'}
+          />
       }
     >
       <Modal.Header>Airdrop campaign management (Placeholder)</Modal.Header>
