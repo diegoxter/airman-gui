@@ -446,6 +446,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               </Card.Content>
 
               <Card.Content extra>
+                {(isCampaignActive(campaignInfo))
+                ?
                 <div className='ui two buttons'>
                   <Button disabled={!isCampaignActive(campaignInfo)} color='teal'>
                     Add participants
@@ -454,6 +456,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
                     Ban participants
                   </Button>
                 </div>
+                :
+                <div>
+                <Button color='teal' fluid>
+                  Withdraw leftover tokens
+                </Button>
+              </div>
+              }
+
                 <Accordion panels={panels}/>
 
               </Card.Content>

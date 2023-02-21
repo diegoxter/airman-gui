@@ -10,7 +10,7 @@ const About = () => {
         height: '100vh'
       }}
     >
-      <h1>Placeholder</h1>
+      <h1>Placeholder about</h1>
     </div>
   );
 };

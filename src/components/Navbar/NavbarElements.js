@@ -162,10 +162,14 @@ class Metamask extends Component {
     }
   }
 
+  handleChange = (e, { value }) => {
+    console.log(value);
+  }
+
   renderMetamask() {
     const connectedMenuOptions = [
+      { key: 'address', value: 'profile', icon: 'id card outline', text: this.cleanAddress(this.props.accounts) + ` Check profile` }, 
       { key: 'network', value: 'string', icon: 'server', text: this.props.network },
-      { key: 'address', value: 'string', icon: 'id card outline', text: this.cleanAddress(this.props.accounts) }, 
     ];
 
     if (this.props.isConnected === false) {
@@ -189,8 +193,9 @@ class Metamask extends Component {
           className='icon'
           floating
           labeled
+          onChange={this.handleChange}
           icon='user circle'
-          text='Profile'
+          text='Settings'
           options={connectedMenuOptions} // TO DO redraw this when the network changes
           >
           </Dropdown>
