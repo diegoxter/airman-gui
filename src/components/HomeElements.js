@@ -10,10 +10,10 @@ export const CampaignModal = ({
   campaignEndDate, 
   participantAddress 
 }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasJoined, setHasJoined] = useState('')
-  const [checkedHasJoined, setCheckedHasJoined] = useState(false)
+  const [hasJoined, setHasJoined] = useState('');
+  const [checkedHasJoined, setCheckedHasJoined] = useState(false);
   const isActive = isCampaignActive(campaignEndDate);
 
   //console.log(participantData.address)
@@ -198,7 +198,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
   );
 }
 
-export const AirdropList = ({ network, accounts, isConnected }) => {
+export const AirdropList = ({ network, accounts }) => {
   const [campaignData, setCampaignData] = useState([]);
   const [campaignDataChecked, setCampaignDataChecked] = useState(false);
   const [participantData, setParticipantData] = useState([]);
@@ -207,10 +207,8 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
   if (network !== '' && accounts !== '' && campaignDataChecked === false && participantDataChecked === false) {
    getAirdropCampaignInfo(network, accounts)
     .then((result) => {
-      //console.log(result)
       setCampaignData(result[0]);
       setCampaignDataChecked(true);
-      //console.log(result[1])
       setParticipantData(result[1]);
       setParticipantDataChecked(true);
     })

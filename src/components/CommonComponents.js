@@ -8,55 +8,55 @@ import {
 
 export const LoadingCardGroup = () => {
 
-    return (
-      <Grid columns={3} stackable>
-        <Grid.Column>
-          <Segment raised>
-            <Placeholder>
-              <Placeholder.Header image>
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder.Header>
-              <Placeholder.Paragraph>
-                <Placeholder.Line length='medium' />
-                <Placeholder.Line length='short' />
-              </Placeholder.Paragraph>
-            </Placeholder>
-          </Segment>
-        </Grid.Column>
-    
-        <Grid.Column>
-          <Segment raised>
-            <Placeholder>
-              <Placeholder.Header image>
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder.Header>
-              <Placeholder.Paragraph>
-                <Placeholder.Line length='medium' />
-                <Placeholder.Line length='short' />
-              </Placeholder.Paragraph>
-            </Placeholder>
-          </Segment>
-        </Grid.Column>
-    
-        <Grid.Column>
-          <Segment raised>
-            <Placeholder>
-              <Placeholder.Header image>
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder.Header>
-              <Placeholder.Paragraph>
-                <Placeholder.Line length='medium' />
-                <Placeholder.Line length='short' />
-              </Placeholder.Paragraph>
-            </Placeholder>
-          </Segment>
-        </Grid.Column>
-      </Grid>
-    );
-  }
+  return (
+    <Grid columns={3} stackable>
+      <Grid.Column>
+        <Segment raised>
+          <Placeholder>
+            <Placeholder.Header image>
+              <Placeholder.Line />
+              <Placeholder.Line />
+            </Placeholder.Header>
+            <Placeholder.Paragraph>
+              <Placeholder.Line length='medium' />
+              <Placeholder.Line length='short' />
+            </Placeholder.Paragraph>
+          </Placeholder>
+        </Segment>
+      </Grid.Column>
+
+      <Grid.Column>
+        <Segment raised>
+          <Placeholder>
+            <Placeholder.Header image>
+              <Placeholder.Line />
+              <Placeholder.Line />
+            </Placeholder.Header>
+            <Placeholder.Paragraph>
+              <Placeholder.Line length='medium' />
+              <Placeholder.Line length='short' />
+            </Placeholder.Paragraph>
+          </Placeholder>
+        </Segment>
+      </Grid.Column>
+
+      <Grid.Column>
+        <Segment raised>
+          <Placeholder>
+            <Placeholder.Header image>
+              <Placeholder.Line />
+              <Placeholder.Line />
+            </Placeholder.Header>
+            <Placeholder.Paragraph>
+              <Placeholder.Line length='medium' />
+              <Placeholder.Line length='short' />
+            </Placeholder.Paragraph>
+          </Placeholder>
+        </Segment>
+      </Grid.Column>
+    </Grid>
+  );
+}
 
 export const FetchingDataMessage = () => {
 
@@ -72,7 +72,7 @@ export const FetchingDataMessage = () => {
 
       <LoadingCardGroup />  
     </div>
-  )
+  );
 }
 
 export const NotConnectedMessage = () => {
@@ -86,7 +86,7 @@ export const NotConnectedMessage = () => {
         <p>Please connect your wallet</p>
       </Message>
     </div>
-  )
+  );
 }
 
 export const NoElementsFoundMessage = ({whatIsBeingLookedFor}) => {
@@ -101,5 +101,5 @@ export const NoElementsFoundMessage = ({whatIsBeingLookedFor}) => {
         </Message.Content>
       </Message>
     </div>
-  )
+  );
 }

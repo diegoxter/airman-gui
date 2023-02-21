@@ -3,7 +3,7 @@ import { waitForConfirmation } from ".";
 import { getAirdropCampaignsAddressList } from "./airmanSystem";
 import { multicall } from "./multicall";
 
-import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json'
+import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json';
 
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -18,7 +18,7 @@ export const getWhitelistFee = async (_campaignAddress) => {
 }
 
 export const getAirdropCampaignInfo = async (_network, _account) => {
-  const airdropList = await getAirdropCampaignsAddressList(_network)
+  const airdropList = await getAirdropCampaignsAddressList(_network);
   const airdropListData = [];
   const airdropParticipantData = [];
 
@@ -86,8 +86,7 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
           tokenAmountCalls,
           amountForEachUserCalls
       ],
-      _network)
-      //console.log(airdropCampaignDataRaw)
+      _network);
 
       airdropListData[index] = {
         campaignAddress: instanceAddress,
@@ -99,23 +98,23 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
         whitelistFee: Number(airdropCampaignDataRaw[5]),
         tokenAmount: Number(airdropCampaignDataRaw[6]),
         amountForEachUser: Number(airdropCampaignDataRaw[7])
-      }
+      };
 
-      const participantInfoRawData = await airdropCampaignInstance.participantInfo(_account)
+      const participantInfoRawData = await airdropCampaignInstance.participantInfo(_account);
       airdropParticipantData[index] = {
         address: participantInfoRawData['ParticipantAddress'],
         canReceive: participantInfoRawData['canReceive'],
         claimed: participantInfoRawData['claimed']
-      }
+      };
   }))
 
-  return [ airdropListData, airdropParticipantData ]
+  return [ airdropListData, airdropParticipantData ];
 }
 
 // Transaction functions
 export const joinAirdrop = async (_campaignAddress, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
-console.log(_campaignAddress)
+
   try {
     const tx = (await airdropCampaignInstance.connect(signer).addToPayableWhitelist(
       {
@@ -131,12 +130,12 @@ console.log(_campaignAddress)
     }
   } catch (error) {
     console.log(error);
-    _setIsLoading(false)
+    _setIsLoading(false);
   }
 
 }
 
 // Helper functions
 export const isCampaignActive = (_campaignInfo_claimableSince) => {
-  return (Number(_campaignInfo_claimableSince) * 1000 > Date.now())
+  return (Number(_campaignInfo_claimableSince) * 1000 > Date.now());
 }

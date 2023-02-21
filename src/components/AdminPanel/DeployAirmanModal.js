@@ -17,7 +17,7 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
   const [amountInputValue] = useDebounce(amount, 600);
   const [tokenAmount, setTokenAmount] = useState('');
   const [isValidAmount, setIsValidAmount] = useState(undefined);
-  const [allowance, setAllowance] = useState('')
+  const [allowance, setAllowance] = useState('');
 
   // Testing purposes
   const testChange = () => {
@@ -39,7 +39,7 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
     setOpen(false);
     setIsValidAmount(false);
     setSymbolCheck(false);
-    setAllowance('')
+    setAllowance('');
     setContract('');
     setAmount('');
     setName('');

@@ -66,6 +66,6 @@ export const DeployedAirManList = ({
         <FetchingDataMessage />
         <LoadingCardGroup />  
       </Segment> 
-    )
+    );
   }
 }

@@ -25,11 +25,11 @@ export const DeployButton = ({
     deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen, network)
     .then((value) => {  console.log(value)
       if (value === true) {
-        handleCancelClick()
-        setCheckedInstances(false)
+        handleCancelClick();
+        setCheckedInstances(false);
       } else {
-        console.log('Not deployed')
-        return false
+        console.log('Not deployed');
+        return false;
       }}
     )
   }
@@ -39,9 +39,9 @@ export const DeployButton = ({
     approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), Number(amountInputValue), setIsLoading)
       .then((value) => {
         if (value === true) {
-          setAllowance(Number(amountInputValue))
+          setAllowance(Number(amountInputValue));
         } else {
-          console.log('Not approved')
+          console.log('Not approved');
         }
     })
   }
@@ -119,29 +119,29 @@ export const TokenContractInput = ({
   const handleContractChange = ( num ) => {
     setContract(num);
     setSymbolCheck(false);
-    setTokenSymbol('')
-    setAllowance('')
+    setTokenSymbol('');
+    setAllowance('');
     setIsValidContract(false);
     setTokenAmount('');
   }
 
   if (contractInputValue.length === 42 && !symbolCheck) {
-    let admPanelAddress = getAdmPanAddress(network)
+    let admPanelAddress = getAdmPanAddress(network);
 
     getTokenInfo(accounts, contractInputValue, admPanelAddress, network)
     .then((value) => {
     if ((typeof value === 'object' && value.symbol !== '') || typeof value.symbol !== 'undefined') {
-      setIsValidContract(true)
-      setTokenSymbol(value.symbol[0])
-      setSymbolCheck(true)
-      setTokenAmount(Number(value.balance))
-      setAllowance(Number(value.allowance))
+      setIsValidContract(true);
+      setTokenSymbol(value.symbol[0]);
+      setSymbolCheck(true);
+      setTokenAmount(Number(value.balance));
+      setAllowance(Number(value.allowance));
     } else {
-      setIsValidContract(false)
-      setSymbolCheck(true)
-      setTokenAmount('')
-      setTokenSymbol('')
-      setAllowance('')
+      setIsValidContract(false);
+      setSymbolCheck(true);
+      setTokenAmount('');
+      setTokenSymbol('');
+      setAllowance('');
     }
     })
   }

@@ -36,11 +36,11 @@ export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress
       getAllowance, 
       getBalance, 
     ],
-    _network)
+    _network);
 
-    const [symbol, allowance, balance] = tokenInfoDataRaw
+    const [symbol, allowance, balance] = tokenInfoDataRaw;
 
-    return { symbol, allowance, balance }
+    return { symbol, allowance, balance };
 }
 
 export const approveTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
@@ -53,7 +53,7 @@ export const approveTokens = async (_account, _tokenContractAddress, _targetAddr
         sleep(2500);
       }
 
-      return true
+      return true;
   } catch (e) {
     if (e.code === 'ACTION_REJECTED') {
         console.log(`rejected transaction`);
@@ -62,7 +62,7 @@ export const approveTokens = async (_account, _tokenContractAddress, _targetAddr
       console.log(`error was ${e.code}`);
       _setIsLoading(false);
     }
-    return false
+    return false;
   }
 }
 
@@ -78,16 +78,8 @@ export const sendTokens = async (_account, _tokenContractAddress, _targetAddress
 
     return true;
   } catch (e) {
-      console.log(`erro while sending tokens`);
-      return false;
-  }
-}
-
-export const checkIfHasEnoughTokens = async (_ownerAddress, _targetAddress, _amountInputValue, _setEnoughTokens) => {
-  if (await checkBalance(_ownerAddress, _targetAddress) < Number(_amountInputValue)) {
-    _setEnoughTokens(false);
-  } else {
-    _setEnoughTokens(true);
+    console.log(`erro while sending tokens`);
+    return false;
   }
 }
 
@@ -100,22 +92,6 @@ export const checkBalance = async (_targetAddress, _tokenContractAddress) => {
 
 
 // These are deprecated
-export const checkTokenSymbol = async (_tokenAddress, _symbolCheck, _setSymbolCheck, _setIsValidContract) => {
-
-  let symbol = '';
-
-  if (!_symbolCheck) {
-      try {
-          symbol = await getTokenSymbol(_tokenAddress);
-      } catch (e) {
-          console.log('Error getting the token symbol');
-      }
-      _setIsValidContract(symbol !== '');
-      _setSymbolCheck(symbol !== '');
-  }
-  return symbol !== '';
-}
-
 export const getTokenSymbol = async (_address) => {
   const tokenInstance = new ethers.Contract(_address, erc20ABI, provider);
   const symbol = await tokenInstance.connect(signer).symbol();

@@ -27,7 +27,7 @@ export const fetchEtherBalance = async (_instanceAddress) => {
 export const getAirdropCampaignsAddressList = async (_network) => {
   const adminPanelAddress = getAdmPanAddress(_network);
   const adminPanelInstance = new ethers.Contract(adminPanelAddress, adminPanelAbi, provider);
-  const airdropCampaignsAddressList = []
+  const airdropCampaignsAddressList = [];
   const getAirManAddressessCalls = [];
 
   for (let i = 0; i < await adminPanelInstance.instanceIDs(); i++) {
@@ -41,14 +41,14 @@ export const getAirdropCampaignsAddressList = async (_network) => {
     getAirManAddressessCalls[i] = getAirManList;
   }
 
-  const airManAddresses = await multicall(adminPanelAbi, getAirManAddressessCalls, _network)
+  const airManAddresses = await multicall(adminPanelAbi, getAirManAddressessCalls, _network);
 
   await Promise.all(airManAddresses.map(async (airmanData) => {
     const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
     const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
     
     if (airManInstanceCampaignList > 0) {
-      const getAirdropListCalls = []
+      const getAirdropListCalls = [];
 
       for (let i = 0; i < airManInstanceCampaignList; i++) {
         const getAirdropList = {
@@ -61,15 +61,15 @@ export const getAirdropCampaignsAddressList = async (_network) => {
         getAirdropListCalls[i] = getAirdropList;
       }
 
-      const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network)
+      const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network);
 
       for (let i = 0; i < (Object.keys(airManDataRaw)).length; i++) {
-        airdropCampaignsAddressList[i] = airManDataRaw[i].campaignAddress
+        airdropCampaignsAddressList[i] = airManDataRaw[i].campaignAddress;
       }
     }
   }))
 
-  return airdropCampaignsAddressList
+  return airdropCampaignsAddressList;
 }
 
 // Transaction functions
@@ -97,8 +97,8 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
       return true;
   } catch (error) {
     console.log('Falla al hacer el deploy de AirMan ');
-    _setIsLoading(false)
-    return false
+    _setIsLoading(false);
+    return false;
   }
 }
 
@@ -117,7 +117,7 @@ export const deployAirdropCampaign = async (
       _amountForCampaign,
       _hasFixedAmount,
       _amountForEveryUser
-    )
+    );
 
     let sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -125,8 +125,8 @@ export const deployAirdropCampaign = async (
       sleep(2500);
     }
   } catch (error) {
-    console.log('campaign deploy failed')
-    _setIsLoading(false)
+    console.log('campaign deploy failed');
+    _setIsLoading(false);
   }
 }
 
@@ -139,7 +139,7 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
     await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading);
   } catch (error) {
     console.log('Failure to withdraw tokens');
-    _setIsLoading(false)
+    _setIsLoading(false);
   }
 }
 
@@ -148,7 +148,7 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
   const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
   const instancesData = await adminPanelInstance.connect(signer).getDeployedInstances(_ownerAddress);
 
-  const calls = []
+  const calls = [];
 
   instancesData.map(async (instanceData, index) => {
     const getAirmanList = {
@@ -161,12 +161,9 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
     calls[index] = getAirmanList;
   })
 
-  const airManListDataRaw = await multicall(
-    adminPanelAbi,
-    calls,
-    _network)
+  const airManListDataRaw = await multicall(adminPanelAbi, calls, _network);
 
-    return airManListDataRaw
+  return airManListDataRaw;
 }
 
 export const getCampaignInfo = async (_network, _instanceAddress) => {
@@ -185,10 +182,7 @@ export const getCampaignInfo = async (_network, _instanceAddress) => {
     calls[i] = getAirDropList;
   }
 
-  const airdropInfoDataRaw = await multicall(
-    airdropManagerAbi,
-    calls,
-    _network)
+  const airdropInfoDataRaw = await multicall(airdropManagerAbi,  calls,  _network);
 
-    return airdropInfoDataRaw
+  return airdropInfoDataRaw;
 }
