@@ -112,7 +112,7 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
 }
 
 // Transaction functions
-export const joinAirdrop = async (_campaignAddress, _setIsLoading) => {
+export const joinAirdrop = async (_campaignAddress, _setIsLoading, _setHasJoined) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
@@ -128,14 +128,46 @@ export const joinAirdrop = async (_campaignAddress, _setIsLoading) => {
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
+    _setHasJoined(true);
+
+    return true;
   } catch (error) {
     console.log(error);
     _setIsLoading(false);
+    return false;
   }
+}
 
+export const retireFromAirdrop = async (_campaignAddress, _setIsLoading, _setHasJoined) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).retireFromCampaign();
+  
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+  
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+    _setHasJoined(false);
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    _setIsLoading(false);
+    return false;
+  }
 }
 
 // Helper functions
 export const isCampaignActive = (_campaignInfo_claimableSince) => {
   return (Number(_campaignInfo_claimableSince) * 1000 > Date.now());
 }
+
+export const checkParticipation = async (_campaignAddress, _userAddress) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  const participantInfo = await airdropCampaignInstance.participantInfo(_userAddress);
+
+  return participantInfo[0].toLowerCase() === _userAddress;
+}
+

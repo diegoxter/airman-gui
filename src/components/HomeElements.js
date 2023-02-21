@@ -1,41 +1,48 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
-import { joinAirdrop, isCampaignActive, getAirdropCampaignInfo } from '../interactions/airdropSystem';
 import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from './CommonComponents';
+import { 
+  joinAirdrop,
+  retireFromAirdrop,
+  isCampaignActive,
+  getAirdropCampaignInfo,
+  checkParticipation
+} from '../interactions/airdropSystem';
 
 export const CampaignModal = ({ 
-  accounts, 
+  accounts,
   campaignAddress,
-  campaignFee, 
-  campaignEndDate, 
-  participantAddress 
+  campaignFee,
+  campaignEndDate
 }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasJoined, setHasJoined] = useState('');
   const [checkedHasJoined, setCheckedHasJoined] = useState(false);
+
   const isActive = isCampaignActive(campaignEndDate);
 
-  //console.log(participantData.address)
-
-  if (!checkedHasJoined || hasJoined === '') {
-    setHasJoined(participantAddress === accounts);
-    setCheckedHasJoined(true);
+  if (!checkedHasJoined && accounts !== '' && campaignAddress !== '') {
+    checkParticipation(campaignAddress, accounts)
+    .then((result) => { //console.log(result)
+      setHasJoined(result);
+      new Promise(r => setTimeout(r, 2500))
+        .then(() => setCheckedHasJoined(true))
+    })
   }
-  //const test = (campaignAddress)
 
   const handleJoinClick = () => {
     setIsLoading(true);
-    joinAirdrop(test, setIsLoading)
-    .then(() =>{
-      new Promise(r => setTimeout(r, 2500))
-      .then(()=> setCheckedHasJoined(false))
-    })
-    console.log('Test join click');
+    joinAirdrop(campaignAddress, setIsLoading, setHasJoined);
   }
 
   const handleRetireClick = () => {
-    console.log('Test retire click');
+    setIsLoading(true);
+    retireFromAirdrop(campaignAddress, setIsLoading, setHasJoined);
+  }
+
+  const handleClose = () => {
+
   }
 
   return (
@@ -60,10 +67,10 @@ export const CampaignModal = ({
       />
       }
     >
-      <Modal.Header>Airdrop campaign management</Modal.Header>
+      <Modal.Header>Airdrop campaign management (Placeholder)</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <Header content={(campaignFee > 0)?'Fee to join {campaignFee} ether': '' }/>
+          <Header content={(campaignFee > 0)?'Fee to join {campaignFee} ether': 'No fee to join' }/>
             
           <p>
             Placeholder
@@ -72,17 +79,17 @@ export const CampaignModal = ({
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
-        <Button color='black' onClick={() => setOpen(false)}>
-        Placeholder
+        <Button color='grey' onClick={() => setOpen(false)}>
+        Close
         </Button>
         { (isLoading)
         ?
-          <Button basic loading />
+          <Button color='black' loading content='PLACEH'/>
         :
           <Button
             content={
               (hasJoined)
-              ? "Placeholder"
+              ? "Retire"
               : "Join"}
             onClick={
               (hasJoined)
@@ -185,11 +192,11 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
       <Card.Content extra>
         <div className='ui two buttons'>
           <CampaignModal 
-          accounts={ accounts } 
-          campaignAddress={ campaignInfo.campaignAddress }
-          campaignFee={ campaignInfo.whitelistFee }
-          campaignEndDate={ campaignInfo.claimableSince }
-          participantAddress={ participantData.address } /> 
+            accounts={ accounts }
+            campaignAddress={ campaignInfo.campaignAddress }
+            campaignFee={ campaignInfo.whitelistFee }
+            campaignEndDate={ campaignInfo.claimableSince }
+          /> 
         </div>
         <Accordion panels={panels}/>
 

@@ -279,6 +279,16 @@ export const NewAirdropModal = ({
   );
 }
 
+const CampaignAccordionOptions = () => {
+
+  return(
+    <Segment>
+      isActive <br/> acceptPayableWhitelist <br/> whitelistFee <br/> maxParticipantAmount
+      <br/> amountForEachUser
+    </Segment>
+  );
+}
+
 
 export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
@@ -350,14 +360,13 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     {
       key: 'content',
       title: {
-        content: 'Lorem ipsum',
+        content: 'Manage campaign options',
       },
       content: {
         content: (
-          <span>
-            dolor sit amet, consectetur adipiscing elit,
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </span>
+
+          <CampaignAccordionOptions />
+
         ),
       },
     },
@@ -438,11 +447,11 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
               <Card.Content extra>
                 <div className='ui two buttons'>
-                  <Button basic color='green'>
-                    Approve
+                  <Button disabled={!isCampaignActive(campaignInfo)} color='teal'>
+                    Add participants
                   </Button>
-                  <Button basic color='red'>
-                    Decline
+                  <Button disabled={!isCampaignActive(campaignInfo)} color='red'>
+                    Ban participants
                   </Button>
                 </div>
                 <Accordion panels={panels}/>
