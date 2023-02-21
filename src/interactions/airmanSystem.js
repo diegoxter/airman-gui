@@ -17,13 +17,6 @@ const getFee = async (_network) => {
   return fee;
 }
 
-export const getDeployedAirManByOwnerList = async (_address, _network) => {
-  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
-  const list = await adminPanelInstance.connect(signer).getDeployedInstances(_address);
-
-  return list;
-}
-
 export const fetchEtherBalance = async (_instanceAddress) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, provider);
   const balance = await airManInstance.getEtherBalance();
@@ -31,43 +24,53 @@ export const fetchEtherBalance = async (_instanceAddress) => {
   return balance;
 }
 
-export const getDeployedAirmanListInformation = async (_network) => {
-  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
-  const deployedAirManAmount = await adminPanelInstance.instanceIDs();
-  const airMansAddressess = []
+export const getDeployedAirmanListInfo = async (_network) => {
+  const adminPanelAddress = getAdmPanAddress(_network);
+  const adminPanelInstance = new ethers.Contract(adminPanelAddress, adminPanelAbi, provider);
   const airdropCampaignsList = []
+  const getAirManAddressessCalls = [];
 
-  const getAirManAddressData = async () => {
-    for (let i = 0; i < deployedAirManAmount; i++) {
-      let temp = await adminPanelInstance.deployedManagers(i);
-      airMansAddressess[i] = temp.instanceAddress;
-    }
+  for (let i = 0; i < await adminPanelInstance.instanceIDs(); i++) {
+    const getAirManList = {
+      abi: adminPanelAbi,
+      address: adminPanelAddress,
+      name: 'deployedManagers',
+      params: [i],
+    };
+
+    getAirManAddressessCalls[i] = getAirManList;
   }
-  await getAirManAddressData();
 
-  try {
-    let g = 0
-    await Promise.all(airMansAddressess.map(async (airmanAddress) => {
-      const airManInstance = new ethers.Contract(airmanAddress, airdropManagerAbi, signer);
-      const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
+  const airManAddresses = await multicall(adminPanelAbi, getAirManAddressessCalls, _network)
 
-      if (airManInstanceCampaignList > 0){
-        for (let i = 0; i < airManInstanceCampaignList; i++) {
-          let temp = await airManInstance.campaigns(i);
-          airdropCampaignsList[g] = temp.campaignAddress;
+  await Promise.all(airManAddresses.map(async (airmanData) => {
+    const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
+    const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
+    
+    if (airManInstanceCampaignList > 0) {
+      const getAirdropListCalls = []
 
-          g++
-        }
+      for (let i = 0; i < airManInstanceCampaignList; i++) {
+        const getAirdropList = {
+          abi: airdropManagerAbi,
+          address: airmanData.instanceAddress,
+          name: 'campaigns',
+          params: [i],
+        };
+    
+        getAirdropListCalls[i] = getAirdropList;
       }
 
-    }));
-  } catch (e) {
-    console.log('falla')
-  }
+      const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network)
+
+      for (let i = 0; i < (Object.keys(airManDataRaw)).length; i++) {
+        airdropCampaignsList[i] = airManDataRaw[i].campaignAddress
+      }
+    }
+  }))
 
   return airdropCampaignsList
 }
-
 
 // Transaction functions
 export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _network) => {
@@ -142,7 +145,9 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
 
 // Draw functions
 export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
-  const instancesData = await getDeployedAirManByOwnerList(_ownerAddress, _network);
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
+  const instancesData = await adminPanelInstance.connect(signer).getDeployedInstances(_ownerAddress);
+
   const calls = []
 
   instancesData.map(async (instanceData, index) => {

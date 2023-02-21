@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { waitForConfirmation } from ".";
-import { getDeployedAirmanListInformation } from "./airmanSystem";
+import { getDeployedAirmanListInfo } from "./airmanSystem";
 //import { fetchAirdropCampaignData } from "./multicall";
 
 import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json'
@@ -16,16 +16,31 @@ export const getWhitelistFee = async (_campaignAddress) => {
 
   return fee;
 }
-/*
-export const testMulticall = async (_network) => {
-  const airdropList = await getDeployedAirmanListInformation(_network)
-  const tx = await fetchAirdropCampaignData(_network, airdropList, airdropCampaignAbi)
 
-  return tx
+export const getAirdropCampaignInfo = async (_network, _account) => {
+  const airdropList = await getDeployedAirmanListInfo(_network)
+  const airdropListData = [{
+    campaignAddress: '',
+    tokenAddress: '',
+    claimableSince: '',
+    isActive: '',                 // bool
+    acceptPayableWhitelist: '',   // bool
+    fixedAmount: '',              // bool
+    whitelistFee: '',
+    tokenAmount: '',
+    amountForEachUser: ''
+  }];
+  const airdropParticipantData = [{ campaignAddress: '', address: '', canReceive: '', claimed: '' }];
+
+  await Promise.all(airdropList.map(async (instanceAddress, index) => {
+  }))
+
+
 }
-*/
+
+
 export const getAirdropCampaignData = async (_network, _account) => {
-  const airdropList = await getDeployedAirmanListInformation(_network)
+  const airdropList = await getDeployedAirmanListInfo(_network)
   const airdropListData = [{
     campaignAddress: '',
     tokenAddress: '',
@@ -70,8 +85,9 @@ export const getAirdropCampaignData = async (_network, _account) => {
   return [ airdropListData, airdropParticipantData ]
 }
 
-// Transaction functions
 
+
+// Transaction functions
 export const joinAirdrop = async (_campaignAddress, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 console.log(_campaignAddress)
@@ -96,7 +112,6 @@ console.log(_campaignAddress)
 }
 
 // Helper functions
-
 export const isCampaignActive = (_campaignInfo_claimableSince) => {
   return (Number(_campaignInfo_claimableSince) * 1000 > Date.now())
 }

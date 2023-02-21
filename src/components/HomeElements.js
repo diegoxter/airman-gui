@@ -14,7 +14,7 @@ export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, part
     getWhitelistFee(campaignAddress).then((value) => setFee(Number(value['_hex'])));
   }
 
-  console.log(participantData.address)
+  //console.log(participantData.address)
 
   if (!checkedHasJoined || hasJoined === '') {
     setHasJoined(participantData.address === accounts);
