@@ -1,23 +1,20 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
-import { joinAirdrop, getWhitelistFee, isCampaignActive, getAirdropCampaignInfo } from '../interactions/airdropSystem';
+import { joinAirdrop, isCampaignActive, getAirdropCampaignInfo } from '../interactions/airdropSystem';
 import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from './CommonComponents';
 
 export const CampaignModal = ({ 
   accounts, 
-  campaignAddress, 
+  campaignAddress,
+  campaignFee, 
   campaignEndDate, 
   participantAddress 
 }) => {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
-  const [fee, setFee] = useState('')
   const [hasJoined, setHasJoined] = useState('')
   const [checkedHasJoined, setCheckedHasJoined] = useState(false)
-
-  if (fee === '' && campaignAddress !== '') {
-    getWhitelistFee(campaignAddress).then((value) => setFee(Number(value['_hex'])));
-  }
+  const isActive = isCampaignActive(campaignEndDate);
 
   //console.log(participantData.address)
 
@@ -52,23 +49,22 @@ export const CampaignModal = ({
       {
         (hasJoined) ?
       <Button
-        color={(isCampaignActive(campaignEndDate))?'green':'red'}
-        content={(isCampaignActive(campaignEndDate))?'Manage':'Claim'}
+        color={(isActive)?'green':'red'}
+        content={(isActive)?'Manage':'Claim'}
       />
       :
       <Button
-        disabled={!(isCampaignActive(campaignEndDate))} 
-        color={isCampaignActive(campaignEndDate)?'green':'grey'}
-        content={isCampaignActive(campaignEndDate)?'Check Campaign':'Campaign Expired'}
+        disabled={!isActive} 
+        color={isActive?'green':'grey'}
+        content={isActive?'Check Campaign':'Campaign Expired'}
       />
       }
     >
       <Modal.Header>Airdrop campaign management</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <Header>
-            Fee to join {fee} ether
-          </Header>
+          <Header content={(campaignFee > 0)?'Fee to join {campaignFee} ether': '' }/>
+            
           <p>
             Placeholder
           </p>
@@ -147,11 +143,11 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
       <Card.Header>
 
         {
-          (isCampaignActive(campaignInfo.claimableSince['_hex']))
+          (isCampaignActive(campaignInfo.claimableSince))
           ?
-          `Placeholder`
+          `Active Placeholder`
           :
-          <s>{`Placeholder`}</s> 
+          <s>{`Inactive Placeholder`}</s> 
         }
 
       </Card.Header>
@@ -190,7 +186,8 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
         <div className='ui two buttons'>
           <CampaignModal 
           accounts={ accounts } 
-          campaignAddress={ campaignInfo.campaignAddress } 
+          campaignAddress={ campaignInfo.campaignAddress }
+          campaignFee={ campaignInfo.whitelistFee }
           campaignEndDate={ campaignInfo.claimableSince }
           participantAddress={ participantData.address } /> 
         </div>
