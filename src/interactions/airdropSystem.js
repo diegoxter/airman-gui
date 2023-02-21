@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { waitForConfirmation } from ".";
-import { getDeployedAirmanListInfo } from "./airmanSystem";
-//import { fetchAirdropCampaignData } from "./multicall";
+import { getAirdropCampaignsAddressList } from "./airmanSystem";
+import { multicall } from "./multicall";
 
 import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json'
 
@@ -18,74 +18,99 @@ export const getWhitelistFee = async (_campaignAddress) => {
 }
 
 export const getAirdropCampaignInfo = async (_network, _account) => {
-  const airdropList = await getDeployedAirmanListInfo(_network)
-  const airdropListData = [{
-    campaignAddress: '',
-    tokenAddress: '',
-    claimableSince: '',
-    isActive: '',                 // bool
-    acceptPayableWhitelist: '',   // bool
-    fixedAmount: '',              // bool
-    whitelistFee: '',
-    tokenAmount: '',
-    amountForEachUser: ''
-  }];
-  const airdropParticipantData = [{ campaignAddress: '', address: '', canReceive: '', claimed: '' }];
+  const airdropList = await getAirdropCampaignsAddressList(_network)
+  const airdropListData = [];
+  const airdropParticipantData = [];
 
   await Promise.all(airdropList.map(async (instanceAddress, index) => {
-  }))
+    const airdropCampaignInstance = new ethers.Contract(instanceAddress, airdropCampaignAbi, provider);
 
+    const tokenAddressCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'tokenAddress',
+      params: [],
+    };
+    const claimableSinceCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'claimableSince',
+      params: [],
+    };
+    const isActiveCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'isActive',
+      params: [],
+    };
+    const acceptPayableWhitelistCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'acceptPayableWhitelist',
+      params: [],
+    };
+    const fixedAmountCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'fixedAmount',
+      params: [],
+    };
+    const whitelistFeeCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'whitelistFee',
+      params: [],
+    };
+    const tokenAmountCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'tokenAmount',
+      params: [],
+    };
+    const amountForEachUserCalls = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'amountForEachUser',
+      params: [],
+    };
 
-}
-
-
-export const getAirdropCampaignData = async (_network, _account) => {
-  const airdropList = await getDeployedAirmanListInfo(_network)
-  const airdropListData = [{
-    campaignAddress: '',
-    tokenAddress: '',
-    claimableSince: '',
-    isActive: '',                 // bool
-    acceptPayableWhitelist: '',   // bool
-    fixedAmount: '',              // bool
-    whitelistFee: '',
-    tokenAmount: '',
-    amountForEachUser: ''
-  }];
-  const airdropParticipantData = [{ campaignAddress: '', address: '', canReceive: '', claimed: '' }];
-
-  try {  // TO DO optimize this with https://github.com/makerdao/multicall/blob/master/src/Multicall2.sol
-    await Promise.all(airdropList.map(async (instanceAddress, index) => {
-      const airdropCampaignInstance = new ethers.Contract(instanceAddress, airdropCampaignAbi, provider);
+    const airdropCampaignDataRaw = await multicall(
+      airdropCampaignAbi,
+      [
+          tokenAddressCalls, 
+          claimableSinceCalls, 
+          isActiveCalls, 
+          acceptPayableWhitelistCalls,
+          fixedAmountCalls,
+          whitelistFeeCalls,
+          tokenAmountCalls,
+          amountForEachUserCalls
+      ],
+      _network)
+      //console.log(airdropCampaignDataRaw)
 
       airdropListData[index] = {
         campaignAddress: instanceAddress,
-        tokenAddress: await airdropCampaignInstance.tokenAddress(),
-        claimableSince: await airdropCampaignInstance.claimableSince(),
-        isActive: await airdropCampaignInstance.isActive(),
-        acceptPayableWhitelist: await airdropCampaignInstance.acceptPayableWhitelist(),
-        fixedAmount: await airdropCampaignInstance.fixedAmount(),
-        whitelistFee: await airdropCampaignInstance.whitelistFee(),
-        tokenAmount: await airdropCampaignInstance.tokenAmount(),
-        amountForEachUser: await airdropCampaignInstance.amountForEachUser()
-      };
-
-      airdropParticipantData[index] = {
-        campaignAddress: instanceAddress,
-        address: (await airdropCampaignInstance.participantInfo(_account))['ParticipantAddress'],
-        canReceive: (await airdropCampaignInstance.participantInfo(_account))['canReceive'],
-        claimed: (await airdropCampaignInstance.participantInfo(_account))['claimed']
+        tokenAddress: airdropCampaignDataRaw[0],
+        claimableSince: Number(airdropCampaignDataRaw[1]),
+        isActive: airdropCampaignDataRaw[2],                 // bool
+        acceptPayableWhitelist: airdropCampaignDataRaw[3],   // bool
+        fixedAmount: airdropCampaignDataRaw[4],              // bool
+        whitelistFee: Number(airdropCampaignDataRaw[5]),
+        tokenAmount: Number(airdropCampaignDataRaw[6]),
+        amountForEachUser: Number(airdropCampaignDataRaw[7])
       }
 
-    }));
-  } catch (e) {
-    console.log(e)
-  }
+      const participantInfoRawData = await airdropCampaignInstance.participantInfo(_account)
+      airdropParticipantData[index] = {
+        address: participantInfoRawData['ParticipantAddress'],
+        canReceive: participantInfoRawData['canReceive'],
+        claimed: participantInfoRawData['claimed']
+      }
+  }))
 
   return [ airdropListData, airdropParticipantData ]
 }
-
-
 
 // Transaction functions
 export const joinAirdrop = async (_campaignAddress, _setIsLoading) => {

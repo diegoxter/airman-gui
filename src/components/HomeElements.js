@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
-import { getAirdropCampaignData, joinAirdrop, getWhitelistFee, isCampaignActive } from '../interactions/airdropSystem';
+import { joinAirdrop, getWhitelistFee, isCampaignActive, getAirdropCampaignInfo } from '../interactions/airdropSystem';
 import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from './CommonComponents';
 
-export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, participantData }) => {
+export const CampaignModal = ({ 
+  accounts, 
+  campaignAddress, 
+  campaignEndDate, 
+  participantAddress 
+}) => {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const [fee, setFee] = useState('')
@@ -17,7 +22,7 @@ export const CampaignModal = ({ accounts, campaignAddress, campaignEndDate, part
   //console.log(participantData.address)
 
   if (!checkedHasJoined || hasJoined === '') {
-    setHasJoined(participantData.address === accounts);
+    setHasJoined(participantAddress === accounts);
     setCheckedHasJoined(true);
   }
   //const test = (campaignAddress)
@@ -157,7 +162,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
           size='tiny'
           src='https://react.semantic-ui.com/images/avatar/large/molly.png'
         />
-        Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress)}</b>
+        Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress[0])}</b>
       </Card.Meta>
 
       <Card.Meta>
@@ -165,12 +170,12 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
       </Card.Meta>
       
       <Card.Meta>
-        End date: <br/><b>{getHumanDate(Number(campaignInfo.claimableSince['_hex']))}</b><br/>
+        End date: <br/><b>{getHumanDate(campaignInfo.claimableSince)}</b><br/>
       </Card.Meta>
 
       <Card.Description>
       {
-          (campaignInfo.acceptPayableWhitelist)
+          (campaignInfo.acceptPayableWhitelist[0])
           ?
           <u><strong>{'Fee to join: '+campaignInfo.whitelistFee}</strong></u>
           :
@@ -186,8 +191,8 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
           <CampaignModal 
           accounts={ accounts } 
           campaignAddress={ campaignInfo.campaignAddress } 
-          campaignEndDate={ campaignInfo.claimableSince['_hex'] }
-          participantData={ participantData } /> 
+          campaignEndDate={ campaignInfo.claimableSince }
+          participantAddress={ participantData.address } /> 
         </div>
         <Accordion panels={panels}/>
 
@@ -203,8 +208,9 @@ export const AirdropList = ({ network, accounts, isConnected }) => {
   const [participantDataChecked, setParticipantDataChecked] = useState(false);
 
   if (network !== '' && accounts !== '' && campaignDataChecked === false && participantDataChecked === false) {
-    getAirdropCampaignData(network, accounts)
+   getAirdropCampaignInfo(network, accounts)
     .then((result) => {
+      //console.log(result)
       setCampaignData(result[0]);
       setCampaignDataChecked(true);
       //console.log(result[1])

@@ -24,10 +24,10 @@ export const fetchEtherBalance = async (_instanceAddress) => {
   return balance;
 }
 
-export const getDeployedAirmanListInfo = async (_network) => {
+export const getAirdropCampaignsAddressList = async (_network) => {
   const adminPanelAddress = getAdmPanAddress(_network);
   const adminPanelInstance = new ethers.Contract(adminPanelAddress, adminPanelAbi, provider);
-  const airdropCampaignsList = []
+  const airdropCampaignsAddressList = []
   const getAirManAddressessCalls = [];
 
   for (let i = 0; i < await adminPanelInstance.instanceIDs(); i++) {
@@ -64,12 +64,12 @@ export const getDeployedAirmanListInfo = async (_network) => {
       const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network)
 
       for (let i = 0; i < (Object.keys(airManDataRaw)).length; i++) {
-        airdropCampaignsList[i] = airManDataRaw[i].campaignAddress
+        airdropCampaignsAddressList[i] = airManDataRaw[i].campaignAddress
       }
     }
   }))
 
-  return airdropCampaignsList
+  return airdropCampaignsAddressList
 }
 
 // Transaction functions
