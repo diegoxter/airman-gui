@@ -13,7 +13,8 @@ export const CampaignModal = ({
   accounts,
   campaignAddress,
   campaignFee,
-  campaignEndDate
+  campaignEndDate,
+  test
 }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +42,22 @@ export const CampaignModal = ({
     retireFromAirdrop(campaignAddress, setIsLoading, setHasJoined);
   }
 
-  const handleClose = () => {
+  const handleTest = () => {
+    console.log('test click')
+    test = 'test'
+    console.log(test)
+  }
 
+  const chooseButton = () => {
+    if (hasJoined) {
+      if (test) {
+        return ["Claim", handleTest]
+      } else {
+        return ['Retire', handleRetireClick]
+      }
+    } else {
+      return 'test'
+    }
   }
 
   return (
@@ -90,11 +105,11 @@ export const CampaignModal = ({
           <Button
             content={
               (hasJoined)
-              ? "Retire"
+              ? (chooseButton())[0]
               : "Click to join"}
             onClick={
               (hasJoined)
-              ? handleRetireClick
+              ? (chooseButton())[1]
               : handleJoinClick}
             color={
               (hasJoined)
@@ -108,6 +123,7 @@ export const CampaignModal = ({
 }
 
 const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
+  let test = participantData.canReceive
   const panels = [
     {
       key: 'content',
@@ -126,6 +142,8 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
       },
     },
   ];
+
+  console.log(test)
 
   const cleanAddress = (_address) => {
     let firstHalf = _address.substr(0, 4);
@@ -197,6 +215,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
             campaignAddress={ campaignInfo.campaignAddress }
             campaignFee={ campaignInfo.whitelistFee }
             campaignEndDate={ campaignInfo.claimableSince }
+            test={ test }
           /> 
         </div>
         <Accordion panels={panels}/>

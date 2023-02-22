@@ -134,6 +134,7 @@ export const joinAirdrop = async (_campaignAddress, _setIsLoading, _setHasJoined
   } catch (error) {
     console.log(error);
     _setIsLoading(false);
+    _setHasJoined(false);
     return false;
   }
 }
