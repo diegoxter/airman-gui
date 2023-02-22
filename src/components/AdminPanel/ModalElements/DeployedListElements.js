@@ -357,6 +357,7 @@ const DeployedCampaignCard = ({
           :
           `End date: Expired`
       }
+      <br />Participants <br /> Unclaimed
       </Card.Description>
       </Card.Content>
 

@@ -30,11 +30,11 @@ const Home = ({ isConnected, network, accounts }) => {
           </Grid.Column>
           
           <Grid.Column >
-            <Checkbox toggle label='Placeholder'/>
+            <Checkbox toggle label='Show Claimed'/>
           </Grid.Column>
           
           <Grid.Column >
-            <Checkbox toggle label='Placeholder'/>
+            <Checkbox toggle label='Show Claimable'/>
           </Grid.Column>
 
         </Grid>

@@ -47,14 +47,14 @@ export const CampaignModal = ({
   }
 
   const handleTest = () => {
-    console.log('test click')
+    console.log('test click');
   }
 
   const handleClaim = () => {
     setIsLoading(true);
     claimAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined)
     .then((value) => {
-      setOpen(!value)
+      setOpen(!value);
       new Promise(r => setTimeout(r, 9500)) // TO DO fix this
       .then(() => setParticipantDataChecked(false))
     })
@@ -63,12 +63,12 @@ export const CampaignModal = ({
   const chooseButton = () => {
     if (hasJoined) {
       if (canClaim) {
-        return ["Claim", handleClaim]
+        return ["Claim", handleClaim];
       } else {
-        return ['Retire', handleRetireClick]
+        return ['Retire', handleRetireClick];
       }
     } else {
-      return 'test'
+      return 'test';
     }
   }
 
@@ -135,20 +135,20 @@ export const CampaignModal = ({
 }
 
 const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParticipantDataChecked }) => {
-  const [ canClaim, setCanClaim ] = useState('')
-  const [ checkedCanClaim, setCheckedCanClaim ] = useState(false)
-  const [ hasClaimed, setHasClaimed] = useState('')
+  const [ canClaim, setCanClaim ] = useState('');
+  const [ checkedCanClaim, setCheckedCanClaim ] = useState(false);
+  const [ hasClaimed, setHasClaimed] = useState('');
 
   if (accounts !== '' && !checkedCanClaim) {
     checkCanClaim(campaignInfo.campaignAddress, accounts)
     .then((result) => {
-      setCanClaim(result)
-      setCheckedCanClaim(true)
+      setCanClaim(result);
+      setCheckedCanClaim(true);
     })
   }
 
   if (hasClaimed === '') {
-    setHasClaimed(participantData.claimed)
+    setHasClaimed(participantData.claimed);
   }
 
   const panels = [
