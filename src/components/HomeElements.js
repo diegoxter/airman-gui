@@ -55,7 +55,7 @@ export const CampaignModal = ({
     claimAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined)
     .then((value) => {
       setOpen(!value)
-      new Promise(r => setTimeout(r, 9500))
+      new Promise(r => setTimeout(r, 9500)) // TO DO fix this
       .then(() => setParticipantDataChecked(false))
     })
   }
