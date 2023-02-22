@@ -247,11 +247,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "option",
-        "type": "uint8"
-      },
-      {
         "internalType": "bool",
         "name": "toOwner",
         "type": "bool"

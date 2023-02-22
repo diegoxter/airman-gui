@@ -19,12 +19,12 @@ export const getAdmPanAddress = (_network) => {
 
       case 4002:
           // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
-          adminPanelContract = '0x10D2B5Bc907a0e0D8EC535e6FD14b0943A52820b'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+          adminPanelContract = '0x32c449954168f2a5f365dCb33a123aFDc223c1C5'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
           break;
 
       case 87:
           // testTokenContract = 0xd9209ca92E8e468C3f8AD7F3CE6B265AfD92760d
-          adminPanelContract = '0xfC166fEdAA29f6DCAb2392e1430D12DFc4a0F833'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
+          adminPanelContract = '0x553BB0B2C069Bbb1f117E272c4bCc7393Cade860'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
           break;
 
       case 31337: // This is for testing/debugging purposes
@@ -48,7 +48,7 @@ export const getMulticallAddress = (_network) => {
           break;
 
       case 4002:
-          multicallContract = '0xcBD78C108821Fd7c51750874681401D1e449a70E';
+          multicallContract = '0xb83853b065b4fEE34c7352E2b3ad1B5d867eB76E';
           break;
 
       case 87:

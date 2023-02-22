@@ -41,33 +41,40 @@ export const getAirdropCampaignsAddressList = async (_network) => {
     getAirManAddressessCalls[i] = getAirManList;
   }
 
-  const airManAddresses = await multicall(adminPanelAbi, getAirManAddressessCalls, _network);
+  let airManAddresses
+  try {
+    airManAddresses = await multicall(adminPanelAbi, getAirManAddressessCalls, _network);
+  } catch (e) {
+    airManAddresses = 0
+  }
 
-  await Promise.all(airManAddresses.map(async (airmanData) => {
-    const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
-    const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
-    
-    if (airManInstanceCampaignList > 0) {
-      const getAirdropListCalls = [];
+  if (airManAddresses > 0) {
+    await Promise.all(airManAddresses.map(async (airmanData) => {
+      const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
+      const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
+      
+      if (airManInstanceCampaignList > 0) {
+        const getAirdropListCalls = [];
 
-      for (let i = 0; i < airManInstanceCampaignList; i++) {
-        const getAirdropList = {
-          abi: airdropManagerAbi,
-          address: airmanData.instanceAddress,
-          name: 'campaigns',
-          params: [i],
-        };
-    
-        getAirdropListCalls[i] = getAirdropList;
+        for (let i = 0; i < airManInstanceCampaignList; i++) {
+          const getAirdropList = {
+            abi: airdropManagerAbi,
+            address: airmanData.instanceAddress,
+            name: 'campaigns',
+            params: [i],
+          };
+      
+          getAirdropListCalls[i] = getAirdropList;
+        }
+
+        const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network);
+
+        for (let i = 0; i < (Object.keys(airManDataRaw)).length; i++) {
+          airdropCampaignsAddressList[i] = airManDataRaw[i].campaignAddress;
+        }
       }
-
-      const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network);
-
-      for (let i = 0; i < (Object.keys(airManDataRaw)).length; i++) {
-        airdropCampaignsAddressList[i] = airManDataRaw[i].campaignAddress;
-      }
-    }
-  }))
+    }))
+  }
 
   return airdropCampaignsAddressList;
 }
@@ -161,7 +168,12 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
     calls[index] = getAirmanList;
   })
 
-  const airManListDataRaw = await multicall(adminPanelAbi, calls, _network);
+  let airManListDataRaw
+  try {
+    airManListDataRaw = await multicall(adminPanelAbi, calls, _network);
+  } catch (e) {
+    airManListDataRaw = 0
+  }
 
   return airManListDataRaw;
 }
