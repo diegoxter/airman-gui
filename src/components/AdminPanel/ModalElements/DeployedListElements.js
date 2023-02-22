@@ -92,11 +92,9 @@ export const ManageAssetsPopup = ({
 
       <Grid.Row>
         <Grid.Column>
-          <h4>Withdraw tokens</h4>
-          <Divider hidden />
           {(tokenBalance > 0)
           ?
-          <Button fluid size='tiny' color='red' content='Withdraw' onClick={() => {handleWithdrawTokensClick()}} />
+          <Button fluid size='tiny' color='red' content='Withdraw tokens' onClick={() => {handleWithdrawTokensClick()}} />
           :
           <Button fluid size='tiny' content="No tokens to withdraw" disabled />
           }

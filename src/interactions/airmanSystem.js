@@ -48,7 +48,7 @@ export const getAirdropCampaignsAddressList = async (_network) => {
     airManAddresses = 0
   }
 
-  if (airManAddresses > 0) {
+  if (airManAddresses.length > 0) {
     await Promise.all(airManAddresses.map(async (airmanData) => {
       const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
       const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
