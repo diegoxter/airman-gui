@@ -99,9 +99,9 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
-      _setOpen(false);
+    _setOpen(false);
       
-      return true;
+    return true;
   } catch (error) {
     console.log('Falla al hacer el deploy de AirMan ');
     _setIsLoading(false);
@@ -131,9 +131,12 @@ export const deployAirdropCampaign = async (
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
+
+    return true
   } catch (error) {
     console.log('campaign deploy failed');
     _setIsLoading(false);
+    return false
   }
 }
 

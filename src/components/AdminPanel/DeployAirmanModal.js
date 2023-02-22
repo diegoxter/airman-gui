@@ -4,7 +4,7 @@ import { useDebounce } from "use-debounce";
 import { isSupportedNetwork } from '../../interactions';
 import { DeployButton, TokenContractInput } from './ModalElements/DeployModalElements';
 
-const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }) => {
+export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [nameInputValue] = useDebounce(name, 1500);
@@ -162,5 +162,3 @@ const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }
     </div>
   );
 }
-
-export default AdminPanelModal;

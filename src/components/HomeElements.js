@@ -64,7 +64,7 @@ export const CampaignModal = ({
           <Button
             disabled={!isActive} 
             color={isActive?'green':'grey'}
-            content={isActive?'Check Campaign':'Campaign Expired'}
+            content={isActive?'Join Campaign':'Campaign Expired'}
           />
       }
     >
@@ -91,7 +91,7 @@ export const CampaignModal = ({
             content={
               (hasJoined)
               ? "Retire"
-              : "Join"}
+              : "Click to join"}
             onClick={
               (hasJoined)
               ? handleRetireClick

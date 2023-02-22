@@ -1,6 +1,6 @@
 import { Grid, Card, Segment, Header, Divider } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage } from '../CommonComponents';
-import AdminPanelModal from './DeployAirmanModal';
+import { AdminPanelModal } from './DeployAirmanModal';
 import { DeployedAirManList } from './DeployedAirManList';
 
 const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, setCheckedInstances, instances}) => {
