@@ -4,9 +4,11 @@ import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from '.
 import { 
   joinAirdrop,
   retireFromAirdrop,
+  claimAirdrop,
   isCampaignActive,
   getAirdropCampaignInfo,
-  checkParticipation
+  checkParticipation,
+  checkCanClaim
 } from '../interactions/airdropSystem';
 
 export const CampaignModal = ({ 
@@ -14,7 +16,9 @@ export const CampaignModal = ({
   campaignAddress,
   campaignFee,
   campaignEndDate,
-  test
+  canClaim,
+  hasClaimed,
+  setParticipantDataChecked
 }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,24 +38,32 @@ export const CampaignModal = ({
 
   const handleJoinClick = () => {
     setIsLoading(true);
-    joinAirdrop(campaignAddress, setIsLoading, setHasJoined);
+    joinAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined);
   }
 
   const handleRetireClick = () => {
     setIsLoading(true);
-    retireFromAirdrop(campaignAddress, setIsLoading, setHasJoined);
+    retireFromAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined);
   }
 
   const handleTest = () => {
     console.log('test click')
-    test = 'test'
-    console.log(test)
+  }
+
+  const handleClaim = () => {
+    setIsLoading(true);
+    claimAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined)
+    .then((value) => {
+      setOpen(!value)
+      new Promise(r => setTimeout(r, 9500))
+      .then(() => setParticipantDataChecked(false))
+    })
   }
 
   const chooseButton = () => {
     if (hasJoined) {
-      if (test) {
-        return ["Claim", handleTest]
+      if (canClaim) {
+        return ["Claim", handleClaim]
       } else {
         return ['Retire', handleRetireClick]
       }
@@ -71,9 +83,9 @@ export const CampaignModal = ({
       {
         (hasJoined) 
         ?
-          <Button
-            color={(isActive)?'green':'red'}
-            content={(isActive)?'Manage':'Claim'}
+          <Button disabled={(hasClaimed)}
+            color={(isActive)?'green':(hasClaimed)?'violet':'red'}
+            content={(isActive)?'Manage':(hasClaimed)?'Claimed':'Claim'}
           />
         :
           <Button
@@ -122,8 +134,23 @@ export const CampaignModal = ({
   )
 }
 
-const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
-  let test = participantData.canReceive
+const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParticipantDataChecked }) => {
+  const [ canClaim, setCanClaim ] = useState('')
+  const [ checkedCanClaim, setCheckedCanClaim ] = useState(false)
+  const [ hasClaimed, setHasClaimed] = useState('')
+
+  if (accounts !== '' && !checkedCanClaim) {
+    checkCanClaim(campaignInfo.campaignAddress, accounts)
+    .then((result) => {
+      setCanClaim(result)
+      setCheckedCanClaim(true)
+    })
+  }
+
+  if (hasClaimed === '') {
+    setHasClaimed(participantData.claimed)
+  }
+
   const panels = [
     {
       key: 'content',
@@ -142,8 +169,6 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
       },
     },
   ];
-
-  console.log(test)
 
   const cleanAddress = (_address) => {
     let firstHalf = _address.substr(0, 4);
@@ -215,7 +240,9 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData }) => {
             campaignAddress={ campaignInfo.campaignAddress }
             campaignFee={ campaignInfo.whitelistFee }
             campaignEndDate={ campaignInfo.claimableSince }
-            test={ test }
+            canClaim={ canClaim }
+            hasClaimed={ hasClaimed }
+            setParticipantDataChecked={ setParticipantDataChecked }
           /> 
         </div>
         <Accordion panels={panels}/>
@@ -231,7 +258,7 @@ export const AirdropList = ({ network, accounts }) => {
   const [participantData, setParticipantData] = useState([]);
   const [participantDataChecked, setParticipantDataChecked] = useState(false);
 
-  if (network !== '' && accounts !== '' && campaignDataChecked === false && participantDataChecked === false) {
+  if ((network !== '' && accounts !== '' && campaignDataChecked === false) || (participantDataChecked === false && network !== '' && accounts !== '')) {
    getAirdropCampaignInfo(network, accounts)
     .then((result) => {
       setCampaignData(result[0]);
@@ -267,7 +294,8 @@ export const AirdropList = ({ network, accounts }) => {
           key={ campaignInfo.campaignAddress }
           accounts={ accounts }
           campaignInfo={ campaignInfo }
-          participantData={ participantData[index] } />
+          participantData={ participantData[index] }
+          setParticipantDataChecked={ setParticipantDataChecked } />
         ))}
         </Card.Group>
         }

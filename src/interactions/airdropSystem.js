@@ -112,7 +112,7 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
 }
 
 // Transaction functions
-export const joinAirdrop = async (_campaignAddress, _setIsLoading, _setHasJoined) => {
+export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setHasJoined) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
@@ -139,7 +139,7 @@ export const joinAirdrop = async (_campaignAddress, _setIsLoading, _setHasJoined
   }
 }
 
-export const retireFromAirdrop = async (_campaignAddress, _setIsLoading, _setHasJoined) => {
+export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setHasJoined) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
@@ -150,7 +150,48 @@ export const retireFromAirdrop = async (_campaignAddress, _setIsLoading, _setHas
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
-    _setHasJoined(false);
+    _setHasJoined(await checkParticipation(_campaignAddress, _userAddress));
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    _setIsLoading(false);
+    return false;
+  }
+}
+
+export const claimAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setHasJoined) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).receiveTokens();
+  
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+  
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+    _setHasJoined(await checkCanClaim(_campaignAddress, _userAddress));
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    _setIsLoading(false);
+    return false;
+  }
+}
+
+export const withdrawCampaignTokens = async (_campaignAddress, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).manageFunds(false);
+  
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+  
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
 
     return true;
   } catch (error) {
@@ -172,3 +213,9 @@ export const checkParticipation = async (_campaignAddress, _userAddress) => {
   return participantInfo[0].toLowerCase() === _userAddress;
 }
 
+export const checkCanClaim = async (_campaignAddress, _userAddress) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  const participantInfo = await airdropCampaignInstance.participantInfo(_userAddress);
+  
+  return participantInfo[1];
+}

@@ -23,7 +23,7 @@ export const DeployButton = ({
     setIsLoading(true);
 
     deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen, network)
-    .then((value) => {  console.log(value)
+    .then((value) => {
       if (value === true) {
         handleCancelClick();
         setCheckedInstances(false);

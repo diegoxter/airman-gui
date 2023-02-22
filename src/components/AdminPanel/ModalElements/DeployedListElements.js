@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import { deployAirdropCampaign, getCampaignInfo, fetchEtherBalance, manageAirmanFunds } from '../../../interactions/airmanSystem';
+import { 
+  deployAirdropCampaign,
+  getCampaignInfo,
+  fetchEtherBalance,
+  manageAirmanFunds
+} from '../../../interactions/airmanSystem';
+import { withdrawCampaignTokens } from '../../../interactions/airdropSystem';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
 import { 
@@ -19,6 +25,8 @@ import {
     Accordion
 } from 'semantic-ui-react';
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 export const ManageAssetsPopup = ({
   setPopUpOpen,
   accounts,
@@ -27,14 +35,13 @@ export const ManageAssetsPopup = ({
   setIsLoading,
   userTokenBalance,
   tokenBalance,
+  setTokenBalance,
   etherBalance,
-  setEtherBalance,
-  setBalanceChecked }) => {
+  setEtherBalance
+ }) => {
   const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [isValidAmount, setIsValidAmount] = useState(false);
-
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   const handleAmountChange = (num) => {
     setAmount(num);
@@ -44,11 +51,12 @@ export const ManageAssetsPopup = ({
   const handleSendClick = () => {
     setIsLoading(true);
     sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), setIsLoading)
-    .then(() => {
-      setPopUpOpen(false);
-
-      sleep(3500)
-      .then(() => setBalanceChecked(false))
+    .then((value) => {
+      if (value === true) {
+        setPopUpOpen(false);
+        sleep(5500)
+        .then(() => setTokenBalance(''))
+      }
     })
   }
 
@@ -56,9 +64,8 @@ export const ManageAssetsPopup = ({
     manageAirmanFunds(instanceAddress, 1, setIsLoading)
     .then(() => {
       setPopUpOpen(false);
-
-      sleep(3500)
-      .then(() => setBalanceChecked(false))
+      sleep(5500)
+      .then(() => setTokenBalance(''))
     })
   }
 
@@ -118,13 +125,11 @@ export const ManageAssetsPopup = ({
 
 export const NewAirdropModal = ({
   instanceAddress,
-  instanceToken,
   tokenBalance,
   setTokenBalance,
   tokenSymbol,
   isLoading,
   setIsLoading,
-  setBalanceChecked,
   setCampaignDataChecked
   }) => {
   const [open, setOpen] = useState(false);
@@ -191,7 +196,6 @@ export const NewAirdropModal = ({
         parsedAmountPerParticipant, 
         setIsLoading)
       .then(() => {
-        setBalanceChecked(false);
         handleClose();
         setCampaignDataChecked(false);
       })
@@ -287,6 +291,106 @@ const CampaignAccordionOptions = () => {
   );
 }
 
+const DeployedCampaignCard = ({
+  campaignInfo,
+  instanceToken,
+  isCampaignActive,
+  tokenSymbol,
+  cleanAddress,
+  getHumanDate,
+  checkedBalance,
+  tokenBalance,
+  setTokenBalance,
+  setIsLoading
+}) => {
+  const [campaignBalance, setCampaignBalance] = useState('')
+
+  if (campaignBalance === '' || checkedBalance === false) {
+    checkBalance(campaignInfo.campaignAddress, instanceToken)
+    .then((result) => {
+      setCampaignBalance(result);
+    });
+   };
+
+  const handleWithdrawTokens = () => {
+    setIsLoading(true)
+    withdrawCampaignTokens(campaignInfo.campaignAddress, setIsLoading)
+    .then((value) => {
+      if (value === true) {
+        sleep(5500)
+        .then(() => setTokenBalance(''))
+      }
+    })
+  }
+
+  // TO DO finish this
+  const panels = [
+  {
+    key: 'content',
+    title: {content: 'Manage campaign options'},
+    content: {content: (<CampaignAccordionOptions />)}}];
+
+  return(
+    <Card key={Number(campaignInfo.campaignID['_hex'])}>
+      <Card.Content>
+
+      <Card.Header>
+        {
+          (isCampaignActive(campaignInfo))
+          ?
+          `Campaign #${Number(campaignInfo.campaignID['_hex'])}`
+          :
+          <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
+        }
+      </Card.Header>
+
+      <Card.Meta>{`Total amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>{`Amount in contract ${campaignBalance} ${tokenSymbol}`}</Card.Meta>
+
+      <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
+
+      <Card.Description>
+      {
+          (isCampaignActive(campaignInfo))
+          ?
+          `End date: ${getHumanDate(Number(campaignInfo.endDate['_hex']))}`
+          :
+          `End date: Expired`
+      }
+      </Card.Description>
+      </Card.Content>
+
+      <Card.Content extra>
+        {(isCampaignActive(campaignInfo))
+        ?
+        <div className='ui two buttons'>
+          <Button disabled={!isCampaignActive(campaignInfo)} color='teal'>
+            Add participants
+          </Button>
+          <Button disabled={!isCampaignActive(campaignInfo)} color='red'>
+            Ban participants
+          </Button>
+        </div>
+        :
+        <div>
+        <Button 
+        disabled={campaignBalance === 0} 
+        color={(campaignBalance === 0)? 'grey': 'teal'} 
+        fluid 
+        onClick={handleWithdrawTokens}
+        content={(campaignBalance === 0)? 'No tokens to withdraw': 'Withdraw leftover tokens'}>
+          
+        </Button>
+      </div>
+      }
+
+        <Accordion panels={panels}/>
+
+      </Card.Content>
+    </Card>
+  )
+}
+
 
 export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanceAddress, instanceToken }) => {
   const [open, setOpen] = useState(false);
@@ -297,10 +401,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [userTokenBalance, setUserTokenBalance] = useState('')
   const [etherBalance, setEtherBalance] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
-  const [balanceChecked, setBalanceChecked] = useState(false)
   const [tokenSymbol, setTokenSymbol] = useState('');
-
-  //let sleep = ms => new Promise(r => setTimeout(r, ms));
+  const [checkedBalance, setCheckedBalance] = useState(false);
 
   const cleanAddress = (_address) => {
     let firstHalf = _address.substr(0, 4);
@@ -327,13 +429,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       setCampaignData(value);
       setCampaignDataChecked(true);
     })
-    if (tokenBalance === '' || tokenSymbol === '') {
-      getTokenInfo(instanceAddress, instanceToken, instanceAddress, network)
-      .then((value) => {
-        setTokenBalance(Number(value.balance));
-        setTokenSymbol(value.symbol[0]);
-      })
-    }
+  }
+
+  if (tokenBalance === '' || tokenSymbol === '') {
+    getTokenInfo(instanceAddress, instanceToken, instanceAddress, network)
+    .then((value) => {
+      setTokenBalance(Number(value.balance));
+      setTokenSymbol(value.symbol[0]);
+    })
   }
 
   const handleClose = () => {
@@ -343,6 +446,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     setOpen(false);
     setCampaignDataChecked(false);
     setCampaignData([]);
+    setCheckedBalance(false);
   }
 
   const getHumanDate = (unixtime) => {
@@ -352,23 +456,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
     return dateString.toString();
   }
-
-  // TO DO finish this
-  const panels = [
-    {
-      key: 'content',
-      title: {
-        content: 'Manage campaign options',
-      },
-      content: {
-        content: (
-
-          <CampaignAccordionOptions />
-
-        ),
-      },
-    },
-  ];
 
   const isCampaignActive = (campaignInfo) => {
     return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
@@ -416,56 +503,20 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           </Segment>
         :
           campaignData.map((campaignInfo) => (
-            <Card key={Number(campaignInfo.campaignID['_hex'])}>
-              <Card.Content>
+            <DeployedCampaignCard 
+            key={Number(campaignInfo.campaignID['_hex'])}
+            campaignInfo={ campaignInfo }
+            instanceToken={ instanceToken }
+            isCampaignActive={ isCampaignActive }
+            tokenSymbol={ tokenSymbol }
+            cleanAddress={ cleanAddress }
+            getHumanDate={ getHumanDate }
+            checkedBalance={ checkedBalance }
+            setIsLoading= { setIsLoading }
+            tokenBalance={ tokenBalance }
+            setTokenBalance={ setTokenBalance }
+            />
 
-              <Card.Header>
-                {
-                  (isCampaignActive(campaignInfo))
-                  ?
-                  `Campaign #${Number(campaignInfo.campaignID['_hex'])}`
-                  :
-                  <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
-                }
-              </Card.Header>
-
-              <Card.Meta>{`Amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
-              <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
-
-              <Card.Description>
-              {
-                  (isCampaignActive(campaignInfo))
-                  ?
-                  `End date: ${getHumanDate(Number(campaignInfo.endDate['_hex']))}`
-                  :
-                  `End date: Expired`
-              }
-              </Card.Description>
-              </Card.Content>
-
-              <Card.Content extra>
-                {(isCampaignActive(campaignInfo))
-                ?
-                <div className='ui two buttons'>
-                  <Button disabled={!isCampaignActive(campaignInfo)} color='teal'>
-                    Add participants
-                  </Button>
-                  <Button disabled={!isCampaignActive(campaignInfo)} color='red'>
-                    Ban participants
-                  </Button>
-                </div>
-                :
-                <div>
-                <Button color='teal' fluid>
-                  Withdraw leftover tokens
-                </Button>
-              </div>
-              }
-
-                <Accordion panels={panels}/>
-
-              </Card.Content>
-            </Card>
           ))}
 
       </Card.Group>
@@ -480,8 +531,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           onOpen={() => setPopUpOpen(true)}
           trigger={ 
           <Button 
-          disabled={tokenBalance === 0 && etherBalance === 0} 
-          color={(tokenBalance === 0 && etherBalance === 0)?'grey':'yellow'} 
+          color={(tokenBalance === 0 && etherBalance === 0)?'violet':'yellow'} 
           floated='left'>
             {(tokenBalance === 0 && etherBalance === 0)?'No assets to manage':'Manage assets'}
           </Button> 
@@ -498,7 +548,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             setEtherBalance={ setEtherBalance }
             userTokenBalance={ userTokenBalance }
             tokenBalance= { tokenBalance }
-            setBalanceChecked={ setBalanceChecked } /> }
+            setTokenBalance= { setTokenBalance }
+            setCheckedBalance={ setCheckedBalance } /> }
           on='click'
           position='top right' />
 
@@ -514,7 +565,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           tokenSymbol={ tokenSymbol }
           setIsLoading={ setIsLoading }
           isLoading={ isLoading }
-          setBalanceChecked={ setBalanceChecked }
           setCampaignDataChecked={ setCampaignDataChecked }
         />
         
