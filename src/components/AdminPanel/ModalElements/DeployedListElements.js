@@ -284,10 +284,10 @@ export const NewAirdropModal = ({
 const CampaignAccordionOptions = () => {
 
   return(
-    <Segment>
+    <div>
       isActive <br/> acceptPayableWhitelist <br/> whitelistFee <br/> maxParticipantAmount
       <br/> amountForEachUser
-    </Segment>
+    </div>
   );
 }
 
@@ -323,12 +323,30 @@ const DeployedCampaignCard = ({
     })
   }
 
+  const handleAddClick = () => {
+    console.log('Test add button')
+  }
+
+  const handleBanClick = () => {
+    console.log('Test ban button')
+  }
+
   // TO DO finish this
   const panels = [
   {
     key: 'content',
     title: {content: 'Manage campaign options'},
-    content: {content: (<CampaignAccordionOptions />)}}];
+    content: {content: (
+      <div>
+        <Segment vertical>
+          <CampaignAccordionOptions />
+        </Segment>
+        
+        <Segment vertical>
+          <Button fluid textAlign='center' color={'blue'} content='Save' />
+        </Segment>
+      </div>
+    )}}];
 
   return(
     <Card key={Number(campaignInfo.campaignID['_hex'])}>
@@ -365,10 +383,10 @@ const DeployedCampaignCard = ({
         {(isCampaignActive(campaignInfo))
         ?
         <div className='ui two buttons'>
-          <Button disabled={!isCampaignActive(campaignInfo)} color='teal'>
+          <Button disabled={!isCampaignActive(campaignInfo)} color='teal' onClick={handleAddClick}>
             Add participants
           </Button>
-          <Button disabled={!isCampaignActive(campaignInfo)} color='red'>
+          <Button disabled={!isCampaignActive(campaignInfo)} color='red' onClick={handleBanClick}>
             Ban participants
           </Button>
         </div>
@@ -404,13 +422,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [tokenBalance, setTokenBalance] = useState('');
   const [tokenSymbol, setTokenSymbol] = useState('');
   const [checkedBalance, setCheckedBalance] = useState(false);
-
-  const cleanAddress = (_address) => {
-    let firstHalf = _address.substr(0, 4);
-    let secondHalf = _address.substr(38, 4);
-
-    return firstHalf+'...'+secondHalf;
-  }
 
   if (etherBalance === '') {
     fetchEtherBalance(instanceAddress)
@@ -458,30 +469,54 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     return dateString.toString();
   }
 
+  const cleanAddress = (_address) => {
+    let firstHalf = _address.substr(0, 4);
+    let secondHalf = _address.substr(38, 4);
+
+    return firstHalf+'...'+secondHalf;
+  }
+
   const isCampaignActive = (campaignInfo) => {
     return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
   }
 
   return (
     <Modal
-      //dimmer='blurring'
+      dimmer='blurring'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
       trigger={<Button fluid color='violet'> Manage Airdrop Campaigns </Button>} >
       
       <Modal.Header>
-        <Grid>
-          <Grid.Column as='h1' floated='left' width={7}>
-            Instance #{instanceNumer} <br/>Deployed campaigns
-            <br/> <p style={{
-              fontSize: '12px',
-              marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress)} </p>
-          </Grid.Column>
+        <Grid >
+          <Grid.Row>
+            <Grid.Column as='h1' floated='left' width={7}>
+              Instance #{instanceNumer} <br/>Deployed campaigns
+              <br/> <p style={{
+                fontSize: '12px',
+                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress)} </p>
+            </Grid.Column>
 
-          <Grid.Column floated='right' width={5}>
-            Tokens held in this contract: <br/> <Segment textAlign='center'><u>{(tokenBalance > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
-          </Grid.Column>
+            <Grid.Column floated='right' width={5}>
+              Tokens held in this contract: <br/> <Segment textAlign='center'><u>{(tokenBalance > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
+            </Grid.Column>
+          </Grid.Row>
+          
+          <Grid.Row columns={'equal'}>
+            <Grid.Column>
+              <Checkbox toggle label={'Placeholder'} />
+            </Grid.Column>
+
+            <Grid.Column>
+              <Checkbox toggle label={'Placeholder'} />
+            </Grid.Column>
+            
+            <Grid.Column>
+              <Checkbox toggle label={'Placeholder'} />
+            </Grid.Column>          
+          </Grid.Row>
+
         </Grid>
       </Modal.Header>
 

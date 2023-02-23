@@ -1,4 +1,4 @@
-import { Grid, Card, Segment, Header, Divider } from 'semantic-ui-react';
+import { Grid, Card, Segment, Divider, Checkbox } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage } from '../CommonComponents';
 import { AdminPanelModal } from './DeployAirmanModal';
 import { DeployedAirManList } from './DeployedAirManList';
@@ -9,26 +9,40 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
       <Grid.Row>
         <Card style={{width: '528px'}} >
           <Grid celled='internally'>
-          <Grid.Column width={12}>
+            <Grid.Column width={12}>
 
-          <Card.Content>
-            <Header>Deploy a new Airdrop Manager</Header>
-            <Card.Description>
-              Create a new Airdrop Manager for your community!
-            </Card.Description>
-          </Card.Content>
-          </Grid.Column>
+              <Card.Content>
+                <Card.Header content='Deploy a new Airdrop Manager' />
+                <Card.Description>
+                  Create a new Airdrop Manager for your community!
+                </Card.Description>
+              </Card.Content>
+            </Grid.Column>
 
-          <Grid.Column width={3} >
-          <AdminPanelModal 
-            network={ network } 
-            accounts={ accounts } 
-            isConnected={ isConnected }
-            setCheckedInstances={ setCheckedInstances }
-          /> 
-          </Grid.Column>
-        </Grid>
-      </Card>
+            <Grid.Column width={3} >
+              <AdminPanelModal
+                network={ network }
+                accounts={ accounts }
+                isConnected={ isConnected }
+                setCheckedInstances={ setCheckedInstances }
+              />
+            </Grid.Column>
+          </Grid>
+        </Card>
+      </Grid.Row>
+
+    <Grid.Row columns={'equal'}>
+      <Grid.Column >
+        <Checkbox toggle label='Show expired'/>
+      </Grid.Column>
+      
+      <Grid.Column >
+        <Checkbox toggle label='Show Claimed'/>
+      </Grid.Column>
+      
+      <Grid.Column >
+        <Checkbox toggle label='Show Claimable'/>
+      </Grid.Column>
     </Grid.Row>
 
     <Grid.Row>

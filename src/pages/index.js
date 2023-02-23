@@ -23,21 +23,18 @@ const Home = ({ isConnected, network, accounts }) => {
         </Card>      
       </Grid.Row>
 
-      <Grid.Row centered>
-        <Grid columns='equal'>
-          <Grid.Column >
-            <Checkbox toggle label='Show expired'/>
-          </Grid.Column>
-          
-          <Grid.Column >
-            <Checkbox toggle label='Show Claimed'/>
-          </Grid.Column>
-          
-          <Grid.Column >
-            <Checkbox toggle label='Show Claimable'/>
-          </Grid.Column>
-
-        </Grid>
+      <Grid.Row columns={'equal'}>
+        <Grid.Column >
+          <Checkbox toggle label='Show expired'/>
+        </Grid.Column>
+        
+        <Grid.Column >
+          <Checkbox toggle label='Show Claimed'/>
+        </Grid.Column>
+        
+        <Grid.Column >
+          <Checkbox toggle label='Show Claimable'/>
+        </Grid.Column>
       </Grid.Row>
 
       <Grid.Row>

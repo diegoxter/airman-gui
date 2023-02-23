@@ -46,10 +46,6 @@ export const CampaignModal = ({
     retireFromAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined);
   }
 
-  const handleTest = () => {
-    console.log('test click');
-  }
-
   const handleClaim = () => {
     setIsLoading(true);
     claimAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined)
