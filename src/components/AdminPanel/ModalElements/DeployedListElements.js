@@ -283,6 +283,54 @@ const CampaignAccordionOptions = () => {
   );
 }
 
+const AddUsersPopup = () => {
+
+  const handleAddClick = () => {
+    console.log('Test add button')
+  }
+
+  return (
+    <div>
+        <Form>
+          <Form.Field>
+            <label>Insert the to-be-add addresses separated by comma</label>
+            <input placeholder='Addressess' />
+          </Form.Field>
+        </Form>
+
+        <Divider hidden />
+
+        <Button fluid color='teal' onClick={handleAddClick}>
+            Add
+        </Button>
+    </div>
+  )
+}
+
+const BanUsersPopup = () => {
+
+  const handleBanClick = () => {
+    console.log('Test ban button')
+  }
+
+  return (
+    <div>
+        <Form>
+          <Form.Field>
+            <label>Insert the to-be-banned addresses separated by comma</label>
+            <input placeholder='Addressess' />
+          </Form.Field>
+        </Form>
+
+        <Divider hidden />
+
+        <Button fluid color='red' onClick={handleBanClick}>
+            Ban
+        </Button>
+    </div>
+  )
+}
+
 const DeployedCampaignCard = ({
   campaignInfo,
   instanceToken,
@@ -313,14 +361,6 @@ const DeployedCampaignCard = ({
         .then(() => setTokenBalance(''))
       }
     })
-  }
-
-  const handleAddClick = () => {
-    console.log('Test add button')
-  }
-
-  const handleBanClick = () => {
-    console.log('Test ban button')
   }
 
   // TO DO finish this
@@ -375,12 +415,19 @@ const DeployedCampaignCard = ({
         {(isCampaignActive(campaignInfo))
         ?
         <div className='ui two buttons'>
-          <Button disabled={!isCampaignActive(campaignInfo)} color='teal' onClick={handleAddClick}>
-            Add participants
-          </Button>
-          <Button disabled={!isCampaignActive(campaignInfo)} color='red' onClick={handleBanClick}>
-            Ban participants
-          </Button>
+          <Popup
+            content={<AddUsersPopup position='top center' />}
+            on='click'
+            pinned
+            trigger={<Button color='teal' content='Add users' />}
+          />      
+
+          <Popup
+            content={<BanUsersPopup position='top center' />}
+            on='click'
+            pinned
+            trigger={<Button color='red' content='Ban users' position='top right' />}
+          /> 
         </div>
         :
         <div>
@@ -474,7 +521,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
   return (
     <Modal
-      dimmer='blurring'
+      //dimmer='blurring'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
