@@ -57,7 +57,6 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
     marginTop: '8px',
   };
 
-  // TO DO Draw the content we actually want
   return (
     (isSupportedNetwork(network) && isConnected) 
     ?

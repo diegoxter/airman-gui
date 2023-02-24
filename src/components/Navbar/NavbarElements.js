@@ -146,7 +146,6 @@ class Metamask extends Component {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     
-    // TO DO This could be optimized
     const { chainId } = await provider.getNetwork();
     this.props.changeNetwork(chainId);
   }
@@ -196,7 +195,7 @@ class Metamask extends Component {
           onChange={this.handleChange}
           icon='user circle'
           text='Settings'
-          options={connectedMenuOptions} // TO DO redraw this when the network changes
+          options={connectedMenuOptions}
           >
           </Dropdown>
         );

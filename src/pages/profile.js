@@ -31,7 +31,6 @@ const Profile = ({ network, accounts, isConnected }) => {
     })
   }
 
-  // TO DO this Grid needs to be drawn better
   return (
     <Tab panes={panes} />
   );
