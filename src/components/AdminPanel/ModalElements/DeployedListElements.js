@@ -139,6 +139,7 @@ export const NewAirdropModal = ({
   const [hasValidAmounts, setHasValidAmounts] = useState(false);
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
+  const [hasValidAmountPerParticipant, setHasValidAmountPerParticipant] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -156,52 +157,39 @@ export const NewAirdropModal = ({
   }
 
   const handleTimeChange = (value) => {
-    setTimeInSeconds(value);
-
-    if (!isNaN(value) || value === '') {
-      setHasValidTimeAmounts(false);
-    } else {
-      setHasValidTimeAmounts(true);
-    }
+    setTimeInSeconds(Number(value));
+    setHasValidTimeAmounts(!isNaN(value) && Number(value) > 0);
   }
 
   const handleAmountToAirdropChange = (value) => {
-    setAmountToAirdrop(value);
-
-    if (!isNaN(value) || value === '') {
-      setHasValidAmounts(false);
-    } else {
-      setHasValidAmounts(true);
-    }
+    setAmountToAirdrop(Number(value));
+    setHasValidAmounts(!isNaN(value) && Number(value) > 0);
   }
 
   const handleAmountPerParticipantChange = (value) => {
-    setAmountPerParticipant(value);
+    setAmountPerParticipant(Number(value));
+    setHasValidAmountPerParticipant(!isNaN(value) && Number(value) > 0 && Number(value) < amountToAirdrop);
   }
 
   const handleDeployClick = () => {
     setIsLoading(true);
-    try {
-      let parsedAmountPerParticipant = 0;
+    let parsedAmountPerParticipant = 0;
 
-      if (hasFixedAmount) {
-        parsedAmountPerParticipant = Number(amountPerParticipant);
-      }
-
-      deployAirdropCampaign(
-        instanceAddress, 
-        Number(timeInSeconds), 
-        Number(amountToAirdrop), 
-        hasFixedAmount, 
-        parsedAmountPerParticipant, 
-        setIsLoading)
-      .then(() => {
-        handleClose();
-        setCampaignDataChecked(false);
-      })
-    } catch (error) {
-      console.log('Falla al hacer el deploy de AirMan ');
+    if (hasFixedAmount) {
+      parsedAmountPerParticipant = Number(amountPerParticipant);
     }
+
+    deployAirdropCampaign(
+      instanceAddress, 
+      Number(timeInSeconds), 
+      Number(amountToAirdrop), 
+      hasFixedAmount, 
+      parsedAmountPerParticipant, 
+      setIsLoading)
+    .then(() => {
+      handleClose();
+      setCampaignDataChecked(false);
+    })
   }
 
   return (
@@ -218,14 +206,14 @@ export const NewAirdropModal = ({
       <Modal.Content>
         <Form>
           <Form.Field      
-            error={(hasValidTimeAmounts)}
+            error={(!hasValidTimeAmounts)}
             onChange={(e) => handleTimeChange(e.target.value)}>
             <label>Time (in seconds) to end the campaign:</label>
             <input placeholder='Seconds to end the campaign...' />
           </Form.Field>
 
           <Form.Field
-            error={(hasValidAmounts)}
+            error={(!hasValidAmounts || amountToAirdrop > tokenBalance)}
             onChange={(e) => handleAmountToAirdropChange(e.target.value)} >
             <label>Total amount to airdrop</label>
             <input placeholder='Tokens to give...' />
@@ -242,10 +230,7 @@ export const NewAirdropModal = ({
           ?
           <Form.Field
             onChange={(e) => handleAmountPerParticipantChange(e.target.value)}
-            error={{
-              content: 'Please enter a valid email address',
-              pointing: 'above',
-            }}>
+            error={!hasValidAmountPerParticipant}>
             <label>Amount for each participant</label>
             <input placeholder='Amount...' />
           </Form.Field>
@@ -262,18 +247,25 @@ export const NewAirdropModal = ({
           Cancel
         </Button>
         {
-        (amountToAirdrop === 0 || amountToAirdrop === '' || timeInSeconds === '' || timeInSeconds === 0)
+        (!hasValidAmounts || !hasValidTimeAmounts || !hasValidAmountPerParticipant)
         ?
         <Button
         color='grey'
-        disabled={true} // TO DO fix this when the form is empty
+        disabled
         content='Insert amount' />
         :
         <Button
         loading={isLoading}
-        color={(amountToAirdrop > tokenBalance)?'red':'green'} 
-        disabled={((amountToAirdrop > tokenBalance)?true:false)} // TO DO fix this when the form is empty
-        content={(amountToAirdrop > tokenBalance)?'Invalid data':'Deploy'} 
+        color={
+          ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
+          ? 'red' : 'green'} 
+        disabled={
+          (
+            (amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
+          ? true : false}
+        content={
+          ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
+          ? 'Invalid data' : 'Deploy'} 
         onClick={() => handleDeployClick()} />
         }
       </Modal.Actions>
@@ -343,7 +335,7 @@ const DeployedCampaignCard = ({
         </Segment>
         
         <Segment vertical>
-          <Button fluid textAlign='center' color={'blue'} content='Save' />
+          <Button fluid color={'blue'} content='Save' />
         </Segment>
       </div>
     )}}];
