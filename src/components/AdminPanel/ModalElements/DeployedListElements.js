@@ -247,7 +247,7 @@ export const NewAirdropModal = ({
           Cancel
         </Button>
         {
-        (!hasValidAmounts || !hasValidTimeAmounts || !hasValidAmountPerParticipant)
+        (!hasValidAmounts || !hasValidTimeAmounts || (hasFixedAmount && !hasValidAmountPerParticipant))
         ?
         <Button
         color='grey'
@@ -257,11 +257,11 @@ export const NewAirdropModal = ({
         <Button
         loading={isLoading}
         color={
-          ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
+          ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? 'red' : 'green'} 
         disabled={
           (
-            (amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
+            (amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? true : false}
         content={
           ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
