@@ -201,6 +201,31 @@ export const withdrawCampaignTokens = async (_campaignAddress, _setIsLoading) =>
   }
 }
 
+// TO DO test this
+export const addUserList = async (_campaignAddress, _userList, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).batchAddToWhitelist(_userList);
+  
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+  
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    _setIsLoading(false);
+    return false;
+  }
+}
+/*
+export const banUser = async (_campaignAddress, _userList, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
+}
+*/
 // Helper functions
 export const isCampaignActive = (_campaignInfo_claimableSince) => {
   return (Number(_campaignInfo_claimableSince) * 1000 > Date.now());

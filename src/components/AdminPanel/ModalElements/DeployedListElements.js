@@ -7,7 +7,7 @@ import {
   fetchEtherBalance,
   manageAirmanFunds
 } from '../../../interactions/airmanSystem';
-import { withdrawCampaignTokens } from '../../../interactions/airdropSystem';
+import { withdrawCampaignTokens, addUserList } from '../../../interactions/airdropSystem';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
 import { 
@@ -283,31 +283,81 @@ const CampaignAccordionOptions = () => {
   );
 }
 
-const AddUsersPopup = () => {
+const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
+  const [userListInput, setUserListInput] = useState('');
+  const [userList, setUserList] = useState([]);
+
+  const handleAddToListClick = () => {
+    const newItems = [...userList, userListInput.toLowerCase()];
+    setUserList(newItems);
+    setUserListInput('');
+  }
+
+  const handleDeleteLastElementClick = () => {
+    const newArray = userList.slice(0, -1);
+    setUserList(newArray);
+  }
+
+  const handleUserListChange = (address) => {
+    setUserListInput(address);
+  }
 
   const handleAddClick = () => {
-    console.log('Test add button')
+    //console.log(userList)
+    addUserList(instanceAddress, userList, setIsLoading)  
+    .then((value) => {
+    })
   }
 
   return (
     <div>
+        <Segment>
+          {userList}
+        </Segment>
+
+        <Divider />
+
         <Form>
           <Form.Field>
-            <label>Insert the to-be-add addresses separated by comma</label>
-            <input placeholder='Addressess' />
+            <label>Insert the addresses one by one</label>
+            <input 
+              placeholder='Addressess'
+              value={userListInput}
+              onChange={(e) => handleUserListChange(e.target.value)}
+            />
           </Form.Field>
         </Form>
 
         <Divider hidden />
 
-        <Button fluid color='teal' onClick={handleAddClick}>
-            Add
-        </Button>
+      <div className='ui two buttons'>
+        <Button 
+        disabled={userListInput === ''}
+        fluid 
+        color='teal' 
+        onClick={handleAddToListClick}
+        content='Add to list' />
+
+        <Button 
+        disabled={userList.length === 0}
+        fluid 
+        color='red' 
+        onClick={handleDeleteLastElementClick}
+        content='Delete last element' />
+        </div>
+        <Divider hidden />
+
+        <Button
+        disabled={userList.length === 0}
+        fluid 
+        color='teal' 
+        onClick={handleAddClick}
+        content='Send transaction' />
     </div>
   )
 }
 
-const BanUsersPopup = () => {
+const BanUsersPopup = ({ instanceAddress, setIsLoading }) => {
 
   const handleBanClick = () => {
     console.log('Test ban button')
@@ -416,14 +466,16 @@ const DeployedCampaignCard = ({
         ?
         <div className='ui two buttons'>
           <Popup
-            content={<AddUsersPopup position='top center' />}
+            position='top center'
+            content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
             on='click'
             pinned
             trigger={<Button color='teal' content='Add users' />}
           />      
 
           <Popup
-            content={<BanUsersPopup position='top center' />}
+            position='top center'
+            content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
             on='click'
             pinned
             trigger={<Button color='red' content='Ban users' position='top right' />}
