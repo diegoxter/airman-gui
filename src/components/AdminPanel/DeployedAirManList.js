@@ -19,7 +19,7 @@ export const DeployedAirManList = ({
   if (checkedInstances) {
     if (instances.length > 0) {
       return (
-        <Card.Group>
+        <Card.Group itemsPerRow={4} >
           {instances.map((instance) => ( // aqui
             <Card key={instance.id}>
               <Card.Content>

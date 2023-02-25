@@ -182,9 +182,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
   }
 
   return(
-    <Card style={{
-      width:'250px'
-    }}>
+    <Card style={{width:'280px', marginLeft:'60px', marginRight:'50px'}} >
       <Card.Content>
 
       <Card.Header>
@@ -283,16 +281,17 @@ export const AirdropList = ({ network, accounts }) => {
           <LoadingCardGroup />
         </div> 
         :
-        <Card.Group itemsPerRow={2}>
+        <Card.Group>
   
-        {campaignData.map((campaignInfo, index) => (
-          <AirdropCampaignCard 
-          key={ campaignInfo.campaignAddress }
-          accounts={ accounts }
-          campaignInfo={ campaignInfo }
-          participantData={ participantData[index] }
-          setParticipantDataChecked={ setParticipantDataChecked } />
-        ))}
+          {campaignData.map((campaignInfo, index) => (
+            <AirdropCampaignCard 
+            key={ campaignInfo.campaignAddress }
+            accounts={ accounts }
+            campaignInfo={ campaignInfo }
+            participantData={ participantData[index] }
+            setParticipantDataChecked={ setParticipantDataChecked } />
+          ))}
+
         </Card.Group>
         }
       </Segment>

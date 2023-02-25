@@ -22,10 +22,18 @@ import {
     Popup,
     Input,
     Divider,
-    Accordion
+    Accordion,
+    Icon
 } from 'semantic-ui-react';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const cleanAddress = (_address, n, i) => {
+  let firstHalf = _address.substr(0, n);
+  let secondHalf = _address.substr(i, n);
+
+  return firstHalf+'...'+secondHalf;
+}
 
 export const ManageAssetsPopup = ({
   setPopUpOpen,
@@ -286,6 +294,8 @@ const CampaignAccordionOptions = () => {
 const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
   const [userListInput, setUserListInput] = useState('');
   const [userList, setUserList] = useState([]);
+  const [isListPopupOpen, setIsListPopupOpen] = useState(false);
+  const [duplicatedAddress, setDuplicatedAddress] = useState(false);
 
   const handleAddToListClick = () => {
     const newItems = [...userList, userListInput.toLowerCase()];
@@ -293,13 +303,15 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
     setUserListInput('');
   }
 
-  const handleDeleteLastElementClick = () => {
-    const newArray = userList.slice(0, -1);
+  const handleDeleteLastElementClick = (index) => {
+    const newArray = [...userList];
+    newArray.splice(index, 1);
     setUserList(newArray);
   }
 
   const handleUserListChange = (address) => {
     setUserListInput(address);
+    setDuplicatedAddress(userList.indexOf(address.toLowerCase()) !== -1);
   }
 
   const handleAddClick = () => {
@@ -309,16 +321,71 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
     })
   }
 
+  const switchPopup = () => {
+    setIsListPopupOpen(!isListPopupOpen)
+  }
+
+  // 0xcBE7D932979a1DCa6aDC7c42a71b694c9B13DC78
+
   return (
     <div>
+      <Segment.Group horizontal>
         <Segment>
-          {userList}
+          Address count: {userList.length}
         </Segment>
+
+        <Segment>
+          <Popup
+            on='click'
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
+            position='right center'
+            trigger={
+              <Button icon color='grey' size='mini' onClick={switchPopup}>
+                <Icon name={(isListPopupOpen)? 'close':'arrow right'} />
+              </Button>
+            }
+            content={
+              <div> 
+                <Header > List </Header>
+                  {
+                    (userList.length === 0)
+                    ?
+                    'No addressess'
+                    :
+                    <div style={{height: '200px', overflowY: 'auto'}}>
+                      <Segment.Group style={{marginRight: '7px'}}>
+                      {userList.map((address, index) => (
+                        <Segment.Group key={index} horizontal size='tiny'>
+                          <Segment>
+                            {cleanAddress(address, 8, 34)} 
+                          </Segment>
+
+                          <Segment>
+                            <Button icon color='red' size='mini' onClick={() => {handleDeleteLastElementClick(index)}}>
+                              <Icon name='delete' />
+                            </Button>
+                          </Segment>
+                        </Segment.Group>
+                      ))}
+                    </Segment.Group>
+                  </div>
+                  }
+                  
+
+              </div>         
+            }
+          />
+        </Segment>
+
+        </Segment.Group>
+          
 
         <Divider />
 
         <Form>
-          <Form.Field>
+          <Form.Field
+          error={(duplicatedAddress)}>
             <label>Insert the addresses one by one</label>
             <input 
               placeholder='Addressess'
@@ -330,29 +397,22 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
 
         <Divider hidden />
 
-      <div className='ui two buttons'>
-        <Button 
-        disabled={userListInput === ''}
-        fluid 
-        color='teal' 
-        onClick={handleAddToListClick}
-        content='Add to list' />
+        <div className='ui two buttons'>
+          <Button 
+            disabled={userListInput.length < 42 || duplicatedAddress}
+            fluid 
+            color={(duplicatedAddress)? 'red' : 'violet'} 
+            onClick={handleAddToListClick}
+            content={(duplicatedAddress)? 'Duplicated address' : 'Add to list'} />
 
-        <Button 
-        disabled={userList.length === 0}
-        fluid 
-        color='red' 
-        onClick={handleDeleteLastElementClick}
-        content='Delete last element' />
+          <Button
+            disabled={userList.length === 0}
+            fluid 
+            color={(userList.length === 0)?'grey':'teal'} 
+            onClick={handleAddClick}
+            content='Send transaction' />
         </div>
-        <Divider hidden />
 
-        <Button
-        disabled={userList.length === 0}
-        fluid 
-        color='teal' 
-        onClick={handleAddClick}
-        content='Send transaction' />
     </div>
   )
 }
@@ -386,7 +446,6 @@ const DeployedCampaignCard = ({
   instanceToken,
   isCampaignActive,
   tokenSymbol,
-  cleanAddress,
   getHumanDate,
   checkedBalance,
   tokenBalance,
@@ -447,7 +506,7 @@ const DeployedCampaignCard = ({
       <Card.Meta>{`Total amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
       <Card.Meta>{`Amount in contract ${campaignBalance} ${tokenSymbol}`}</Card.Meta>
 
-      <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress)}</b></Card.Meta>
+      <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b></Card.Meta>
 
       <Card.Description>
       {
@@ -469,6 +528,8 @@ const DeployedCampaignCard = ({
             position='top center'
             content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
             on='click'
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
             pinned
             trigger={<Button color='teal' content='Add users' />}
           />      
@@ -477,6 +538,8 @@ const DeployedCampaignCard = ({
             position='top center'
             content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
             on='click'
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
             pinned
             trigger={<Button color='red' content='Ban users' position='top right' />}
           /> 
@@ -560,19 +623,13 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     return dateString.toString();
   }
 
-  const cleanAddress = (_address) => {
-    let firstHalf = _address.substr(0, 4);
-    let secondHalf = _address.substr(38, 4);
-
-    return firstHalf+'...'+secondHalf;
-  }
-
   const isCampaignActive = (campaignInfo) => {
     return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
   }
 
   return (
     <Modal
+      style={{height: '94%', overflowY: 'auto'}}
       //dimmer='blurring'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
@@ -586,7 +643,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               Instance #{instanceNumer} <br/>Deployed campaigns
               <br/> <p style={{
                 fontSize: '12px',
-                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress)} </p>
+                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} </p>
             </Grid.Column>
 
             <Grid.Column floated='right' width={5}>
@@ -605,13 +662,15 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             
             <Grid.Column>
               <Checkbox toggle label={'Placeholder'} />
-            </Grid.Column>          
+            </Grid.Column>
+
+            <Button circular icon='refresh'/>
           </Grid.Row>
 
         </Grid>
       </Modal.Header>
 
-      <Modal.Content scrolling>
+      <Modal.Content scrolling style={{height: '51%', overflowY: 'auto'}}>
         { (!campaignDataChecked)
         ? //           
         <Segment style={{width:'96%'}}>
@@ -620,7 +679,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           <LoadingCardGroup />
         </Segment>
         :
-        <Card.Group> 
+        <Card.Group itemsPerRow={3}> 
         {(campaignData.length === 0)
         ?
           <Segment style={{width:'96%'}}>
@@ -636,7 +695,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             instanceToken={ instanceToken }
             isCampaignActive={ isCampaignActive }
             tokenSymbol={ tokenSymbol }
-            cleanAddress={ cleanAddress }
             getHumanDate={ getHumanDate }
             checkedBalance={ checkedBalance }
             setIsLoading= { setIsLoading }

@@ -215,7 +215,7 @@ export const addUserList = async (_campaignAddress, _userList, _setIsLoading) =>
 
     return true;
   } catch (error) {
-    console.log(error);
+    console.log('Failure to batchAdd addressess');
     _setIsLoading(false);
     return false;
   }
