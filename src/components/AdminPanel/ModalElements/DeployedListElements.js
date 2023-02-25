@@ -123,7 +123,13 @@ export const ManageAssetsPopup = ({
               {(etherBalance > 0)?ethers.utils.formatEther(etherBalance.toString())+' ETH': '0 ETH'} 
             </Segment>
           <Divider hidden />
-          <Button fluid size='tiny' color={(etherBalance === 0 || etherBalance==='')?'grey':'orange'} content='Withdraw Ether' onClick={handleWithdrawEtherClick} disabled={(etherBalance === 0 || etherBalance === '')}/>
+          <Button 
+            fluid
+            size='tiny'
+            color={(etherBalance === 0 || etherBalance==='')?'grey':'orange'}
+            content='Withdraw Ether' onClick={handleWithdrawEtherClick}
+            disabled={(etherBalance === 0 || etherBalance === '')}
+          />
         </Grid.Column>
       </Grid.Row>
     </Grid>
@@ -268,8 +274,7 @@ export const NewAirdropModal = ({
           ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? 'red' : 'green'} 
         disabled={
-          (
-            (amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
+          ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? true : false}
         content={
           ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
@@ -453,6 +458,8 @@ const DeployedCampaignCard = ({
   setIsLoading
 }) => {
   const [campaignBalance, setCampaignBalance] = useState('')
+  const [addPopupOpen, setaddPopupOpen] = useState(false)
+  const [banPopupOpen, setBanPopupOpen] = useState(false)
 
   if (campaignBalance === '' || checkedBalance === false) {
     checkBalance(campaignInfo.campaignAddress, instanceToken)
@@ -531,18 +538,31 @@ const DeployedCampaignCard = ({
             closeOnDocumentClick={false}
             closeOnEscape={false}
             pinned
-            trigger={<Button color='teal' content='Add users' />}
-          />      
+            trigger={
+            <Button 
+            disabled={banPopupOpen}
+            basic={banPopupOpen}
+            color={(addPopupOpen)? 'orange':'teal'}
+            content={(addPopupOpen)? 'Close':'Add users'}
+            onClick={() => setaddPopupOpen(!addPopupOpen)} />
+          } />      
 
-          <Popup
+          <Popup // TO DO add this function to the contract
             position='top center'
             content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
             on='click'
             closeOnDocumentClick={false}
             closeOnEscape={false}
             pinned
-            trigger={<Button color='red' content='Ban users' position='top right' />}
-          /> 
+            trigger={
+            <Button
+            disabled={addPopupOpen}
+            basic={addPopupOpen}
+            color={(banPopupOpen)? 'orange':'red'}
+            content={(banPopupOpen)? 'Close':'Ban users'} 
+            onClick={() => setBanPopupOpen(!banPopupOpen)}
+          /> }
+          />
         </div>
         :
         <div>
@@ -647,7 +667,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             </Grid.Column>
 
             <Grid.Column floated='right' width={5}>
-              Tokens held in this contract: <br/> <Segment textAlign='center'><u>{(tokenBalance > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
+              Tokens held in this contract: <br/> 
+              <Segment textAlign='center'><u>{(tokenBalance > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
             </Grid.Column>
           </Grid.Row>
           
