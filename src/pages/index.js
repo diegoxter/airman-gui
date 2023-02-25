@@ -6,7 +6,7 @@ import { AirdropList } from '../components/HomeElements';
 const Home = ({ isConnected, network, accounts }) => {
 
   return (
-    <Grid divided='vertically'>
+    <Grid style={{marginTop: '40px'}} divided='vertically'>
       <Grid.Row>
         <Card 
             style={{

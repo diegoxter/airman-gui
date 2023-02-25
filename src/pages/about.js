@@ -4,6 +4,7 @@ const About = () => {
   return (
     <div
       style={{
+        marginTop: '50px',
         display: 'flex',
         justifyContent: 'Center',
         alignItems: 'Right',

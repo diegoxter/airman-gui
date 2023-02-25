@@ -9,7 +9,9 @@ import { ethers } from "ethers";
 
 export const Nav = styled.nav`
   background: #00238b;
-  height: 85px;
+  width: 100%;
+  height: 55px;
+  position: fixed;
   display: flex;
   justify-content: space-between;
   padding: 0.2rem calc((100vw - 1000px) / 2);
@@ -17,6 +19,7 @@ export const Nav = styled.nav`
   /* Third Nav */
   /* justify-content: flex-start; */
   @media screen and (max-width: 768px) {
+    width: 56%;
     align-items: center;
     display: flex;
   }
