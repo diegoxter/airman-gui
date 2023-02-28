@@ -28,6 +28,12 @@ export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress
     name: 'balanceOf',
     params: [_owner],
   };
+  const getDecimals = {
+    abi: erc20ABI,
+    address: _tokenContractAddress,
+    name: 'decimals',
+    params: [],
+  };
 
   const tokenInfoDataRaw = await multicall(
     erc20ABI,
@@ -35,12 +41,13 @@ export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress
       getSymbol,
       getAllowance,
       getBalance,
+      getDecimals
     ],
     _network);
 
-    const [symbol, allowance, balance] = tokenInfoDataRaw;
+    const [symbol, allowance, balance, decimals] = tokenInfoDataRaw;
 
-    return { symbol, allowance, balance };
+    return { symbol, allowance, balance, decimals };
 }
 
 export const approveTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {

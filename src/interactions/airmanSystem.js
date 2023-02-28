@@ -113,8 +113,10 @@ export const deployAirdropCampaign = async (
   _instanceAddress,
   _endsIn,
   _amountForCampaign,
-  _hasFixedAmount,
+  _whitelistFee,
   _amountForEveryUser,
+  _maxParticipantAmount,
+  _hasFixedAmount,
   _setIsLoading ) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
 
@@ -122,8 +124,10 @@ export const deployAirdropCampaign = async (
     const tx = await airManInstance.connect(signer).newAirdropCampaign(
       _endsIn,
       _amountForCampaign,
-      _hasFixedAmount,
-      _amountForEveryUser
+      _whitelistFee,
+      _amountForEveryUser,
+      _maxParticipantAmount,
+      _hasFixedAmount
     );
 
     let sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -134,7 +138,7 @@ export const deployAirdropCampaign = async (
 
     return true
   } catch (error) {
-    console.log('campaign deploy failed');
+    console.log(error);
     _setIsLoading(false);
     return false
   }

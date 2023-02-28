@@ -13,6 +13,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   const [contractInputValue] = useDebounce(contract, 1000);
   const [symbolCheck, setSymbolCheck] = useState(false);
   const [tokenSymbol, setTokenSymbol] = useState('');
+  const [tokenDecimals, setTokenDecimals] = useState('')
   const [amount, setAmount] = useState('');
   const [amountInputValue] = useDebounce(amount, 600);
   const [tokenAmount, setTokenAmount] = useState('');
@@ -98,6 +99,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
                     setAllowance= { setAllowance }
                     setTokenSymbol={ setTokenSymbol }
                     setSymbolCheck={ setSymbolCheck }
+                    setTokenDecimals={ setTokenDecimals }
                     setTokenAmount={ setTokenAmount }
                   />
 

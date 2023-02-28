@@ -23,6 +23,12 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
       }
     ],
     "name": "EtherReceived",
@@ -55,6 +61,12 @@
         "internalType": "uint256",
         "name": "amountToAirdrop",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "instanceAddress",
+        "type": "address"
       }
     ],
     "name": "NewAirdropCampaign",
@@ -94,13 +106,18 @@
         "type": "uint256"
       },
       {
-        "internalType": "contract AirdropCampaign",
-        "name": "campaignAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "amountToAirdrop",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "amountToAirdrop",
+        "name": "fee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountForEachUser",
         "type": "uint256"
       },
       {
@@ -109,9 +126,9 @@
         "type": "bool"
       },
       {
-        "internalType": "uint256",
-        "name": "amountForEachUser",
-        "type": "uint256"
+        "internalType": "contract AirdropCampaign",
+        "name": "campaignAddress",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -156,14 +173,24 @@
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "hasFixedAmount",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "whitelistFee",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "amountForEveryUser",
+        "name": "amountForEachUser",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxUserAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "hasFixedAmount",
+        "type": "bool"
       }
     ],
     "name": "newAirdropCampaign",

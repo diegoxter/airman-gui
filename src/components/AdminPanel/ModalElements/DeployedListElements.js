@@ -150,24 +150,25 @@ export const NewAirdropModal = ({
   const [timeInSeconds, setTimeInSeconds] = useState('');
   const [hasValidTimeAmounts, setHasValidTimeAmounts] = useState(false);
   const [amountToAirdrop, setAmountToAirdrop] = useState('');
+  const [whitelistFee, setWhitelistFee] = useState('0');
+  const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
   const [hasValidAmounts, setHasValidAmounts] = useState(false);
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
   const [hasValidAmountPerParticipant, setHasValidAmountPerParticipant] = useState(false);
+  const [maxParticipantAmount, setMaxParticipantAmount] = useState('');
+  const [hasValidMaxParticipantAmount, setHasValidMaxParticipantAmount] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
     setTimeInSeconds('');
     setAmountToAirdrop('');
     setTokenBalance('');
+    setWhitelistFee('0');
   }
 
   const handleCheckboxChange = () => {
-    if (hasFixedAmount) {
-      setHasFixedAmount(false);
-    } else {
-      setHasFixedAmount(true);
-    }
+    setHasFixedAmount(!hasFixedAmount);
   }
 
   const handleTimeChange = (value) => {
@@ -180,9 +181,24 @@ export const NewAirdropModal = ({
     setHasValidAmounts(!isNaN(value) && Number(value) > 0);
   }
 
+  const handleWhitelistFeeChange = (value) => {
+    setWhitelistFee(value);
+    setHasValidFeeAmounts(!isNaN(value) && value !== '');
+  }
+
   const handleAmountPerParticipantChange = (value) => {
     setAmountPerParticipant(Number(value));
     setHasValidAmountPerParticipant(!isNaN(value) && Number(value) > 0 && Number(value) < amountToAirdrop);
+  }
+
+  const handleMaxParticipantAmountChange = (value) => {
+    setMaxParticipantAmount(Number(value));
+    setHasValidMaxParticipantAmount(
+      !isNaN(value) &&
+      Number(value) > 0 &&
+      value !== '' &&
+      (amountToAirdrop / Number(value) === amountPerParticipant)
+    );
   }
 
   const handleDeployClick = () => {
@@ -197,13 +213,23 @@ export const NewAirdropModal = ({
       instanceAddress,
       Number(timeInSeconds),
       Number(amountToAirdrop),
-      hasFixedAmount,
+      whitelistFee,
       parsedAmountPerParticipant,
+      maxParticipantAmount,
+      hasFixedAmount,
       setIsLoading)
     .then(() => {
       handleClose();
       setCampaignDataChecked(false);
     })
+  }
+
+  const getFeeAmount = () => {
+    if (!isNaN(whitelistFee) && whitelistFee !== '') {
+      return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'gwei'))
+    } else {
+      return '0'
+    }
   }
 
   return (
@@ -230,7 +256,16 @@ export const NewAirdropModal = ({
             error={(!hasValidAmounts || amountToAirdrop > tokenBalance)}
             onChange={(e) => handleAmountToAirdropChange(e.target.value)} >
             <label>Total amount to airdrop</label>
-            <input placeholder='Tokens to give...' />
+            <input placeholder='Tokens to airdrop...' />
+          </Form.Field>
+
+          <Form.Field
+            error={(!hasValidFeeAmounts)}
+            onChange={(e) => handleWhitelistFeeChange(e.target.value)} >
+            <label>
+              Whitelist fee in Gwei (can be 0) [value in Ether: {getFeeAmount()}]
+              </label>
+            <input placeholder='Fee in Gwei...' />
           </Form.Field>
 
           <Form.Field>
@@ -242,17 +277,35 @@ export const NewAirdropModal = ({
 
           {(hasFixedAmount)
           ?
+          <div>
           <Form.Field
             onChange={(e) => handleAmountPerParticipantChange(e.target.value)}
             error={!hasValidAmountPerParticipant}>
             <label>Amount for each participant</label>
             <input placeholder='Amount...' />
           </Form.Field>
+
+          <Form.Field
+            onChange={(e) => handleMaxParticipantAmountChange(e.target.value)}
+            error={!hasValidMaxParticipantAmount}>
+            <label>Max. participant amount</label>
+            <input placeholder='Amount...' />
+          </Form.Field>
+          </div>
           :
+          <div>
           <Form.Field disabled>
             <label>Amount for each participant</label>
             <input placeholder='Amount...' />
-          </Form.Field>}
+          </Form.Field>
+
+          <Form.Field disabled>
+            <label>Max. participant amount</label>
+            <input placeholder='Amount...' />
+          </Form.Field>
+          </div>
+
+          }
         </Form>
       </Modal.Content>
 
@@ -261,7 +314,7 @@ export const NewAirdropModal = ({
           Cancel
         </Button>
         {
-        (!hasValidAmounts || !hasValidTimeAmounts || (hasFixedAmount && !hasValidAmountPerParticipant))
+        (!hasValidAmounts || !hasValidTimeAmounts || (hasFixedAmount && (!hasValidAmountPerParticipant || !hasValidMaxParticipantAmount)))
         ?
         <Button
         color='grey'
@@ -271,13 +324,13 @@ export const NewAirdropModal = ({
         <Button
         loading={isLoading}
         color={
-          ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
+          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? 'red' : 'green'}
         disabled={
-          ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
+          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? true : false}
         content={
-          ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
+          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || !hasValidTimeAmounts))
           ? 'Invalid data' : 'Deploy'}
         onClick={() => handleDeployClick()} />
         }
@@ -510,8 +563,8 @@ const DeployedCampaignCard = ({
         }
       </Card.Header>
 
-      <Card.Meta>{`Total amount to airdrop ${campaignInfo.amountToAirdrop} ${tokenSymbol}`}</Card.Meta>
-      <Card.Meta>{`Amount in contract ${campaignBalance} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>{`Total amount to airdrop ${parseInt(campaignInfo.amountToAirdrop).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>{`Amount in contract ${parseInt(campaignBalance).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
 
       <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b></Card.Meta>
 

@@ -3,7 +3,6 @@ import { getAdmPanAddress } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
-import { BigNumber } from 'ethers';
 
 export const DeployButton = ({
   network,
@@ -114,6 +113,7 @@ export const TokenContractInput = ({
   setTokenSymbol,
   symbolCheck,
   setSymbolCheck,
+  setTokenDecimals,
   setTokenAmount
 }) => {
 
@@ -136,6 +136,7 @@ export const TokenContractInput = ({
       setTokenSymbol(value.symbol[0]);
       setSymbolCheck(true);
       setTokenAmount((parseInt(value.balance)).toLocaleString());
+      setTokenDecimals(value.decimals)
       setAllowance((value.allowance).toString());
     } else {
       setIsValidContract(false);
