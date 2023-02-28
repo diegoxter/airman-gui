@@ -68,6 +68,29 @@
   {
     "inputs": [
       {
+        "internalType": "address payable",
+        "name": "_newOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_instanceToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialBalance",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployFreeAirdropManagerInstance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -81,48 +104,14 @@
     "name": "deployedByUser",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "id",
         "type": "uint256"
       },
       {
         "internalType": "address",
-        "name": "instanceAddress",
+        "name": "instanceOwner",
         "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "instanceToken",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "deployedManagers",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
       },
       {
         "internalType": "address",
@@ -155,34 +144,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_instanceToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_initialBalance",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address payable",
-        "name": "_newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "freeAirManInstace",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "instanceOwner",
         "type": "address"
       }
     ],
-    "name": "getDeployedInstances",
+    "name": "getDeployedInstancesByOwner",
     "outputs": [
       {
         "internalType": "uint256[]",

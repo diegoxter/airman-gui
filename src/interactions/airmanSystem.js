@@ -52,7 +52,7 @@ export const getAirdropCampaignsAddressList = async (_network) => {
     await Promise.all(airManAddresses.map(async (airmanData) => {
       const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
       const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
-      
+
       if (airManInstanceCampaignList > 0) {
         const getAirdropListCalls = [];
 
@@ -63,7 +63,7 @@ export const getAirdropCampaignsAddressList = async (_network) => {
             name: 'campaigns',
             params: [i],
           };
-      
+
           getAirdropListCalls[i] = getAirdropList;
         }
 
@@ -86,21 +86,21 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
 
   try {
     const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
-      _token, 
+      _token,
       Number(amount),
       {
         value: fee,
       }
       )
     );
-  
+
     let sleep = ms => new Promise(r => setTimeout(r, ms));
-  
+
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
     _setOpen(false);
-      
+
     return true;
   } catch (error) {
     console.log('Falla al hacer el deploy de AirMan ');
@@ -156,7 +156,7 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
 // Draw functions
 export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
   const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
-  const instancesData = await adminPanelInstance.connect(signer).getDeployedInstances(_ownerAddress);
+  const instancesData = await adminPanelInstance.connect(signer).getDeployedInstancesByOwner(_ownerAddress);
 
   const calls = [];
 
@@ -164,8 +164,8 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
     const getAirmanList = {
       abi: adminPanelAbi,
       address: getAdmPanAddress(_network),
-      name: 'deployedManagers',
-      params: [instanceData],
+      name: 'deployedByUser',
+      params: [_ownerAddress, instanceData],
     };
 
     calls[index] = getAirmanList;

@@ -3,11 +3,11 @@ import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from '.
 import { DeployedAirdropModal } from './ModalElements/DeployedListElements';
 
 
-export const DeployedAirManList = ({ 
-  network, 
-  accounts, 
-  instances, 
-  checkedInstances, 
+export const DeployedAirManList = ({
+  network,
+  accounts,
+  instances,
+  checkedInstances,
 }) => {
   const cleanAddress = (_address) => {
     let firstHalf = _address.substr(0, 3);
@@ -19,9 +19,9 @@ export const DeployedAirManList = ({
   if (checkedInstances) {
     if (instances.length > 0) {
       return (
-        <Card.Group itemsPerRow={5} >
-          {instances.map((instance) => ( // aqui
-            <Card key={instance.id} style={{marginLeft: '45px'}}>
+        <Card.Group>
+          {instances.map((instance) => (
+            <Card key={instance.id} style={{marginLeft: '15px', width: '22%'}}>
               <Card.Content>
                 <Image
                     floated='right'
@@ -36,36 +36,36 @@ export const DeployedAirManList = ({
               </Card.Content>
               <Card.Content extra>
                 <div className='button'>
-                  <DeployedAirdropModal 
+                  <DeployedAirdropModal
                     accounts={ accounts }
                     network={ network }
                     instanceNumer={ Number(instance.id) }
-                    instanceAddress={ instance.instanceAddress } 
+                    instanceAddress={ instance.instanceAddress }
                     instanceToken= { instance.instanceToken }
                     />
                 </div>
               </Card.Content>
-            </Card>        
+            </Card>
           ))}
         </Card.Group>
-      ); 
+      );
     } else {
-      return( 
+      return(
         <Segment style={{width:'100%'}}>
 
           <NoElementsFoundMessage whatIsBeingLookedFor='Airdrop Managers'/>
           <Divider hidden/>
-          <LoadingCardGroup /> 
+          <LoadingCardGroup />
 
         </Segment>
       );
     }
   } else {
-    return ( 
+    return (
       <Segment style={{width:'96%'}}>
         <FetchingDataMessage />
-        <LoadingCardGroup />  
-      </Segment> 
+        <LoadingCardGroup />
+      </Segment>
     );
   }
 }

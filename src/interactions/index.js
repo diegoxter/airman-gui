@@ -1,10 +1,10 @@
 export function isSupportedNetwork(chainId) {
   const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ];
-  
+
   if (typeof chainId === 'number') {
     chainId = '0x' + Number(chainId).toString(16).padStart(2, '0');
-  } 
-  
+  }
+
   return typeof chainId === 'string' && supportedNetworks.includes(chainId);
 };
 
@@ -13,28 +13,28 @@ export const getAdmPanAddress = (_network) => {
   let adminPanelContract = '';
 
   switch (_network) {
-      case 61:
-          adminPanelContract = '0';
-          break;
+    case 61:
+      adminPanelContract = '0';
+      break;
 
-      case 4002:
-          // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
-          adminPanelContract = '0x32c449954168f2a5f365dCb33a123aFDc223c1C5'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
-          break;
+    case 4002:
+      // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
+      adminPanelContract = '0xAC3760945656Dd5684cFe74A2Ade0B42EBb586A8'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+      break;
 
-      case 87:
-          // testTokenContract = 0xd9209ca92E8e468C3f8AD7F3CE6B265AfD92760d
-          adminPanelContract = '0x553BB0B2C069Bbb1f117E272c4bCc7393Cade860'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
-          break;
+    case 87:
+      // testTokenContract = 0xd9209ca92E8e468C3f8AD7F3CE6B265AfD92760d
+      adminPanelContract = '0x553BB0B2C069Bbb1f117E272c4bCc7393Cade860'; // previous 0x700bF227BFf82705A4B1AD099098e4E258cD3570
+      break;
 
-      case 31337: // This is for testing/debugging purposes
-          adminPanelContract = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-          break;
+    case 31337: // This is for testing/debugging purposes
+      adminPanelContract = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+      break;
 
-      default:
-          adminPanelContract = 'unsupported';
-          break;
-  }   
+    default:
+      adminPanelContract = 'unsupported';
+      break;
+  }
 
   return adminPanelContract;
 };
@@ -43,28 +43,56 @@ export const getMulticallAddress = (_network) => {
   let multicallContract = '';
 
   switch (_network) {
-      case 61:
-        multicallContract = '0';
-          break;
+    case 61:
+      multicallContract = '0';
+      break;
 
-      case 4002:
-          multicallContract = '0xb83853b065b4fEE34c7352E2b3ad1B5d867eB76E';
-          break;
+    case 4002:
+      multicallContract = '0xb83853b065b4fEE34c7352E2b3ad1B5d867eB76E';
+      break;
 
-      case 87:
-          multicallContract = '1';
-          break;
+    case 87:
+      multicallContract = '1';
+      break;
 
-      case 31337: // This is for testing/debugging purposes
-        multicallContract = '2';
-          break;
+    case 31337: // This is for testing/debugging purposes
+      multicallContract = '2';
+      break;
 
-      default:
-          multicallContract = 'unsupported';
-          break;
-  }   
+    default:
+      multicallContract = 'unsupported';
+      break;
+  }
 
   return multicallContract;
+};
+
+export const getAdminAddress = (_network) => {
+  let adminAddress = '';
+
+  switch (_network) {
+    case 61:
+      adminAddress = '0';
+      break;
+
+    case 4002:
+      adminAddress = '0x162072bC30A66E240c5DEef918F83E8f280e6063';
+      break;
+
+    case 87:
+      adminAddress = '1';
+      break;
+
+    case 31337: // This is for testing/debugging purposes
+      adminAddress = '2';
+      break;
+
+    default:
+      adminAddress = 'unsupported';
+      break;
+  }
+
+  return adminAddress;
 };
 
 export const convertToHex = (integer) => {
@@ -115,20 +143,20 @@ export async function handleNetworkChange(chainID) {
             url = 'http://127.0.0.1:8545/';
             chainName = 'localhost';
             chainSymbol = 'ETH';
-            
+
             break;
-          
+
           default:
             url = 'empty';
             chainName = 'empty';
             chainSymbol = 'broken';
-            
+
             break;
         }
 
       await window.ethereum.request({
         method: 'wallet_addEthereumChain',
-        params: 
+        params:
         [
           {
             chainId: chainID,

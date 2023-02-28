@@ -48,7 +48,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   }
 
   const divStyle = {
-    marginLeft: '10px',
+    marginLeft: '-7px',
     marginTop: '9px',
   };
 
@@ -58,7 +58,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   };
 
   return (
-    (isSupportedNetwork(network) && isConnected) 
+    (isSupportedNetwork(network) && isConnected)
     ?
     <Modal
       onClose={() => handleCancelClick()}
@@ -81,13 +81,13 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
               <Form>
                 <Grid.Row>
                   <Form.Input
-                    label='Project name'       
+                    label='Project name'
                     placeholder='Enter name'
                     value={name}
                     onChange={(e) => handleNameChange(e.target.value)}
                   />
 
-                  <TokenContractInput 
+                  <TokenContractInput
                     accounts={ accounts }
                     network={ network }
                     setIsValidContract= { setIsValidContract }
@@ -100,12 +100,12 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
                     setSymbolCheck={ setSymbolCheck }
                     setTokenAmount={ setTokenAmount }
                   />
-                
+
                   <Form.Input
                     label={`Tokens held: ${tokenAmount} ${tokenSymbol}`}
                     placeholder='Amount for AirMan to manage'
                     value={amount}
-                    onChange={(e) => handleAmountChange(e.target.value)} 
+                    onChange={(e) => handleAmountChange(e.target.value)}
                   />
 
                   <Form.Field>
@@ -137,7 +137,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
           setOpen={ setOpen }
           amount={ amount }
           amountInputValue={ amountInputValue }
-          contractInputValue={ contractInputValue } 
+          contractInputValue={ contractInputValue }
           accounts={ accounts }
           isValidContract={ isValidContract }
           isValidAmount={ isValidAmount }
@@ -150,7 +150,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
     </Modal>
     :
     <div>
-      <Button 
+      <Button
             style={{
                 right: '22px',
               }}

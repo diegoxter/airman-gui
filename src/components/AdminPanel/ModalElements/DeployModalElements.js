@@ -3,13 +3,14 @@ import { getAdmPanAddress } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
+import { BigNumber } from 'ethers';
 
 export const DeployButton = ({
   network,
-  setOpen, 
-  contractInputValue, 
-  accounts, 
-  isValidContract, 
+  setOpen,
+  contractInputValue,
+  accounts,
+  isValidContract,
   amountInputValue,
   isValidAmount,
   setCheckedInstances,
@@ -64,7 +65,7 @@ export const DeployButton = ({
     } else if (isLoading) {
       return (
         <Button
-          loading 
+          loading
           primary
           size='medium'>
             PLACEH
@@ -111,7 +112,7 @@ export const TokenContractInput = ({
   setContract,
   setAllowance,
   setTokenSymbol,
-  symbolCheck, 
+  symbolCheck,
   setSymbolCheck,
   setTokenAmount
 }) => {
@@ -134,8 +135,8 @@ export const TokenContractInput = ({
       setIsValidContract(true);
       setTokenSymbol(value.symbol[0]);
       setSymbolCheck(true);
-      setTokenAmount(Number(value.balance));
-      setAllowance(Number(value.allowance));
+      setTokenAmount((parseInt(value.balance)).toLocaleString());
+      setAllowance((value.allowance).toString());
     } else {
       setIsValidContract(false);
       setSymbolCheck(true);

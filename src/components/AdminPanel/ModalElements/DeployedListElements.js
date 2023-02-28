@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import { 
+import {
   deployAirdropCampaign,
   getCampaignInfo,
   fetchEtherBalance,
@@ -10,10 +10,10 @@ import {
 import { withdrawCampaignTokens, addUserList } from '../../../interactions/airdropSystem';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
-import { 
-    Card, 
-    Button, 
-    Grid, 
+import {
+    Card,
+    Button,
+    Grid,
     Segment,
     Modal,
     Header,
@@ -85,7 +85,7 @@ export const ManageAssetsPopup = ({
 
       sleep(3500)
       .then(() => setEtherBalance(''))
-    })    
+    })
   }
 
 
@@ -123,7 +123,7 @@ export const ManageAssetsPopup = ({
               {(etherBalance > 0)?ethers.utils.formatEther(etherBalance.toString())+' ETH': '0 ETH'} 
             </Segment>
           <Divider hidden />
-          <Button 
+          <Button
             fluid
             size='tiny'
             color={(etherBalance === 0 || etherBalance==='')?'grey':'orange'}
@@ -194,11 +194,11 @@ export const NewAirdropModal = ({
     }
 
     deployAirdropCampaign(
-      instanceAddress, 
-      Number(timeInSeconds), 
-      Number(amountToAirdrop), 
-      hasFixedAmount, 
-      parsedAmountPerParticipant, 
+      instanceAddress,
+      Number(timeInSeconds),
+      Number(amountToAirdrop),
+      hasFixedAmount,
+      parsedAmountPerParticipant,
       setIsLoading)
     .then(() => {
       handleClose();
@@ -219,7 +219,7 @@ export const NewAirdropModal = ({
 
       <Modal.Content>
         <Form>
-          <Form.Field      
+          <Form.Field
             error={(!hasValidTimeAmounts)}
             onChange={(e) => handleTimeChange(e.target.value)}>
             <label>Time (in seconds) to end the campaign:</label>
@@ -234,9 +234,9 @@ export const NewAirdropModal = ({
           </Form.Field>
 
           <Form.Field>
-            <Checkbox 
+            <Checkbox
             label='Has fixed amount per user?'
-            onChange={() => handleCheckboxChange()} 
+            onChange={() => handleCheckboxChange()}
             />
           </Form.Field>
 
@@ -255,7 +255,7 @@ export const NewAirdropModal = ({
           </Form.Field>}
         </Form>
       </Modal.Content>
-      
+
       <Modal.Actions>
         <Button color='red' onClick={() => handleClose()}>
           Cancel
@@ -272,13 +272,13 @@ export const NewAirdropModal = ({
         loading={isLoading}
         color={
           ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
-          ? 'red' : 'green'} 
+          ? 'red' : 'green'}
         disabled={
           ((amountToAirdrop > tokenBalance || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? true : false}
         content={
           ((amountToAirdrop > tokenBalance || !hasValidAmounts || !hasValidTimeAmounts))
-          ? 'Invalid data' : 'Deploy'} 
+          ? 'Invalid data' : 'Deploy'}
         onClick={() => handleDeployClick()} />
         }
       </Modal.Actions>
@@ -321,7 +321,7 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
 
   const handleAddClick = () => {
     //console.log(userList)
-    addUserList(instanceAddress, userList, setIsLoading)  
+    addUserList(instanceAddress, userList, setIsLoading)
     .then((value) => {
     })
   }
@@ -351,7 +351,7 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
               </Button>
             }
             content={
-              <div> 
+              <div>
                 <Header > List </Header>
                   {
                     (userList.length === 0)
@@ -363,7 +363,7 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
                       {userList.map((address, index) => (
                         <Segment.Group key={index} horizontal size='tiny'>
                           <Segment>
-                            {cleanAddress(address, 8, 34)} 
+                            {cleanAddress(address, 8, 34)}
                           </Segment>
 
                           <Segment>
@@ -376,15 +376,15 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
                     </Segment.Group>
                   </div>
                   }
-                  
 
-              </div>         
+
+              </div>
             }
           />
         </Segment>
 
         </Segment.Group>
-          
+
 
         <Divider />
 
@@ -392,7 +392,7 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
           <Form.Field
           error={(duplicatedAddress)}>
             <label>Insert the addresses one by one</label>
-            <input 
+            <input
               placeholder='Addressess'
               value={userListInput}
               onChange={(e) => handleUserListChange(e.target.value)}
@@ -403,17 +403,17 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
         <Divider hidden />
 
         <div className='ui two buttons'>
-          <Button 
+          <Button
             disabled={userListInput.length < 42 || duplicatedAddress}
-            fluid 
-            color={(duplicatedAddress)? 'red' : 'violet'} 
+            fluid
+            color={(duplicatedAddress)? 'red' : 'violet'}
             onClick={handleAddToListClick}
             content={(duplicatedAddress)? 'Duplicated address' : 'Add to list'} />
 
           <Button
             disabled={userList.length === 0}
-            fluid 
-            color={(userList.length === 0)?'grey':'teal'} 
+            fluid
+            color={(userList.length === 0)?'grey':'teal'}
             onClick={handleAddClick}
             content='Send transaction' />
         </div>
@@ -489,7 +489,7 @@ const DeployedCampaignCard = ({
         <Segment vertical>
           <CampaignAccordionOptions />
         </Segment>
-        
+
         <Segment vertical>
           <Button fluid color={'blue'} content='Save' />
         </Segment>
@@ -539,13 +539,13 @@ const DeployedCampaignCard = ({
             closeOnEscape={false}
             pinned
             trigger={
-            <Button 
+            <Button
             disabled={banPopupOpen}
             basic={banPopupOpen}
             color={(addPopupOpen)? 'orange':'teal'}
             content={(addPopupOpen)? 'Close':'Add users'}
             onClick={() => setaddPopupOpen(!addPopupOpen)} />
-          } />      
+          } />
 
           <Popup // TO DO add this function to the contract
             position='top center'
@@ -559,20 +559,20 @@ const DeployedCampaignCard = ({
             disabled={addPopupOpen}
             basic={addPopupOpen}
             color={(banPopupOpen)? 'orange':'red'}
-            content={(banPopupOpen)? 'Close':'Ban users'} 
+            content={(banPopupOpen)? 'Close':'Ban users'}
             onClick={() => setBanPopupOpen(!banPopupOpen)}
           /> }
           />
         </div>
         :
         <div>
-        <Button 
-        disabled={campaignBalance === 0} 
-        color={(campaignBalance === 0)? 'grey': 'teal'} 
-        fluid 
+        <Button
+        disabled={campaignBalance === 0}
+        color={(campaignBalance === 0)? 'grey': 'teal'}
+        fluid
         onClick={handleWithdrawTokens}
         content={(campaignBalance === 0)? 'No tokens to withdraw': 'Withdraw leftover tokens'}>
-          
+
         </Button>
       </div>
       }
@@ -606,7 +606,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
   if (userTokenBalance === '') {
     checkBalance(accounts, instanceToken)
-    .then((value) => {setUserTokenBalance(value)})
+    .then((value) => {setUserTokenBalance((parseInt(value)).toLocaleString())})
   }
 
   if (open && !campaignDataChecked) {
@@ -620,7 +620,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   if (tokenBalance === '' || tokenSymbol === '') {
     getTokenInfo(instanceAddress, instanceToken, instanceAddress, network)
     .then((value) => {
-      setTokenBalance(Number(value.balance));
+      setTokenBalance((parseInt(value.balance)).toLocaleString());
       setTokenSymbol(value.symbol[0]);
     })
   }
@@ -655,7 +655,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       onOpen={() => setOpen(true)}
       open={open}
       trigger={<Button fluid color='violet'> Manage Airdrop Campaigns </Button>} >
-      
+
       <Modal.Header>
         <Grid >
           <Grid.Row>
@@ -667,11 +667,11 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             </Grid.Column>
 
             <Grid.Column floated='right' width={5}>
-              Tokens held in this contract: <br/> 
-              <Segment textAlign='center'><u>{(tokenBalance > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
+              Tokens held in this contract: <br/>
+              <Segment textAlign='center'><u>{(parseInt(tokenBalance) > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
             </Grid.Column>
           </Grid.Row>
-          
+
           <Grid.Row columns={'equal'}>
             <Grid.Column>
               <Checkbox toggle label={'Placeholder'} />
@@ -680,7 +680,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             <Grid.Column>
               <Checkbox toggle label={'Placeholder'} />
             </Grid.Column>
-            
+
             <Grid.Column>
               <Checkbox toggle label={'Placeholder'} />
             </Grid.Column>
@@ -693,14 +693,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
       <Modal.Content scrolling style={{height: '51%', overflowY: 'auto'}}>
         { (!campaignDataChecked)
-        ? //           
+        ?
         <Segment style={{width:'96%'}}>
           <FetchingDataMessage />
           <Divider hidden/>
           <LoadingCardGroup />
         </Segment>
         :
-        <Card.Group itemsPerRow={3}> 
+        <Card.Group itemsPerRow={3}>
         {(campaignData.length === 0)
         ?
           <Segment style={{width:'96%'}}>
@@ -710,7 +710,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           </Segment>
         :
           campaignData.map((campaignInfo) => (
-            <DeployedCampaignCard 
+            <DeployedCampaignCard
             key={Number(campaignInfo.campaignID['_hex'])}
             campaignInfo={ campaignInfo }
             instanceToken={ instanceToken }
@@ -727,7 +727,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
       </Card.Group>
         }
-       
+
       </Modal.Content>
 
       <Modal.Actions>
@@ -735,18 +735,18 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           open={ popUpOpen }
           onClose={() => setPopUpOpen(false)}
           onOpen={() => setPopUpOpen(true)}
-          trigger={ 
-          <Button 
-          color={(tokenBalance === 0 && etherBalance === 0)?'violet':'yellow'} 
+          trigger={
+          <Button
+          color={(tokenBalance === 0 && etherBalance === 0)?'violet':'yellow'}
           floated='left'>
             {(tokenBalance === 0 && etherBalance === 0)?'No assets to manage':'Manage assets'}
-          </Button> 
+          </Button>
           }
           content={ <ManageAssetsPopup
             setPopUpOpen={ setPopUpOpen }
-            accounts={ accounts } 
-            network={ network } 
-            instanceAddress={ instanceAddress } 
+            accounts={ accounts }
+            network={ network }
+            instanceAddress={ instanceAddress }
             instanceToken={ instanceToken }
             isLoading={ isLoading }
             setIsLoading={ setIsLoading }
@@ -764,7 +764,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
         </Button>
 
         <NewAirdropModal
-          instanceAddress={ instanceAddress } 
+          instanceAddress={ instanceAddress }
           instanceToken={ instanceToken }
           tokenBalance={ tokenBalance }
           setTokenBalance={ setTokenBalance }
@@ -773,7 +773,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           isLoading={ isLoading }
           setCampaignDataChecked={ setCampaignDataChecked }
         />
-        
+
       </Modal.Actions>
     </Modal>
   );
