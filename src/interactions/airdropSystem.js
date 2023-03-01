@@ -18,7 +18,7 @@ export const getWhitelistFee = async (_campaignAddress) => {
 }
 
 export const getAirdropCampaignInfo = async (_network, _account) => {
-  const airdropList = await getAirdropCampaignsAddressList(_network);
+  const airdropList = await getAirdropCampaignsAddressList(_network,_account);
   const airdropListData = [];
   const airdropParticipantData = [];
 
@@ -35,18 +35,6 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'claimableSince',
-      params: [],
-    };
-    const isActiveCalls = {
-      abi: airdropCampaignAbi,
-      address: instanceAddress,
-      name: 'isActive',
-      params: [],
-    };
-    const acceptPayableWhitelistCalls = {
-      abi: airdropCampaignAbi,
-      address: instanceAddress,
-      name: 'acceptPayableWhitelist',
       params: [],
     };
     const fixedAmountCalls = {
@@ -77,10 +65,8 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
     const airdropCampaignDataRaw = await multicall(
       airdropCampaignAbi,
       [
-          tokenAddressCalls, 
-          claimableSinceCalls, 
-          isActiveCalls, 
-          acceptPayableWhitelistCalls,
+          tokenAddressCalls,
+          claimableSinceCalls,
           fixedAmountCalls,
           whitelistFeeCalls,
           tokenAmountCalls,
@@ -92,12 +78,10 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
         campaignAddress: instanceAddress,
         tokenAddress: airdropCampaignDataRaw[0],
         claimableSince: Number(airdropCampaignDataRaw[1]),
-        isActive: airdropCampaignDataRaw[2],                 // bool
-        acceptPayableWhitelist: airdropCampaignDataRaw[3],   // bool
-        fixedAmount: airdropCampaignDataRaw[4],              // bool
-        whitelistFee: Number(airdropCampaignDataRaw[5]),
-        tokenAmount: Number(airdropCampaignDataRaw[6]),
-        amountForEachUser: Number(airdropCampaignDataRaw[7])
+        fixedAmount: airdropCampaignDataRaw[2],              // bool
+        whitelistFee: Number(airdropCampaignDataRaw[3]),
+        tokenAmount: Number(airdropCampaignDataRaw[4]),
+        amountForEachUser: Number(airdropCampaignDataRaw[5])
       };
 
       const participantInfoRawData = await airdropCampaignInstance.participantInfo(_account);
@@ -122,9 +106,9 @@ export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading,
       }
       )
     );
-  
+
     let sleep = ms => new Promise(r => setTimeout(r, ms));
-  
+
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -144,9 +128,9 @@ export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLo
 
   try {
     const tx = await airdropCampaignInstance.connect(signer).retireFromCampaign();
-  
+
     let sleep = ms => new Promise(r => setTimeout(r, ms));
-  
+
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -165,9 +149,9 @@ export const claimAirdrop = async (_campaignAddress, _userAddress, _setIsLoading
 
   try {
     const tx = await airdropCampaignInstance.connect(signer).receiveTokens();
-  
+
     let sleep = ms => new Promise(r => setTimeout(r, ms));
-  
+
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -185,10 +169,10 @@ export const withdrawCampaignTokens = async (_campaignAddress, _setIsLoading) =>
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
-    const tx = await airdropCampaignInstance.connect(signer).manageFunds(false);
-  
+    const tx = await airdropCampaignInstance.connect(signer).manageFunds();
+
     let sleep = ms => new Promise(r => setTimeout(r, ms));
-  
+
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -206,9 +190,9 @@ export const addUserList = async (_campaignAddress, _userList, _setIsLoading) =>
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
   try {
     const tx = await airdropCampaignInstance.connect(signer).batchAddToWhitelist(_userList);
-  
+
     let sleep = ms => new Promise(r => setTimeout(r, ms));
-  
+
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -241,6 +225,6 @@ export const checkParticipation = async (_campaignAddress, _userAddress) => {
 export const checkCanClaim = async (_campaignAddress, _userAddress) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
   const participantInfo = await airdropCampaignInstance.participantInfo(_userAddress);
-  
+
   return participantInfo[1];
 }

@@ -10,21 +10,14 @@ const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
 // Getter functions
-const getFee = async (_network) => {
+export const getFee = async (_network) => {
   const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
-  const fee = await adminPanelInstance.feeInGwei();
+  const fee = await adminPanelInstance.feeInWei();
 
   return fee;
 }
 
-export const fetchEtherBalance = async (_instanceAddress) => {
-  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, provider);
-  const balance = await airManInstance.getEtherBalance();
-
-  return balance;
-}
-
-export const getAirdropCampaignsAddressList = async (_network) => {
+export const getAirdropCampaignsAddressList = async (_network, _ownerAddress) => {
   const adminPanelAddress = getAdmPanAddress(_network);
   const adminPanelInstance = new ethers.Contract(adminPanelAddress, adminPanelAbi, provider);
   const airdropCampaignsAddressList = [];
@@ -34,8 +27,8 @@ export const getAirdropCampaignsAddressList = async (_network) => {
     const getAirManList = {
       abi: adminPanelAbi,
       address: adminPanelAddress,
-      name: 'deployedManagers',
-      params: [i],
+      name: 'deployedByUser',
+      params: [_ownerAddress, i],
     };
 
     getAirManAddressessCalls[i] = getAirManList;
@@ -111,22 +104,18 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
 
 export const deployAirdropCampaign = async (
   _instanceAddress,
-  _endsIn,
-  _amountForCampaign,
-  _whitelistFee,
-  _amountForEveryUser,
-  _maxParticipantAmount,
+  uintValues,
   _hasFixedAmount,
   _setIsLoading ) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
 
   try {
     const tx = await airManInstance.connect(signer).newAirdropCampaign(
-      _endsIn,
-      _amountForCampaign,
-      _whitelistFee,
-      _amountForEveryUser,
-      _maxParticipantAmount,
+      uintValues[0],
+      uintValues[1],
+      uintValues[2],
+      uintValues[3],
+      uintValues[4],
       _hasFixedAmount
     );
 

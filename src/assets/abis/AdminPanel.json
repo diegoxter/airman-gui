@@ -3,7 +3,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_feeInGwei",
+        "name": "_feeInWei",
         "type": "uint256"
       }
     ],
@@ -129,7 +129,7 @@
   },
   {
     "inputs": [],
-    "name": "feeInGwei",
+    "name": "feeInWei",
     "outputs": [
       {
         "internalType": "uint256",
@@ -207,11 +207,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "newFeeInGwei",
+        "name": "newFeeInWei",
         "type": "uint256"
       }
     ],
-    "name": "setFeeInGwei",
+    "name": "setFeeInWei",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

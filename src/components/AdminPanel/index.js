@@ -14,7 +14,7 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
         <Grid.Column>
           <Card style={{width: '400px'}} >
             <Grid celled='internally'>
-              <Grid.Column width={12}>
+              <Grid.Column width={11}>
 
                 <Card.Content>
                   <Card.Header content='Deploy a new Airdrop Manager' />
@@ -24,7 +24,7 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
                 </Card.Content>
               </Grid.Column>
 
-              <Grid.Column width={3} >
+              <Grid.Column width={5} >
                 <AdminPanelModal
                   network={ network }
                   accounts={ accounts }

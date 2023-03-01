@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
-import { isSupportedNetwork } from '../../interactions';
+import { isSupportedNetwork, weiToEther } from '../../interactions';
+import { getFee } from '../../interactions/airmanSystem';
 import { DeployButton, TokenContractInput } from './ModalElements/DeployModalElements';
 
 export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }) => {
@@ -19,6 +20,12 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   const [tokenAmount, setTokenAmount] = useState('');
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [allowance, setAllowance] = useState('');
+  const [feeToDeploy, setFeeToDeploy] = useState(0)
+
+  if (feeToDeploy === 0) {
+    getFee(network)
+    .then((value) => {setFeeToDeploy(weiToEther(Number(value)))})
+  }
 
   // Testing purposes
   const testChange = () => {
@@ -48,14 +55,9 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
     setTokenSymbol('');
   }
 
-  const divStyle = {
-    marginLeft: '-7px',
-    marginTop: '9px',
-  };
-
   const buttonStyle = {
-    marginLeft: '25%',
-    marginTop: '8px',
+    width: '100%',
+    marginTop: '6px',
   };
 
   return (
@@ -65,10 +67,10 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
       onClose={() => handleCancelClick()}
       onOpen={() => setOpen(true)}
       open={ open }
-      trigger={<Button style={divStyle} color='yellow' content='Deploy'/>
+      trigger={<Button style={buttonStyle} color='yellow' content='Deploy'/>
       }
     >
-      <Modal.Header>Lorem Ipsum</Modal.Header>
+      <Modal.Header>Deploy your Airdrop Manager instance for {feeToDeploy} ether</Modal.Header>
       <Modal.Content image>
 
         <Grid columns={3} divided>
@@ -152,13 +154,8 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
     </Modal>
     :
     <div>
-      <Button
-            style={{
-                right: '22px',
-              }}
-                color='red'
-            >
-            Not connected
+      <Button style={buttonStyle} color='red' >
+          Not connected
       </Button>
     </div>
   );

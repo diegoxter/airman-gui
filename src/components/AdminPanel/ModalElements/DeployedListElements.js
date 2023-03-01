@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import {
-  deployAirdropCampaign,
-  getCampaignInfo,
-  fetchEtherBalance,
-  manageAirmanFunds
-} from '../../../interactions/airmanSystem';
+import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import { withdrawCampaignTokens, addUserList } from '../../../interactions/airdropSystem';
+import { getEtherBalance } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
 import {
@@ -84,7 +80,7 @@ export const ManageAssetsPopup = ({
       let sleep = ms => new Promise(r => setTimeout(r, ms));
 
       sleep(3500)
-      .then(() => setEtherBalance(''))
+      .then(() => setEtherBalance('0.0'))
     })
   }
 
@@ -107,7 +103,7 @@ export const ManageAssetsPopup = ({
 
       <Grid.Row>
         <Grid.Column>
-          {(tokenBalance > 0)
+          {(parseInt(tokenBalance) > 0)
           ?
           <Button fluid size='tiny' color='red' content='Withdraw tokens' onClick={() => {handleWithdrawTokensClick()}} />
           :
@@ -120,7 +116,7 @@ export const ManageAssetsPopup = ({
         <Grid.Column>
           <h4>Ether in contract</h4>
             <Segment>
-              {(etherBalance > 0)?ethers.utils.formatEther(etherBalance.toString())+' ETH': '0 ETH'} 
+              {(Number(etherBalance) > 0)?etherBalance+' ETH': '0 ETH'}
             </Segment>
           <Divider hidden />
           <Button
@@ -211,11 +207,11 @@ export const NewAirdropModal = ({
 
     deployAirdropCampaign(
       instanceAddress,
-      Number(timeInSeconds),
+      [ Number(timeInSeconds),
       Number(amountToAirdrop),
       whitelistFee,
       parsedAmountPerParticipant,
-      maxParticipantAmount,
+      Number(maxParticipantAmount) ],
       hasFixedAmount,
       setIsLoading)
     .then(() => {
@@ -226,7 +222,7 @@ export const NewAirdropModal = ({
 
   const getFeeAmount = () => {
     if (!isNaN(whitelistFee) && whitelistFee !== '') {
-      return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'gwei'))
+      return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'))
     } else {
       return '0'
     }
@@ -263,9 +259,9 @@ export const NewAirdropModal = ({
             error={(!hasValidFeeAmounts)}
             onChange={(e) => handleWhitelistFeeChange(e.target.value)} >
             <label>
-              Whitelist fee in Gwei (can be 0) [value in Ether: {getFeeAmount()}]
+              Whitelist fee in Wei (can be 0) [value in Ether: {getFeeAmount()}]
               </label>
-            <input placeholder='Fee in Gwei...' />
+            <input placeholder='Fee in Wei...' />
           </Form.Field>
 
           <Form.Field>
@@ -511,13 +507,21 @@ const DeployedCampaignCard = ({
   setIsLoading
 }) => {
   const [campaignBalance, setCampaignBalance] = useState('')
+  const [campaignTokenBalance, setCampaignTokenBalance] = useState('')
   const [addPopupOpen, setaddPopupOpen] = useState(false)
   const [banPopupOpen, setBanPopupOpen] = useState(false)
 
-  if (campaignBalance === '' || checkedBalance === false) {
+  if (campaignBalance === '') {
+    getEtherBalance(campaignInfo.campaignAddress)
+    .then((value) => {
+      setCampaignBalance(value)
+    })
+  }
+
+  if (campaignTokenBalance === '' || checkedBalance === false) {
     checkBalance(campaignInfo.campaignAddress, instanceToken)
     .then((result) => {
-      setCampaignBalance(result);
+      setCampaignTokenBalance(result);
     });
    };
 
@@ -563,10 +567,11 @@ const DeployedCampaignCard = ({
         }
       </Card.Header>
 
-      <Card.Meta>{`Total amount to airdrop ${parseInt(campaignInfo.amountToAirdrop).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
-      <Card.Meta>{`Amount in contract ${parseInt(campaignBalance).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>Total amount to airdrop <br/> {`${parseInt(campaignInfo.amountToAirdrop).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>Tokens in contract <br/> {`${parseInt(campaignTokenBalance).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>Ether in contract <br/> {`${parseInt(campaignBalance).toLocaleString()}`}</Card.Meta>
 
-      <Card.Meta>Campaign address <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b></Card.Meta>
+      <Card.Meta>Campaign address <br/> <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b></Card.Meta>
 
       <Card.Description>
       {
@@ -620,11 +625,11 @@ const DeployedCampaignCard = ({
         :
         <div>
         <Button
-        disabled={campaignBalance === 0}
-        color={(campaignBalance === 0)? 'grey': 'teal'}
+        disabled={campaignTokenBalance === 0}
+        color={(campaignTokenBalance === 0)? 'grey': 'teal'}
         fluid
         onClick={handleWithdrawTokens}
-        content={(campaignBalance === 0)? 'No tokens to withdraw': 'Withdraw leftover tokens'}>
+        content={(campaignTokenBalance === 0)? 'No tokens to withdraw': 'Withdraw leftover tokens'}>
 
         </Button>
       </div>
@@ -651,9 +656,9 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [checkedBalance, setCheckedBalance] = useState(false);
 
   if (etherBalance === '') {
-    fetchEtherBalance(instanceAddress)
+    getEtherBalance(instanceAddress)
     .then((value) => {
-      setEtherBalance(Number(value['_hex']))
+      setEtherBalance(value)
     })
   }
 
@@ -718,6 +723,10 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
                 fontSize: '12px',
                 marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} </p>
             </Grid.Column>
+
+            {
+              // 0xcdA4C82F5b308Bd12530344fa17f56447D44D8E0
+            }
 
             <Grid.Column floated='right' width={5}>
               Tokens held in this contract: <br/>

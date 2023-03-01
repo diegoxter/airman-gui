@@ -1,14 +1,8 @@
-export function isSupportedNetwork(chainId) {
-  const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ];
+import { ethers } from "ethers";
 
-  if (typeof chainId === 'number') {
-    chainId = '0x' + Number(chainId).toString(16).padStart(2, '0');
-  }
+const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  return typeof chainId === 'string' && supportedNetworks.includes(chainId);
-};
-
-
+// Contract storing
 export const getAdmPanAddress = (_network) => {
   let adminPanelContract = '';
 
@@ -19,7 +13,7 @@ export const getAdmPanAddress = (_network) => {
 
     case 4002:
       // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
-      adminPanelContract = '0xAC3760945656Dd5684cFe74A2Ade0B42EBb586A8'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+      adminPanelContract = '0x3F9E6803f1577E4bD9286699b3c6B66AD29fD7AE'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
       break;
 
     case 87:
@@ -95,14 +89,37 @@ export const getAdminAddress = (_network) => {
   return adminAddress;
 };
 
+// Utils
 export const convertToHex = (integer) => {
   let str = Number(integer).toString(16);
 
   return str.length === 1 ? "0" + str : str;
 };
 
+export const weiToEther = (value) => {
+  const parsedValue = ethers.utils.formatEther(ethers.utils.parseUnits((value).toString(), 'wei'));
 
-export async function handleNetworkChange(chainID) {
+  return parsedValue;
+}
+
+// Network related functions
+export const isSupportedNetwork = (chainId) => {
+  const supportedNetworks = [ '0x3d', '0xfa2', '0x57', '0x7a69' ];
+
+  if (typeof chainId === 'number') {
+    chainId = '0x' + Number(chainId).toString(16).padStart(2, '0');
+  }
+
+  return typeof chainId === 'string' && supportedNetworks.includes(chainId);
+};
+
+export const getEtherBalance = async (address) => {
+  const balance = ethers.utils.formatEther(await provider.getBalance(address));
+
+  return balance;
+}
+
+export const handleNetworkChange = async (chainID) => {
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
@@ -181,7 +198,7 @@ export async function handleNetworkChange(chainID) {
 }
 
 
-export async function waitForConfirmation(txHash, provider, interval, _setIsLoading) {
+export const waitForConfirmation = async (txHash, provider, interval, _setIsLoading) => {
   const receipt = await provider.getTransactionReceipt(txHash);
   if (receipt === null) {
     setTimeout(() => {

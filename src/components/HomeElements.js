@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
 import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from './CommonComponents';
-import { 
+import {
   joinAirdrop,
   retireFromAirdrop,
   claimAirdrop,
@@ -10,8 +10,9 @@ import {
   checkParticipation,
   checkCanClaim
 } from '../interactions/airdropSystem';
+import { weiToEther } from '../interactions';
 
-export const CampaignModal = ({ 
+export const CampaignModal = ({
   accounts,
   campaignAddress,
   campaignFee,
@@ -77,7 +78,7 @@ export const CampaignModal = ({
       open={open}
       trigger=
       {
-        (hasJoined) 
+        (hasJoined)
         ?
           <Button disabled={(hasClaimed)}
             color={(isActive)?'green':(hasClaimed)?'violet':'red'}
@@ -85,7 +86,7 @@ export const CampaignModal = ({
           />
         :
           <Button
-            disabled={!isActive} 
+            disabled={!isActive}
             color={isActive?'green':'grey'}
             content={isActive?'Join Campaign':'Campaign Expired'}
           />
@@ -94,8 +95,8 @@ export const CampaignModal = ({
       <Modal.Header>Airdrop campaign management (Placeholder)</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <Header content={(campaignFee > 0)?'Fee to join {campaignFee} ether': 'No fee to join' }/>
-            
+          <Header content={(campaignFee > 0)?`Fee to join ${campaignFee} ether`: 'No fee to join' }/>
+
           <p>
             Placeholder
           </p>
@@ -181,6 +182,12 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
     return dateString.toString();
   }
 
+  const getFeeAmount = () => {
+    if (!isNaN(campaignInfo.whitelistFee) && campaignInfo.whitelistFee !== '') {
+      return weiToEther(campaignInfo.whitelistFee)
+    }
+  }
+
   return(
     <Card style={{width:'280px', marginLeft:'60px', marginRight:'50px'}} >
       <Card.Content>
@@ -192,7 +199,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
           ?
           `Active Placeholder`
           :
-          <s>{`Inactive Placeholder`}</s> 
+          <s>{`Inactive Placeholder`}</s>
         }
 
       </Card.Header>
@@ -209,35 +216,35 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
       <Card.Meta>
         Campaign address <br/><b>{cleanAddress(campaignInfo.campaignAddress)}</b>
       </Card.Meta>
-      
+
       <Card.Meta>
         End date: <br/><b>{getHumanDate(campaignInfo.claimableSince)}</b><br/>
       </Card.Meta>
 
       <Card.Description>
       {
-          (campaignInfo.acceptPayableWhitelist[0])
+          (campaignInfo.whitelistFee > 0)
           ?
-          <u><strong>{'Fee to join: '+campaignInfo.whitelistFee}</strong></u>
+          <u><strong>{`Fee to join: ${getFeeAmount()} Ether`}</strong></u>
           :
           ``
       }
 
-        <br/>Project description Placeholder 
+        <br/>Project description Placeholder
       </Card.Description>
       </Card.Content>
 
       <Card.Content extra>
         <div className='ui two buttons'>
-          <CampaignModal 
+          <CampaignModal
             accounts={ accounts }
             campaignAddress={ campaignInfo.campaignAddress }
-            campaignFee={ campaignInfo.whitelistFee }
+            campaignFee={ weiToEther(campaignInfo.whitelistFee) }
             campaignEndDate={ campaignInfo.claimableSince }
             canClaim={ canClaim }
             hasClaimed={ hasClaimed }
             setParticipantDataChecked={ setParticipantDataChecked }
-          /> 
+          />
         </div>
         <Accordion panels={panels}/>
 
@@ -254,7 +261,7 @@ export const AirdropList = ({ network, accounts }) => {
 
   if ((network !== '' && accounts !== '' && campaignDataChecked === false) || (participantDataChecked === false && network !== '' && accounts !== '')) {
    getAirdropCampaignInfo(network, accounts)
-    .then((result) => {
+    .then((result) => { console.log(result)
       setCampaignData(result[0]);
       setCampaignDataChecked(true);
       setParticipantData(result[1]);
@@ -266,25 +273,25 @@ export const AirdropList = ({ network, accounts }) => {
     return(
       <Segment style={{width:'96%'}}>
         <FetchingDataMessage />
-        <LoadingCardGroup />  
+        <LoadingCardGroup />
 
-      </Segment>   
+      </Segment>
     );
   } else {
     return(
       <Segment style={{width:'96%'}}>
-        { 
+        {
         (campaignData.length === 0)
         ?
         <div>
           <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
           <LoadingCardGroup />
-        </div> 
+        </div>
         :
         <Card.Group>
-  
+
           {campaignData.map((campaignInfo, index) => (
-            <AirdropCampaignCard 
+            <AirdropCampaignCard
             key={ campaignInfo.campaignAddress }
             accounts={ accounts }
             campaignInfo={ campaignInfo }

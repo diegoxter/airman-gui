@@ -19,9 +19,9 @@ export const DeployedAirManList = ({
   if (checkedInstances) {
     if (instances.length > 0) {
       return (
-        <Card.Group>
+        <Card.Group style={{width: '70%'}}>
           {instances.map((instance) => (
-            <Card key={instance.id} style={{marginLeft: '15px', width: '22%'}}>
+            <Card key={instance.id} style={{marginLeft: '15px', width: '25%'}}>
               <Card.Content>
                 <Image
                     floated='right'
