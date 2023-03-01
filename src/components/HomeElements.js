@@ -261,7 +261,7 @@ export const AirdropList = ({ network, accounts }) => {
 
   if ((network !== '' && accounts !== '' && campaignDataChecked === false) || (participantDataChecked === false && network !== '' && accounts !== '')) {
    getAirdropCampaignInfo(network, accounts)
-    .then((result) => { console.log(result)
+    .then((result) => {
       setCampaignData(result[0]);
       setCampaignDataChecked(true);
       setParticipantData(result[1]);

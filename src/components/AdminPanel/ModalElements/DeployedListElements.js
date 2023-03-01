@@ -540,7 +540,7 @@ const DeployedCampaignCard = ({
   const panels = [
   {
     key: 'content',
-    title: {content: 'Manage campaign options'},
+    title: {content: 'Manage campaign'},
     content: {content: (
       <div>
         <Segment vertical>
@@ -569,7 +569,7 @@ const DeployedCampaignCard = ({
 
       <Card.Meta>Total amount to airdrop <br/> {`${parseInt(campaignInfo.amountToAirdrop).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
       <Card.Meta>Tokens in contract <br/> {`${parseInt(campaignTokenBalance).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
-      <Card.Meta>Ether in contract <br/> {`${parseInt(campaignBalance).toLocaleString()}`}</Card.Meta>
+      <Card.Meta>Ether in contract <br/> {`${(campaignBalance)}`}</Card.Meta>
 
       <Card.Meta>Campaign address <br/> <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b></Card.Meta>
 
@@ -629,7 +629,7 @@ const DeployedCampaignCard = ({
         color={(campaignTokenBalance === 0)? 'grey': 'teal'}
         fluid
         onClick={handleWithdrawTokens}
-        content={(campaignTokenBalance === 0)? 'No tokens to withdraw': 'Withdraw leftover tokens'}>
+        content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
 
         </Button>
       </div>
