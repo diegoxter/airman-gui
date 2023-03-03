@@ -185,9 +185,10 @@ export const withdrawCampaignTokens = async (_campaignAddress, _setIsLoading) =>
   }
 }
 
-// TO DO test this
+
 export const addUserList = async (_campaignAddress, _userList, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
   try {
     const tx = await airdropCampaignInstance.connect(signer).batchAddToWhitelist(_userList);
 
@@ -226,5 +227,5 @@ export const checkCanClaim = async (_campaignAddress, _userAddress) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
   const participantInfo = await airdropCampaignInstance.participantInfo(_userAddress);
 
-  return participantInfo[1];
+    return ((participantInfo[0]).toLowerCase() === _userAddress && participantInfo[1] === false);
 }

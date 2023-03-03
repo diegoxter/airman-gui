@@ -1,8 +1,9 @@
-import { 
-    Grid, 
-    Placeholder, 
+import {
+    Grid,
+    Placeholder,
     Segment,
     Message,
+    Button,
     Icon
 } from 'semantic-ui-react';
 
@@ -70,7 +71,7 @@ export const FetchingDataMessage = () => {
         </Message.Content>
       </Message>
 
-      <LoadingCardGroup />  
+      <LoadingCardGroup />
     </div>
   );
 }
@@ -101,5 +102,16 @@ export const NoElementsFoundMessage = ({whatIsBeingLookedFor}) => {
         </Message.Content>
       </Message>
     </div>
+  );
+}
+
+export const CopyButton = ({dataToCopy}) => {
+
+  const handleCopyClick = () => {
+    navigator.clipboard.writeText(dataToCopy);
+  };
+
+  return(
+    <Button circular compact icon='copy' size='mini' onClick={(() => handleCopyClick())}/>
   );
 }

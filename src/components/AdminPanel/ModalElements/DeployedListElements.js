@@ -5,7 +5,7 @@ import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../..
 import { withdrawCampaignTokens, addUserList } from '../../../interactions/airdropSystem';
 import { getEtherBalance } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
-import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage } from '../../CommonComponents';
+import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage, CopyButton } from '../../CommonComponents';
 import {
     Card,
     Button,
@@ -571,7 +571,10 @@ const DeployedCampaignCard = ({
       <Card.Meta>Tokens in contract <br/> {`${parseInt(campaignTokenBalance).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
       <Card.Meta>Ether in contract <br/> {`${(campaignBalance)}`}</Card.Meta>
 
-      <Card.Meta>Campaign address <br/> <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b></Card.Meta>
+      <Card.Meta>Campaign address <br/>
+      <b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b>
+      <CopyButton dataToCopy={campaignInfo.campaignAddress}/>
+      </Card.Meta>
 
       <Card.Description>
       {
@@ -721,16 +724,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               Instance #{instanceNumer} <br/>Deployed campaigns
               <br/> <p style={{
                 fontSize: '12px',
-                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} </p>
+                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} <CopyButton dataToCopy={instanceAddress} /> </p>
             </Grid.Column>
-
-            {
-              // 0xcdA4C82F5b308Bd12530344fa17f56447D44D8E0
-            }
 
             <Grid.Column floated='right' width={5}>
               Tokens held in this contract: <br/>
-              <Segment textAlign='center'><u>{(parseInt(tokenBalance) > 0)?tokenBalance: 0 } {tokenSymbol}</u></Segment>
+              <Segment textAlign='center'>
+                <u>{(parseInt(tokenBalance) > 0)?tokenBalance: 0 } {tokenSymbol}</u> <CopyButton dataToCopy={instanceToken} />
+                </Segment>
             </Grid.Column>
           </Grid.Row>
 
