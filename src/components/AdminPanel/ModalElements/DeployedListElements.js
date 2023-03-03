@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
-import { withdrawCampaignTokens, addUserList } from '../../../interactions/airdropSystem';
+import { withdrawCampaignTokens, addUserList, banUser } from '../../../interactions/airdropSystem';
 import { getEtherBalance } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage, CopyButton } from '../../CommonComponents';
@@ -345,7 +345,7 @@ const CampaignAccordionOptions = () => {
   );
 }
 
-const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
+const AddUsersPopup = ({ instanceAddress, isLoading, setIsLoading }) => {
   const [userListInput, setUserListInput] = useState('');
   const [userList, setUserList] = useState([]);
   const [isListPopupOpen, setIsListPopupOpen] = useState(false);
@@ -369,17 +369,17 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
   }
 
   const handleAddClick = () => {
-    //console.log(userList)
+    setIsLoading(true);
     addUserList(instanceAddress, userList, setIsLoading)
-    .then((value) => {
+    .then(() => {
+      const newItems = [];
+      setUserList(newItems);
     })
   }
 
   const switchPopup = () => {
     setIsListPopupOpen(!isListPopupOpen)
   }
-
-  // 0xcBE7D932979a1DCa6aDC7c42a71b694c9B13DC78
 
   return (
     <div>
@@ -460,6 +460,7 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
             content={(duplicatedAddress)? 'Duplicated address' : 'Add to list'} />
 
           <Button
+            loading={isLoading}
             disabled={userList.length === 0}
             fluid
             color={(userList.length === 0)?'grey':'teal'}
@@ -471,16 +472,29 @@ const AddUsersPopup = ({ instanceAddress, setIsLoading }) => {
   )
 }
 
-const BanUsersPopup = ({ instanceAddress, setIsLoading }) => {
+const BanUsersPopup = ({ instanceAddress, isLoading, setIsLoading }) => {
+  const [userInput, setUserInput] = useState('');
 
   const handleBanClick = () => {
-    console.log('Test ban button')
+    console.log('Test ban button');
+    setIsLoading(true);
+    // banUser(instanceAddress, userInput, setIsLoading)
+  }
+
+  const handleCheckBannedClick = () => {
+    console.log('Test check banned button');
+  }
+
+  const handleUserChange = (e) => {
+    setUserInput(e);
   }
 
   return (
     <div>
         <Form>
-          <Form.Field>
+          <Form.Field
+            onChange={(e) => handleUserChange(e.target.value)}
+          >
             <label>Insert the to-be-banned addresses separated by comma</label>
             <input placeholder='Addressess' />
           </Form.Field>
@@ -488,9 +502,14 @@ const BanUsersPopup = ({ instanceAddress, setIsLoading }) => {
 
         <Divider hidden />
 
-        <Button fluid color='red' onClick={handleBanClick}>
-            Ban
-        </Button>
+        <div className='ui two buttons'>
+          <Button disabled={userInput.length !== 42 } loading={isLoading} fluid color='red' onClick={handleBanClick}>
+              Ban
+          </Button>
+          <Button fluid color='blue' onClick={handleCheckBannedClick}>
+              Check banned
+          </Button>
+        </div>
     </div>
   )
 }
@@ -504,6 +523,7 @@ const DeployedCampaignCard = ({
   checkedBalance,
   tokenBalance,
   setTokenBalance,
+  isLoading,
   setIsLoading
 }) => {
   const [campaignBalance, setCampaignBalance] = useState('')
@@ -594,7 +614,7 @@ const DeployedCampaignCard = ({
         <div className='ui two buttons'>
           <Popup
             position='top center'
-            content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
+            content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
             on='click'
             closeOnDocumentClick={false}
             closeOnEscape={false}
@@ -610,7 +630,7 @@ const DeployedCampaignCard = ({
 
           <Popup // TO DO add this function to the contract
             position='top center'
-            content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } setIsLoading={ setIsLoading } />}
+            content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
             on='click'
             closeOnDocumentClick={false}
             closeOnEscape={false}
@@ -628,12 +648,11 @@ const DeployedCampaignCard = ({
         :
         <div>
         <Button
-        disabled={campaignTokenBalance === 0}
-        color={(campaignTokenBalance === 0)? 'grey': 'teal'}
-        fluid
-        onClick={handleWithdrawTokens}
-        content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
-
+          disabled={campaignTokenBalance === 0}
+          color={(campaignTokenBalance === 0)? 'grey': 'teal'}
+          fluid
+          onClick={handleWithdrawTokens} // TO DO this needs to be shown only if the time for owner to claim is up
+          content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
         </Button>
       </div>
       }
@@ -781,7 +800,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             tokenSymbol={ tokenSymbol }
             getHumanDate={ getHumanDate }
             checkedBalance={ checkedBalance }
-            setIsLoading= { setIsLoading }
+            isLoading={ isLoading }
+            setIsLoading={ setIsLoading }
             tokenBalance={ tokenBalance }
             setTokenBalance={ setTokenBalance }
             />

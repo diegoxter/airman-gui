@@ -205,12 +205,26 @@ export const addUserList = async (_campaignAddress, _userList, _setIsLoading) =>
     return false;
   }
 }
-/*
-export const banUser = async (_campaignAddress, _userList, _setIsLoading) => {
-  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
+export const banUser = async (_campaignAddress, _user, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).toggleParticipation(_user);
+
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true;
+  } catch (error) {
+    console.log('Failure to ban user');
+    _setIsLoading(false);
+    return false;
+  }
 }
-*/
+
 // Helper functions
 export const isCampaignActive = (_campaignInfo_claimableSince) => {
   return (Number(_campaignInfo_claimableSince) * 1000 > Date.now());
