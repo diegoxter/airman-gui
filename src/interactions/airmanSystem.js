@@ -17,7 +17,7 @@ export const getFee = async (_network) => {
   return fee;
 }
 
-export const getAirdropCampaignsAddressList = async (_network, _ownerAddress) => {
+export const getAirdropCampaignsAddressList = async (_network) => {
   const adminPanelAddress = getAdmPanAddress(_network);
   const adminPanelInstance = new ethers.Contract(adminPanelAddress, adminPanelAbi, provider);
   const airdropCampaignsAddressList = [];
@@ -27,8 +27,8 @@ export const getAirdropCampaignsAddressList = async (_network, _ownerAddress) =>
     const getAirManList = {
       abi: adminPanelAbi,
       address: adminPanelAddress,
-      name: 'deployedByUser',
-      params: [_ownerAddress, i],
+      name: 'deployedManagersById',
+      params: [i],
     };
 
     getAirManAddressessCalls[i] = getAirManList;

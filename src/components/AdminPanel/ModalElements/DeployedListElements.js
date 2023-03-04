@@ -237,7 +237,7 @@ export const NewAirdropModal = ({
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
     >
-      <Header> Tokens held in AirMan: <u>{tokenBalance} {tokenSymbol}</u></Header >
+      <Header> Tokens held in AirMan: <u>{parseInt(tokenBalance).toLocaleString('en-US')} {tokenSymbol}</u></Header >
 
       <Modal.Content>
         <Form>
@@ -249,7 +249,7 @@ export const NewAirdropModal = ({
           </Form.Field>
 
           <Form.Field
-            error={(!hasValidAmounts || amountToAirdrop > tokenBalance)}
+            error={(!hasValidAmounts || Number(amountToAirdrop) > Number(tokenBalance))}
             onChange={(e) => handleAmountToAirdropChange(e.target.value)} >
             <label>Total amount to airdrop</label>
             <input placeholder='Tokens to airdrop...' />
@@ -700,7 +700,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   if (tokenBalance === '' || tokenSymbol === '') {
     getTokenInfo(instanceAddress, instanceToken, instanceAddress, network)
     .then((value) => {
-      setTokenBalance((parseInt(value.balance)).toLocaleString());
+      setTokenBalance((value.balance));
       setTokenSymbol(value.symbol[0]);
     })
   }
@@ -749,7 +749,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             <Grid.Column floated='right' width={5}>
               Tokens held in this contract: <br/>
               <Segment textAlign='center'>
-                <u>{(parseInt(tokenBalance) > 0)?tokenBalance: 0 } {tokenSymbol}</u> <CopyButton dataToCopy={instanceToken} />
+                <u>{(parseInt(tokenBalance) > 0)?parseInt(tokenBalance).toLocaleString('en-US'): 0 } {tokenSymbol}</u> <CopyButton dataToCopy={instanceToken} />
                 </Segment>
             </Grid.Column>
           </Grid.Row>

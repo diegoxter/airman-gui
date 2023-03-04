@@ -13,7 +13,7 @@ export const getAdmPanAddress = (_network) => {
 
     case 4002:
       // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
-      adminPanelContract = '0x3F9E6803f1577E4bD9286699b3c6B66AD29fD7AE'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+      adminPanelContract = '0xD6A6E95870352d55b1D16C1AE0463550952E5618'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
       break;
 
     case 87:

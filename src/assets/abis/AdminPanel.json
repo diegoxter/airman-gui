@@ -128,6 +128,40 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployedManagersById",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "instanceOwner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "instanceAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "instanceToken",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "feeInWei",
     "outputs": [

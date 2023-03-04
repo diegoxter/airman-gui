@@ -18,7 +18,7 @@ export const getWhitelistFee = async (_campaignAddress) => {
 }
 
 export const getAirdropCampaignInfo = async (_network, _account) => {
-  const airdropList = await getAirdropCampaignsAddressList(_network,_account);
+  const airdropList = await getAirdropCampaignsAddressList(_network);
   const airdropListData = [];
   const airdropParticipantData = [];
 
