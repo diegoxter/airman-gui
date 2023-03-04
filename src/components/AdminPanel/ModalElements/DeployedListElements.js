@@ -146,9 +146,9 @@ export const NewAirdropModal = ({
   const [timeInSeconds, setTimeInSeconds] = useState('');
   const [hasValidTimeAmounts, setHasValidTimeAmounts] = useState(false);
   const [amountToAirdrop, setAmountToAirdrop] = useState('');
+  const [hasValidAmounts, setHasValidAmounts] = useState(false);
   const [whitelistFee, setWhitelistFee] = useState('0');
   const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
-  const [hasValidAmounts, setHasValidAmounts] = useState(false);
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
   const [hasValidAmountPerParticipant, setHasValidAmountPerParticipant] = useState(false);
@@ -156,11 +156,16 @@ export const NewAirdropModal = ({
   const [hasValidMaxParticipantAmount, setHasValidMaxParticipantAmount] = useState(false);
 
   const handleClose = () => {
-    setOpen(false);
+    setHasValidTimeAmounts(false);
+    setHasValidAmounts(false);
+    setHasValidFeeAmounts(false);
+    setHasValidAmountPerParticipant(false);
+    setHasValidMaxParticipantAmount(false);
     setTimeInSeconds('');
     setAmountToAirdrop('');
     setTokenBalance('');
     setWhitelistFee('0');
+    setOpen(false);
   }
 
   const handleCheckboxChange = () => {
@@ -320,10 +325,10 @@ export const NewAirdropModal = ({
         <Button
         loading={isLoading}
         color={
-          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
+          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || !hasValidTimeAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? 'red' : 'green'}
         disabled={
-          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || (hasFixedAmount && !hasValidAmountPerParticipant)))
+          ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || !hasValidTimeAmounts|| (hasFixedAmount && !hasValidAmountPerParticipant)))
           ? true : false}
         content={
           ((amountToAirdrop > tokenBalance || !hasValidFeeAmounts || !hasValidAmounts || !hasValidTimeAmounts))
@@ -773,7 +778,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
         </Grid>
       </Modal.Header>
 
-      <Modal.Content scrolling style={{height: '51%', overflowY: 'auto'}}>
+      <Modal.Content scrolling style={{height: '68%', overflowY: 'auto'}}>
         { (!campaignDataChecked)
         ?
         <Segment style={{width:'96%'}}>
