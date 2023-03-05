@@ -17,6 +17,13 @@ export const getWhitelistFee = async (_campaignAddress) => {
   return fee;
 }
 
+export const getOwnerTokenWithdrawDate = async (_campaignAddress) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  const withdrawDate = await airdropCampaignInstance.ownerTokenWithdrawDate();
+
+  return withdrawDate;
+}
+
 export const getAirdropCampaignInfo = async (_network, _account) => {
   const airdropList = await getAirdropCampaignsAddressList(_network);
   const airdropListData = [];

@@ -30,7 +30,7 @@ export const CampaignModal = ({
 
   if (!checkedHasJoined && accounts !== '' && campaignAddress !== '') {
     checkParticipation(campaignAddress, accounts)
-    .then((result) => { //console.log(result)
+    .then((result) => {
       setHasJoined(result);
       new Promise(r => setTimeout(r, 2500))
         .then(() => setCheckedHasJoined(true))

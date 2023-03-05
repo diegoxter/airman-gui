@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
-import { withdrawCampaignTokens, addUserList, banUser } from '../../../interactions/airdropSystem';
+import { withdrawCampaignTokens, addUserList, banUser, getOwnerTokenWithdrawDate } from '../../../interactions/airdropSystem';
 import { getEtherBalance, weiToEther } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage, CopyButton } from '../../CommonComponents';
@@ -18,7 +18,8 @@ import {
     Popup,
     Input,
     Divider,
-    Icon
+    Icon,
+    Item
 } from 'semantic-ui-react';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -139,7 +140,8 @@ export const NewAirdropModal = ({
   tokenSymbol,
   isLoading,
   setIsLoading,
-  setCampaignDataChecked
+  setCampaignDataChecked,
+  getHumanDate
   }) => {
   const [open, setOpen] = useState(false);
   const [timeInSeconds, setTimeInSeconds] = useState('');
@@ -232,10 +234,26 @@ export const NewAirdropModal = ({
     }
   }
 
+  const getHumanDateWrapper = () => {
+    if (timeInSeconds !== '') {
+      return getHumanDate((Date.now() + (timeInSeconds*1000))/1000)
+    } else {
+      return 'No data'
+    }
+  }
+
+  const withdrawalDate = () => {
+    if (timeInSeconds !== '') {
+      return getHumanDate((Date.now() + ((timeInSeconds*1000)*2))/1000)
+    } else {
+      return 'No data'
+    }
+  }
+
   return (
     <Modal
+      style={{width: '41%'}}
       closeIcon
-      size='tiny'
       open={open}
       trigger={<Button color='olive'> Deploy new airdrop </Button>}
       onClose={() => handleClose()}
@@ -243,19 +261,20 @@ export const NewAirdropModal = ({
     >
       <Header> Tokens held in AirMan: <u>{parseInt(tokenBalance).toLocaleString('en-US')} {tokenSymbol}</u></Header >
 
-      <Modal.Content>
+      <Modal.Content scrolling>
         <Form>
           <Form.Field
             error={(!hasValidTimeAmounts)}
             onChange={(e) => handleTimeChange(e.target.value)}>
-            <label>Time (in seconds) to end the campaign:</label>
+            <label>Time (in seconds) to end the campaign <br />Campaign end date: <u>{getHumanDateWrapper()}</u> <br />
+            Withdrawal eligibility date: <u>{withdrawalDate()}</u></label>
             <input placeholder='Seconds to end the campaign...' />
           </Form.Field>
 
           <Form.Field
             error={(!hasValidAmounts || Number(amountToAirdrop) > Number(tokenBalance))}
             onChange={(e) => handleAmountToAirdropChange(e.target.value)} >
-            <label>Total amount to airdrop</label>
+            <label>Total amount to airdrop </label>
             <input placeholder='Tokens to airdrop...' />
           </Form.Field>
 
@@ -263,7 +282,7 @@ export const NewAirdropModal = ({
             error={(!hasValidFeeAmounts)}
             onChange={(e) => handleWhitelistFeeChange(e.target.value)} >
             <label>
-              Whitelist fee in Wei (can be 0) [value in Ether: {getFeeAmount()}]
+              Whitelist fee in Wei (can be 0) <br /> [value in Ether: <u>{getFeeAmount()}</u>]:
               </label>
             <input placeholder='Fee in Wei...' />
           </Form.Field>
@@ -515,28 +534,33 @@ const DeployedCampaignCard = ({
   tokenSymbol,
   getHumanDate,
   checkedBalance,
-  tokenBalance,
   setTokenBalance,
   isLoading,
   setIsLoading
 }) => {
-  const [campaignBalance, setCampaignBalance] = useState('')
-  const [campaignTokenBalance, setCampaignTokenBalance] = useState('')
-  const [addPopupOpen, setaddPopupOpen] = useState(false)
-  const [banPopupOpen, setBanPopupOpen] = useState(false)
+  const [campaignBalance, setCampaignBalance] = useState('');
+  const [campaignTokenBalance, setCampaignTokenBalance] = useState('');
+  const [campaignWithdrawDate, setCampaignWithdrawDate] = useState('');
+  const [addPopupOpen, setaddPopupOpen] = useState(false);
+  const [banPopupOpen, setBanPopupOpen] = useState(false);
+
+  const date = Date.now();
+  //const options = { month: 'short', weekday: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+  //const dateString = date.toLocaleString('en-US', options);
 
   if (campaignBalance === '') {
     getEtherBalance(campaignInfo.campaignAddress)
-    .then((value) => {
-      setCampaignBalance(value)
-    })
+    .then((value) => setCampaignBalance(value))
+  }
+
+  if (campaignWithdrawDate === '') {
+    getOwnerTokenWithdrawDate(campaignInfo.campaignAddress)
+    .then((value) => setCampaignWithdrawDate(value))
   }
 
   if (campaignTokenBalance === '' || checkedBalance === false) {
     checkBalance(campaignInfo.campaignAddress, instanceToken)
-    .then((result) => {
-      setCampaignTokenBalance(result);
-    });
+    .then((result) => setCampaignTokenBalance(result));
    };
 
   const handleWithdrawTokens = () => {
@@ -590,16 +614,19 @@ const DeployedCampaignCard = ({
       {
           (isCampaignActive(campaignInfo))
           ?
-          `End date: ${getHumanDate(Number(campaignInfo.endDate['_hex']))}`
+          <Item>
+            Claimable after: <br /><u> {getHumanDate(Number(campaignInfo.endDate['_hex']))} </u> <br/>
+            Date to withdraw: <br /> <u>{getHumanDate(campaignWithdrawDate)} </u>
+          </Item>
           :
-          `End date: Expired`
+          <Item>End date: <u>Expired</u> <br/></Item>
       }
       <br />Participants <br /> Unclaimed
       </Card.Description>
       </Card.Content>
 
       <Card.Content extra>
-        {(isCampaignActive(campaignInfo))
+        {(date < (campaignWithdrawDate * 1000))
         ?
         <div className='ui two buttons'>
           <Popup
@@ -705,7 +732,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
   const getHumanDate = (unixtime) => {
     const date = new Date(unixtime * 1000);
-    const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const options = { month: 'short', weekday: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
     const dateString = date.toLocaleString('en-US', options);
 
     return dateString.toString();
@@ -732,13 +759,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               Deployed campaigns
               <br/> <p style={{
                 fontSize: '12px',
-                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} <CopyButton dataToCopy={instanceAddress} /> </p>
+                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} <CopyButton dataToCopy={instanceAddress} /> <br />
+                Token address: {cleanAddress(instanceToken, 4, 38)} <CopyButton dataToCopy={instanceToken} /> </p>
             </Grid.Column>
 
             <Grid.Column floated='right' width={5}>
               Tokens held in this contract: <br/>
               <Segment textAlign='center'>
-                <u>{(parseInt(tokenBalance) > 0)?parseInt(tokenBalance).toLocaleString('en-US'): 0 } {tokenSymbol}</u> <CopyButton dataToCopy={instanceToken} />
+                <u>{(parseInt(tokenBalance) > 0)?parseInt(tokenBalance).toLocaleString('en-US'): 0 } {tokenSymbol}</u>
                 </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -844,6 +872,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           setIsLoading={ setIsLoading }
           isLoading={ isLoading }
           setCampaignDataChecked={ setCampaignDataChecked }
+          getHumanDate={ getHumanDate }
         />
 
       </Modal.Actions>
