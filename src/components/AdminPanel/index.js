@@ -1,18 +1,24 @@
 import { Grid, Card, Segment, Divider, Checkbox, Button } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage } from '../CommonComponents';
 import { AdminPanelModal } from './DeployAirmanModal';
+import { AdminModal } from './AdminModal';
 import { DeployedAirManList } from './DeployedAirManList';
-import { getAdminAddress } from '../../interactions';
+import { isAdminAddress } from '../../interactions/airmanSystem';
+import { useState } from 'react';
 
 const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, setCheckedInstances, instances}) => {
+  const [isAdmin, setIsAdmin] = useState('')
 
-  const adminAddress = getAdminAddress(network)
+  if (isConnected && accounts !== '' && network !== '' && isAdmin === '') {
+    isAdminAddress(network, accounts)
+    .then((value) => setIsAdmin(value))
+  }
 
   return(
     <Grid divided='vertically'>
       <Grid.Row columns={2}>
         <Grid.Column>
-          <Card style={{width: '400px'}} >
+          <Card style={{width: '85%'}} >
             <Grid celled='internally'>
               <Grid.Column width={11}>
 
@@ -36,10 +42,10 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
           </Card>
         </Grid.Column>
 
-        {(isConnected && accounts === adminAddress.toLowerCase())
+        {(isConnected  && isAdmin)
         ?
-        <Grid.Column>
-        <Card style={{width: '250px'}} >
+        <Grid.Column >
+        <Card style={{width: '55%'}} >
           <Grid celled='internally'>
             <Grid.Column width={10}>
 
@@ -51,8 +57,11 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
               </Card.Content>
             </Grid.Column>
 
-            <Grid.Column width={2} >
-              <Button width={3} content='Placeholder'
+            <Grid.Column width={5} >
+              <AdminModal
+              style={{width: '90%'}}
+              network={ network }
+              accounts={ accounts }
               />
             </Grid.Column>
           </Grid>

@@ -18,7 +18,6 @@ import {
     Popup,
     Input,
     Divider,
-    Accordion,
     Icon
 } from 'semantic-ui-react';
 
@@ -337,15 +336,6 @@ export const NewAirdropModal = ({
         }
       </Modal.Actions>
     </Modal>
-  );
-}
-
-const CampaignAccordionOptions = () => {
-
-  return(
-    <div>
-      whitelistFee
-    </div>
   );
 }
 
@@ -738,7 +728,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
         <Grid >
           <Grid.Row>
             <Grid.Column as='h1' floated='left' width={7}>
-              Instance #{instanceNumer} <br/>Deployed campaigns
+              Instance #{instanceNumer} <br/>
+              Deployed campaigns
               <br/> <p style={{
                 fontSize: '12px',
                 marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} <CopyButton dataToCopy={instanceAddress} /> </p>

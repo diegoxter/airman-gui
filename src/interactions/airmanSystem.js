@@ -17,6 +17,22 @@ export const getFee = async (_network) => {
   return fee;
 }
 
+export const getDeployedInstances = async (_network) => {
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
+  const deployedInstances = await adminPanelInstance.instanceIDs();
+
+  return deployedInstances;
+}
+
+export const isAdminAddress = async (_network, _account) => {
+  const adminRoleHash = '0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775';
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, provider);
+
+  const isAdmin = await adminPanelInstance.hasRole(adminRoleHash, _account);
+
+  return isAdmin;
+};
+
 export const getAirdropCampaignsAddressList = async (_network) => {
   const adminPanelAddress = getAdmPanAddress(_network);
   const adminPanelInstance = new ethers.Contract(adminPanelAddress, adminPanelAbi, provider);

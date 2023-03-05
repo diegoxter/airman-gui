@@ -13,7 +13,7 @@ export const getAdmPanAddress = (_network) => {
 
     case 4002:
       // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
-      adminPanelContract = '0xD6A6E95870352d55b1D16C1AE0463550952E5618'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+      adminPanelContract = '0x08CfeD2d395B340c4308440a9Cb5147A63a095B7'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
       break;
 
     case 87:
@@ -61,34 +61,6 @@ export const getMulticallAddress = (_network) => {
   return multicallContract;
 };
 
-export const getAdminAddress = (_network) => {
-  let adminAddress = '';
-
-  switch (_network) {
-    case 61:
-      adminAddress = '0';
-      break;
-
-    case 4002:
-      adminAddress = '0x162072bC30A66E240c5DEef918F83E8f280e6063';
-      break;
-
-    case 87:
-      adminAddress = '1';
-      break;
-
-    case 31337: // This is for testing/debugging purposes
-      adminAddress = '2';
-      break;
-
-    default:
-      adminAddress = 'unsupported';
-      break;
-  }
-
-  return adminAddress;
-};
-
 // Utils
 export const convertToHex = (integer) => {
   let str = Number(integer).toString(16);
@@ -100,6 +72,13 @@ export const weiToEther = (value) => {
   const parsedValue = ethers.utils.formatEther(ethers.utils.parseUnits((value).toString(), 'wei'));
 
   return parsedValue;
+}
+
+export const cleanAddress = (_address, n, i) => {
+  let firstHalf = _address.substr(0, n);
+  let secondHalf = _address.substr(i, n);
+
+  return firstHalf+'...'+secondHalf;
 }
 
 // Network related functions
