@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import { withdrawCampaignTokens, addUserList, banUser } from '../../../interactions/airdropSystem';
-import { getEtherBalance } from '../../../interactions';
+import { getEtherBalance, weiToEther } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage, CopyButton } from '../../CommonComponents';
 import {
@@ -344,8 +344,7 @@ const CampaignAccordionOptions = () => {
 
   return(
     <div>
-      isActive <br/> acceptPayableWhitelist <br/> whitelistFee <br/> maxParticipantAmount
-      <br/> amountForEachUser
+      whitelistFee
     </div>
   );
 }
@@ -415,7 +414,7 @@ const AddUsersPopup = ({ instanceAddress, isLoading, setIsLoading }) => {
                     <div style={{height: '200px', overflowY: 'auto'}}>
                       <Segment.Group style={{marginRight: '7px'}}>
                       {userList.map((address, index) => (
-                        <Segment.Group key={index} horizontal size='tiny'>
+                        <Segment.Group key={address} horizontal size='tiny'>
                           <Segment>
                             {cleanAddress(address, 8, 34)}
                           </Segment>
@@ -561,23 +560,6 @@ const DeployedCampaignCard = ({
     })
   }
 
-  // TO DO finish this
-  const panels = [
-  {
-    key: 'content',
-    title: {content: 'Manage campaign'},
-    content: {content: (
-      <div>
-        <Segment vertical>
-          <CampaignAccordionOptions />
-        </Segment>
-
-        <Segment vertical>
-          <Button fluid color={'blue'} content='Save' />
-        </Segment>
-      </div>
-    )}}];
-
   return(
     <Card key={Number(campaignInfo.campaignID['_hex'])}>
       <Card.Content>
@@ -589,6 +571,19 @@ const DeployedCampaignCard = ({
           `Campaign #${Number(campaignInfo.campaignID['_hex'])}`
           :
           <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
+        }
+        {
+          (campaignInfo.fee > 0 && isCampaignActive(campaignInfo))
+          ?
+          <Popup
+            flowing
+            content='Click to edit the fee'
+            trigger={
+              <Button size='mini' floated='right'>Fee: <br/> {weiToEther(campaignInfo.fee)+'Ξ'} </Button>
+            }
+          />
+          :
+          false
         }
       </Card.Header>
 
@@ -641,15 +636,16 @@ const DeployedCampaignCard = ({
             closeOnEscape={false}
             pinned
             trigger={
-            <Button
-            disabled={addPopupOpen}
-            basic={addPopupOpen}
-            color={(banPopupOpen)? 'orange':'red'}
-            content={(banPopupOpen)? 'Close':'Ban users'}
-            onClick={() => setBanPopupOpen(!banPopupOpen)}
-          /> }
+              <Button
+              disabled={addPopupOpen}
+              basic={addPopupOpen}
+              color={(banPopupOpen)? 'orange':'red'}
+              content={(banPopupOpen)? 'Close':'Ban users'}
+              onClick={() => setBanPopupOpen(!banPopupOpen)}
+              /> }
           />
         </div>
+
         :
         <div>
         <Button
@@ -661,9 +657,6 @@ const DeployedCampaignCard = ({
         </Button>
       </div>
       }
-
-        <Accordion panels={panels}/>
-
       </Card.Content>
     </Card>
   )
