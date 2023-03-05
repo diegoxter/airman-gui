@@ -3,7 +3,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { Dropdown, Button, Icon } from 'semantic-ui-react'
 import styled from 'styled-components';
 import { networkOptions } from './data';
-import { isSupportedNetwork, handleNetworkChange, convertToHex } from '../../interactions'
+import { isSupportedNetwork, handleNetworkChange, convertToHex, cleanAddress } from '../../interactions'
 import React, { Component } from 'react';
 import { ethers } from "ethers";
 
@@ -21,7 +21,7 @@ export const Nav = styled.nav`
     display: flex;
   }
 `;
-  
+
 export const NavLink = styled(Link)`
   color: #ffffff;
   display: flex;
@@ -34,7 +34,7 @@ export const NavLink = styled(Link)`
     color: #a3a3a3;
   }
 `;
-  
+
 export const Bars = styled(FaBars)`
   display: none;
   color: #808080;
@@ -48,7 +48,7 @@ export const Bars = styled(FaBars)`
     cursor: pointer;
   }
 `;
-  
+
 export const NavMenu = styled.div`
   display: flex;
   align-items: center;
@@ -64,7 +64,7 @@ export const NavMenu = styled.div`
     transform: translate(25%, 25%);
   }
 `;
-  
+
 export const NavBtn = styled.nav`
   display: flex;
   align-items: center;
@@ -76,7 +76,7 @@ export const NavBtn = styled.nav`
     display: none;
   }
 `;
-  
+
 export const NavBtnLink = styled(Link)`
   border-radius: 4px;
   background: #808080;
@@ -117,21 +117,21 @@ const NetworkDropdown = ({ network, accounts }) => {
   } else {
     if ((isSupportedNetwork(network) === false) && accounts !== '')  {
       return (
-        <Dropdown 
-          text='Please use a supported network' 
-          options={networkOptions} 
+        <Dropdown
+          text='Please use a supported network'
+          options={networkOptions}
           onChange={handleChange}  // TO DO if the user cancels the network change the selected item shouldn't change
           selection
-          error 
+          error
         />
       );
     } else {
       if (accounts.length !== 0) {
         return (
-          <Dropdown 
+          <Dropdown
             selection
             options={networkOptions}
-            onChange={handleChange} 
+            onChange={handleChange}
             defaultValue={displayActiveNetwork(network)} // TO DO fix this not redrawing when the network changed
           />
         );
@@ -145,20 +145,9 @@ class Metamask extends Component {
   async connectToMetamask() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
-    
+
     const { chainId } = await provider.getNetwork();
     this.props.changeNetwork(chainId);
-  }
-
-  cleanAddress = (_address) => {
-    if (typeof _address === 'string') {
-      let firstHalf = _address.substr(0, 3);
-      let secondHalf = _address.substr(38, 4);
-  
-      return firstHalf+'...'+secondHalf;
-    } else {
-      return 'empty'
-    }
   }
 
   handleChange = (e, { value }) => {
@@ -167,19 +156,19 @@ class Metamask extends Component {
 
   renderMetamask() {
     const connectedMenuOptions = [
-      { key: 'address', value: 'profile', icon: 'id card outline', text: this.cleanAddress(this.props.accounts) + ` Check profile` }, 
+      { key: 'address', value: 'profile', icon: 'id card outline', text: cleanAddress(this.props.accounts, 3, 38) + ` Check profile` }, 
       { key: 'network', value: 'string', icon: 'server', text: this.props.network },
     ];
 
     if (this.props.isConnected === false) {
       return (
-        <div> 
+        <div>
           <Button icon size='large' onClick={() => this.connectToMetamask()}>
             <Icon name='lock'></Icon> Connect wallet
           </Button>
         </div>
       );
-    } else { 
+    } else {
       // Note: As we already have permission there is no confirmation needed
       this.connectToMetamask();
 

@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import { withdrawCampaignTokens, addUserList, banUser, getOwnerTokenWithdrawDate } from '../../../interactions/airdropSystem';
-import { getEtherBalance, weiToEther } from '../../../interactions';
+import { getEtherBalance, weiToEther, cleanAddress } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage, CopyButton } from '../../CommonComponents';
 import {
@@ -23,13 +23,6 @@ import {
 } from 'semantic-ui-react';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-const cleanAddress = (_address, n, i) => {
-  let firstHalf = _address.substr(0, n);
-  let secondHalf = _address.substr(i, n);
-
-  return firstHalf+'...'+secondHalf;
-}
 
 export const ManageAssetsPopup = ({
   setPopUpOpen,

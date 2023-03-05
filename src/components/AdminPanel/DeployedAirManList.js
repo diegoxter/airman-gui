@@ -1,4 +1,5 @@
 import { Card, Image, Segment, Divider } from 'semantic-ui-react';
+import { cleanAddress } from '../../interactions';
 import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from '../CommonComponents';
 import { DeployedAirdropModal } from './ModalElements/DeployedListElements';
 
@@ -9,12 +10,6 @@ export const DeployedAirManList = ({
   instances,
   checkedInstances,
 }) => {
-  const cleanAddress = (_address) => {
-    let firstHalf = _address.substr(0, 3);
-    let secondHalf = _address.substr(38, 4);
-
-    return firstHalf+'...'+secondHalf;
-  }
 
   if (checkedInstances) {
     if (instances.length > 0) {
@@ -29,9 +24,9 @@ export const DeployedAirManList = ({
                     src='https://react.semantic-ui.com/images/avatar/large/molly.png'
                 />
                 <Card.Header>{`AirMan instance #${Number(instance.id['_hex'])}`}</Card.Header>
-                <Card.Meta>Address: {cleanAddress(instance.instanceAddress)}</Card.Meta>
+                <Card.Meta>Address: {cleanAddress(instance.instanceAddress, 4, 38)}</Card.Meta>
                 <Card.Description>
-                  Token: {cleanAddress(instance.instanceToken)}
+                  Token: {cleanAddress(instance.instanceToken, 4, 38)}
                 </Card.Description>
               </Card.Content>
               <Card.Content extra>

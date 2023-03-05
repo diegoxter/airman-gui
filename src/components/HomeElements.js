@@ -10,7 +10,7 @@ import {
   checkParticipation,
   checkCanClaim
 } from '../interactions/airdropSystem';
-import { weiToEther } from '../interactions';
+import { weiToEther, cleanAddress } from '../interactions';
 
 export const CampaignModal = ({
   accounts,
@@ -167,13 +167,6 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
     },
   ];
 
-  const cleanAddress = (_address) => {
-    let firstHalf = _address.substr(0, 4);
-    let secondHalf = _address.substr(38, 4);
-
-    return firstHalf+'...'+secondHalf;
-  }
-
   const getHumanDate = (unixtime) => {
     const date = new Date(unixtime * 1000);
     const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', second: 'numeric' };
@@ -210,11 +203,11 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
           size='tiny'
           src='https://react.semantic-ui.com/images/avatar/large/molly.png'
         />
-        Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress[0])}</b>
+        Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress[0], 4, 38)}</b>
       </Card.Meta>
 
       <Card.Meta>
-        Campaign address <br/><b>{cleanAddress(campaignInfo.campaignAddress)}</b>
+        Campaign address <br/><b>{cleanAddress(campaignInfo.campaignAddress, 4, 38)}</b>
       </Card.Meta>
 
       <Card.Meta>
