@@ -4,7 +4,7 @@ import { Dropdown, Button, Icon } from 'semantic-ui-react'
 import styled from 'styled-components';
 import { networkOptions } from './data';
 import { isSupportedNetwork, handleNetworkChange, convertToHex, cleanAddress } from '../../interactions'
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { ethers } from "ethers";
 
 export const Nav = styled.nav`
@@ -150,13 +150,9 @@ class Metamask extends Component {
     this.props.changeNetwork(chainId);
   }
 
-  handleChange = (e, { value }) => {
-    console.log(value);
-  }
-
   renderMetamask() {
     const connectedMenuOptions = [
-      { key: 'address', value: 'profile', icon: 'id card outline', text: cleanAddress(this.props.accounts, 3, 38) + ` Check profile` }, 
+      { key: 'address', value: 'profile', icon: 'id card outline', text: cleanAddress(this.props.accounts, 4, 38) },
       { key: 'network', value: 'string', icon: 'server', text: this.props.network },
     ];
 
@@ -181,7 +177,6 @@ class Metamask extends Component {
           className='icon'
           floating
           labeled
-          onChange={this.handleChange}
           icon='user circle'
           text='Settings'
           options={connectedMenuOptions}

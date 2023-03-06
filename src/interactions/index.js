@@ -75,11 +75,16 @@ export const weiToEther = (value) => {
 }
 
 export const cleanAddress = (_address, n, i) => {
-  let firstHalf = _address.substr(0, n);
-  let secondHalf = _address.substr(i, n);
+  if (typeof _address === 'string') {
+    let firstHalf = _address.slice(0, n);
+    let secondHalf = _address.slice(i);
 
-  return firstHalf+'...'+secondHalf;
+    return firstHalf+'...'+secondHalf;
+  } else {
+    return ''
+  }
 }
+
 
 // Network related functions
 export const isSupportedNetwork = (chainId) => {
