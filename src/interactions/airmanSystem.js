@@ -8,6 +8,7 @@ import airdropManagerAbi from '../assets/abis/AirdropManager.json';
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Getter functions
 export const getFee = async (_network) => {
@@ -135,8 +136,6 @@ export const deployAirdropCampaign = async (
       _hasFixedAmount
     );
 
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
-
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -155,11 +154,53 @@ export const manageAirmanFunds = async (_instanceAddress, _option, _setIsLoading
   try {
     const tx = (await airManInstance.connect(signer).manageFunds(_option));
 
-    await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading);
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true
   } catch (error) {
     console.log('Failure to withdraw tokens');
     _setIsLoading(false);
+    return false
   }
+}
+
+export const setNewFee = async (_network, _newFee, _setIsLoading) => {
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
+  try {
+    const tx = (await adminPanelInstance.connect(signer).setFeeInWei(_newFee));
+
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true
+  } catch (e) {
+    console.log('There has been an error setting the new fee', e)
+    _setIsLoading(false)
+    return false
+  }
+}
+
+export const withdrawEther = async (_network, _setIsLoading) => {
+  const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
+
+  try {
+    const tx = (await adminPanelInstance.connect(signer).withdrawEther());
+
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true
+
+  } catch (e) {
+    console.log('There has been an error withdrawing the ether', e)
+    _setIsLoading(false)
+    return false
+  }
+
 }
 
 // Draw functions

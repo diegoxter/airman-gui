@@ -1,4 +1,4 @@
-import { Grid, Card, Segment, Divider, Checkbox, Button } from 'semantic-ui-react';
+import { Grid, Card, Segment, Divider, Checkbox } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../CommonComponents';
 import { AdminPanelModal } from './DeployAirmanModal';
 import { AdminModal } from './AdminModal';

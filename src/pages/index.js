@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, Grid, Card, Segment, Button } from 'semantic-ui-react';
+import { Checkbox, Grid, Card, Segment } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../components/CommonComponents';
 import { AirdropList } from '../components/HomeElements';
 
