@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
-import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from './CommonComponents';
+import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage, RefreshButton } from './CommonComponents';
 import {
   joinAirdrop,
   retireFromAirdrop,
@@ -69,6 +69,24 @@ export const CampaignModal = ({
     }
   }
 
+  const drawAirdropCardContent = (hasCampaignFee) => {
+    if (hasCampaignFee) {
+      return (
+        hasJoined?
+        `You will receive ${campaignFee} as refund ether after retiring`
+        :
+        `The fee to join the campaign is ${campaignFee} ether`
+        );
+    } else {
+      return (
+        hasJoined?
+        'No refund for retiring this campaign'
+        :
+        'No fee to join this campaign');
+    }
+  }
+
+
   return (
     <Modal
       size='mini'
@@ -92,10 +110,13 @@ export const CampaignModal = ({
           />
       }
     >
-      <Modal.Header>Airdrop campaign management (Placeholder)</Modal.Header>
+      <Modal.Header>
+        {hasJoined?'Retire from':'Join'} campaign
+        <RefreshButton floated='right'/>
+      </Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <Header content={(campaignFee > 0)?`Fee to join ${campaignFee} ether`: 'No fee to join' }/>
+          <Header content={drawAirdropCardContent(campaignFee > 0)}/>
 
           <p>
             Placeholder

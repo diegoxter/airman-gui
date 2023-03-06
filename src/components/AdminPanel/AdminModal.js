@@ -5,7 +5,7 @@ import { getEtherBalance, cleanAddress, getAdmPanAddress, weiToEther } from '../
 import { getFee, getDeployedInstances } from '../../interactions/airmanSystem';
 import { CopyButton } from '../CommonComponents';
 
-export const AdminModal = ({network, accounts}) => {
+export const AdminModal = ({network}) => {
   const [open, setOpen] = useState(false);
   const [instanceBalance, setInstanceBalance] = useState('');
   const [currentFee, setCurrentFee] = useState('');

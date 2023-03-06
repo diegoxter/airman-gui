@@ -9,14 +9,14 @@ import {
   NetworkDropdown,
   Metamask
 } from './NavbarElements';
-import 'semantic-ui-css/semantic.min.css'
+import 'semantic-ui-css/semantic.min.css';
 
 // check the css properties for fixed bar
 
 const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
   return (
     <>
-      <Nav> 
+      <Nav>
         <Bars />
           <NavMenu>
             <NavLink to='/' activestyle={true.toString()}>
@@ -37,10 +37,10 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
           </NavBtn>
           <Divider vertical hidden /> {/* TO DO verify the CSS of the above and below elements*/}
           <NavBtn>
-            <Metamask 
-              network={ network } 
-              changeNetwork={ changeNetwork } 
-              isConnected={ isConnected } 
+            <Metamask
+              network={ network }
+              changeNetwork={ changeNetwork }
+              isConnected={ isConnected }
               accounts={ accounts }
             />
           </NavBtn>
@@ -49,5 +49,5 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
     </>
   );
 };
-  
+
 export default Navbar;

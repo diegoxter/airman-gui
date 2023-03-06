@@ -90,7 +90,7 @@ export const NotConnectedMessage = () => {
   );
 }
 
-export const NoElementsFoundMessage = ({whatIsBeingLookedFor}) => {
+export const NoElementsFoundMessage = ({ whatIsBeingLookedFor }) => {
 
   return(
     <div>
@@ -105,13 +105,18 @@ export const NoElementsFoundMessage = ({whatIsBeingLookedFor}) => {
   );
 }
 
-export const CopyButton = ({dataToCopy}) => {
-
+export const CopyButton = ({ dataToCopy }) => {
   const handleCopyClick = () => {
     navigator.clipboard.writeText(dataToCopy);
   };
 
   return(
     <Button circular compact icon='copy' size='mini' onClick={(() => handleCopyClick())}/>
+  );
+}
+
+export const RefreshButton = ({ floated }) => {
+  return(
+    <Button circular icon='refresh' floated={floated}/>
   );
 }

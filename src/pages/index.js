@@ -1,6 +1,6 @@
 import React from 'react';
 import { Checkbox, Grid, Card, Segment, Button } from 'semantic-ui-react';
-import { LoadingCardGroup, NotConnectedMessage } from '../components/CommonComponents';
+import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../components/CommonComponents';
 import { AirdropList } from '../components/HomeElements';
 
 const Home = ({ isConnected, network, accounts }) => {
@@ -8,7 +8,7 @@ const Home = ({ isConnected, network, accounts }) => {
   return (
     <Grid divided='vertically'>
       <Grid.Row>
-        <Card 
+        <Card
             style={{
                 display: 'flex',
                 justifyContent: 'Right',
@@ -20,30 +20,30 @@ const Home = ({ isConnected, network, accounts }) => {
               <Card.Header>Placeholder</Card.Header>
 
             </Card.Content>
-        </Card>      
+        </Card>
       </Grid.Row>
 
       <Grid.Row columns='equal'>
         <Grid.Column >
           <Checkbox toggle label='Show expired'/>
         </Grid.Column>
-        
+
         <Grid.Column >
           <Checkbox toggle label='Show Claimed'/>
         </Grid.Column>
-        
+
         <Grid.Column >
           <Checkbox toggle label='Show Claimable'/>
         </Grid.Column>
 
-        <Button circular icon='refresh'/>
+        <RefreshButton />
       </Grid.Row>
-      
+
       <Grid.Row>
         {
           (isConnected)
           ?
-          <AirdropList 
+          <AirdropList
             network={ network }
             accounts={ accounts }
             isConnected={ isConnected }
@@ -61,5 +61,5 @@ const Home = ({ isConnected, network, accounts }) => {
     </Grid>
   );
 };
-  
+
 export default Home;

@@ -1,8 +1,8 @@
-import { 
+import {
   ETC_ICON_URL,
   FANTOM_ICON_URL,
-  NOVA_ICON_URL, 
-  LOCALHOST_ICON_URL 
+  NOVA_ICON_URL,
+  LOCALHOST_ICON_URL
 } from '../iconURI';
 
 export const networkOptions = [

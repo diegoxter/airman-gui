@@ -5,7 +5,13 @@ import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../..
 import { withdrawCampaignTokens, addUserList, banUser, getOwnerTokenWithdrawDate } from '../../../interactions/airdropSystem';
 import { getEtherBalance, weiToEther, cleanAddress } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
-import { LoadingCardGroup, NoElementsFoundMessage, FetchingDataMessage, CopyButton } from '../../CommonComponents';
+import {
+  LoadingCardGroup,
+  NoElementsFoundMessage,
+  FetchingDataMessage,
+  CopyButton,
+  RefreshButton
+} from '../../CommonComponents';
 import {
     Card,
     Button,
@@ -777,7 +783,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               <Checkbox toggle label={'Placeholder'} />
             </Grid.Column>
 
-            <Button circular icon='refresh'/>
+            <RefreshButton />
           </Grid.Row>
 
         </Grid>

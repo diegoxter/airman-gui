@@ -1,5 +1,5 @@
 import { Grid, Card, Segment, Divider, Checkbox, Button } from 'semantic-ui-react';
-import { LoadingCardGroup, NotConnectedMessage } from '../CommonComponents';
+import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../CommonComponents';
 import { AdminPanelModal } from './DeployAirmanModal';
 import { AdminModal } from './AdminModal';
 import { DeployedAirManList } from './DeployedAirManList';
@@ -58,11 +58,7 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
             </Grid.Column>
 
             <Grid.Column width={5} >
-              <AdminModal
-              style={{width: '90%'}}
-              network={ network }
-              accounts={ accounts }
-              />
+              <AdminModal style={{width: '90%'}} network={ network } />
             </Grid.Column>
           </Grid>
         </Card>
@@ -85,7 +81,7 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
         <Checkbox toggle label='Show Claimable'/>
       </Grid.Column>
 
-      <Button circular icon='refresh'/>
+      <RefreshButton />
 
     </Grid.Row>
 

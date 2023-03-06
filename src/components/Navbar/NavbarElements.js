@@ -3,7 +3,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { Dropdown, Button, Icon } from 'semantic-ui-react'
 import styled from 'styled-components';
 import { networkOptions } from './data';
-import { isSupportedNetwork, handleNetworkChange, convertToHex, cleanAddress } from '../../interactions'
+import { isSupportedNetwork, handleNetworkChange, convertToHex, cleanAddress } from '../../interactions';
 import { Component } from 'react';
 import { ethers } from "ethers";
 
