@@ -40,7 +40,7 @@ export const DeployButton = ({
     approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), amountInputValue, tokenDecimals, setIsLoading)
       .then((value) => {
         if (value === true) {
-          setAllowance(Number(amountInputValue));
+          setAllowance(amountInputValue * 10 ** Number(tokenDecimals));
         } else {
           console.log('Not approved');
         }
@@ -71,7 +71,7 @@ export const DeployButton = ({
             PLACEH
         </Button>
       );
-    } else if (Number(allowance) >= Number(amountInputValue) && network !== '') {
+    } else if (Number(allowance) >= Number(amountInputValue * 10 ** Number(tokenDecimals))) {
       return (
         <Button
           content="Let's do it!"

@@ -70,15 +70,7 @@ const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, se
 
       <Grid.Row columns={'equal'}>
       <Grid.Column >
-        <Checkbox toggle label='Show expired'/>
-      </Grid.Column>
-
-      <Grid.Column >
-        <Checkbox toggle label='Show Claimed'/>
-      </Grid.Column>
-
-      <Grid.Column >
-        <Checkbox toggle label='Show Claimable'/>
+        <Checkbox toggle label='Show empty'/>
       </Grid.Column>
 
       <RefreshButton />
