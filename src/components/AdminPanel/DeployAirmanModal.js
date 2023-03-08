@@ -16,7 +16,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   const [tokenSymbol, setTokenSymbol] = useState('');
   const [tokenDecimals, setTokenDecimals] = useState('')
   const [amount, setAmount] = useState('');
-  const [amountInputValue] = useDebounce(amount, 600);
+  const [amountInputValue] = useDebounce(amount * 10 ** Number(tokenDecimals), 600);
   const [tokenAmount, setTokenAmount] = useState('');
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [allowance, setAllowance] = useState('');
@@ -40,7 +40,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
 
   const handleAmountChange = (num) => {
     setAmount(num);
-    setIsValidAmount((Number(num) > 0) && !isNaN(num));
+    setIsValidAmount((Number(num) > 0) && !isNaN(num) && (num * 10 ** Number(tokenDecimals)) <= Number(tokenAmount));
   }
 
   const handleCancelClick = () => {
@@ -106,7 +106,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
                   />
 
                   <Form.Input
-                    label={`Tokens held: ${tokenAmount} ${tokenSymbol}`}
+                    label={`Tokens held: ${((tokenAmount  / 10 ** Number(tokenDecimals)).toLocaleString('en-US'))} ${tokenSymbol}`}
                     placeholder='Amount for AirMan to manage'
                     value={amount}
                     onChange={(e) => handleAmountChange(e.target.value)}

@@ -135,7 +135,7 @@ export const TokenContractInput = ({
       setIsValidContract(true);
       setTokenSymbol(value.symbol[0]);
       setSymbolCheck(true);
-      setTokenAmount((parseInt(value.balance)).toLocaleString());
+      setTokenAmount(value.balance);
       setTokenDecimals(value.decimals)
       setAllowance((value.allowance).toString());
     } else {

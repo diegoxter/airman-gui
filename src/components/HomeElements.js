@@ -190,7 +190,7 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
 
   const getHumanDate = (unixtime) => {
     const date = new Date(unixtime * 1000);
-    const options = { weekday: 'long', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const options = { month: 'short', weekday: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
     const dateString = date.toLocaleString('en-US', options);
 
     return dateString.toString();
