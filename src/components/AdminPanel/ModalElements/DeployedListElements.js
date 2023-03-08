@@ -180,7 +180,7 @@ export const NewAirdropModal = ({
 
   const handleAmountToAirdropChange = (value) => {
     setAmountToAirdrop(Number(value));
-    setHasValidAmounts(!isNaN(value) && Number(value) > 0);
+    setHasValidAmounts(!isNaN(value) && Number(value) > 0 && (value * 10 ** Number(tokenDecimals)) <= Number(tokenBalance));
   }
 
   const handleWhitelistFeeChange = (value) => {
@@ -214,10 +214,11 @@ export const NewAirdropModal = ({
     deployAirdropCampaign(
       instanceAddress,
       [ Number(timeInSeconds),
-      Number(amountToAirdrop),
+      amountToAirdrop,
       whitelistFee,
       parsedAmountPerParticipant,
       Number(maxParticipantAmount) ],
+      tokenDecimals,
       hasFixedAmount,
       setIsLoading)
     .then(() => {
@@ -532,6 +533,7 @@ const DeployedCampaignCard = ({
   instanceToken,
   isCampaignActive,
   tokenSymbol,
+  tokenDecimals,
   getHumanDate,
   checkedBalance,
   setTokenBalance,
@@ -601,8 +603,8 @@ const DeployedCampaignCard = ({
         }
       </Card.Header>
 
-      <Card.Meta>Total amount to airdrop <br/> {`${parseInt(campaignInfo.amountToAirdrop).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
-      <Card.Meta>Tokens in contract <br/> {`${parseInt(campaignTokenBalance).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>Total amount to airdrop <br/> {`${(parseFloat(campaignInfo.amountToAirdrop) / 10 ** Number(tokenDecimals)).toLocaleString('en-US')} ${tokenSymbol}`}</Card.Meta>
+      <Card.Meta>Tokens in contract <br/> {`${parseFloat(campaignTokenBalance / 10 ** Number(tokenDecimals)).toLocaleString()} ${tokenSymbol}`}</Card.Meta>
       <Card.Meta>Ether in contract <br/> {`${(campaignBalance)}`}</Card.Meta>
 
       <Card.Meta>Campaign address <br/>
@@ -817,6 +819,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             instanceToken={ instanceToken }
             isCampaignActive={ isCampaignActive }
             tokenSymbol={ tokenSymbol }
+            tokenDecimals={ tokenDecimals }
             getHumanDate={ getHumanDate }
             checkedBalance={ checkedBalance }
             isLoading={ isLoading }

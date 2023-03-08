@@ -123,14 +123,16 @@ export const deployAirMan = async (_token, amount, decimals, _setIsLoading, _set
 export const deployAirdropCampaign = async (
   _instanceAddress,
   uintValues,
+  decimals,
   _hasFixedAmount,
   _setIsLoading ) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
+  const parsedAmount = ethers.utils.parseUnits(uintValues[1].toString(), decimals);
 
   try {
     const tx = await airManInstance.connect(signer).newAirdropCampaign(
       uintValues[0],
-      uintValues[1],
+      parsedAmount,
       uintValues[2],
       uintValues[3],
       uintValues[4],
