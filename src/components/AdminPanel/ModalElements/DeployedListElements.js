@@ -137,6 +137,7 @@ export const NewAirdropModal = ({
   tokenBalance,
   setTokenBalance,
   tokenSymbol,
+  tokenDecimals,
   isLoading,
   setIsLoading,
   setCampaignDataChecked,
@@ -258,7 +259,7 @@ export const NewAirdropModal = ({
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
     >
-      <Header> Tokens held in AirMan: <u>{parseInt(tokenBalance).toLocaleString('en-US')} {tokenSymbol}</u></Header >
+      <Header> Tokens held in AirMan: <u>{(parseFloat(tokenBalance / 10 ** Number(tokenDecimals))).toLocaleString('en-US')} {tokenSymbol}</u></Header >
 
       <Modal.Content scrolling>
         <Form>
@@ -688,6 +689,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [userTokenBalance, setUserTokenBalance] = useState('')
   const [etherBalance, setEtherBalance] = useState('');
   const [tokenBalance, setTokenBalance] = useState('');
+  const [tokenDecimals, setTokenDecimals] = useState('')
   const [tokenSymbol, setTokenSymbol] = useState('');
   const [checkedBalance, setCheckedBalance] = useState(false);
 
@@ -716,6 +718,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     .then((value) => {
       setTokenBalance((value.balance));
       setTokenSymbol(value.symbol[0]);
+      setTokenDecimals(value.decimals);
     })
   }
 
@@ -765,7 +768,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             <Grid.Column floated='right' width={5}>
               Tokens held in this contract: <br/>
               <Segment textAlign='center'>
-                <u>{(parseInt(tokenBalance) > 0)?parseInt(tokenBalance).toLocaleString('en-US'): 0 } {tokenSymbol}</u>
+                <u>{(parseFloat(tokenBalance) > 0)?(parseFloat(tokenBalance)  / 10 ** Number(tokenDecimals)).toLocaleString('en-US'): 0 } {tokenSymbol}</u>
                 </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -868,6 +871,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           tokenBalance={ tokenBalance }
           setTokenBalance={ setTokenBalance }
           tokenSymbol={ tokenSymbol }
+          tokenDecimals={ tokenDecimals }
           setIsLoading={ setIsLoading }
           isLoading={ isLoading }
           setCampaignDataChecked={ setCampaignDataChecked }

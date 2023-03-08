@@ -50,11 +50,12 @@ export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress
     return { symbol, allowance, balance, decimals };
 }
 
-export const approveTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
+export const approveTokens = async (_account, _tokenContractAddress, _targetAddress, amount, decimals, _setIsLoading) => {
+  const parsedAmount = ethers.utils.parseUnits(amount.toString(), decimals);
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
 
   try {
-    const tx = (await tokenInstance.connect(signer).approve(_targetAddress, ethers.utils.parseUnits(amount.toString(), 18)));
+    const tx = (await tokenInstance.connect(signer).approve(_targetAddress, parsedAmount));
 
       while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
         sleep(2500);
@@ -66,7 +67,7 @@ export const approveTokens = async (_account, _tokenContractAddress, _targetAddr
         console.log(`rejected transaction`);
         _setIsLoading(false);
     } else {
-      console.log(`error was ${e.code}`);
+      console.log(e);
       _setIsLoading(false);
     }
     return false;

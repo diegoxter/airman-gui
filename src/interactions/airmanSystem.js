@@ -90,14 +90,15 @@ export const getAirdropCampaignsAddressList = async (_network) => {
 }
 
 // Transaction functions
-export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _network) => {
+export const deployAirMan = async (_token, amount, decimals, _setIsLoading, _setOpen, _network) => {
   const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
   const fee = await getFee(_network);
+  const parsedAmount = ethers.utils.parseUnits(amount.toString(), decimals);
 
   try {
     const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
       _token,
-      Number(amount),
+      parsedAmount,
       {
         value: fee,
       }
@@ -113,7 +114,7 @@ export const deployAirMan = async (_token, amount, _setIsLoading, _setOpen, _net
 
     return true;
   } catch (error) {
-    console.log('Falla al hacer el deploy de AirMan ');
+    console.log(error);
     _setIsLoading(false);
     return false;
   }

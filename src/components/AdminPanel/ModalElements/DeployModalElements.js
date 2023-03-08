@@ -11,6 +11,7 @@ export const DeployButton = ({
   accounts,
   isValidContract,
   amountInputValue,
+  tokenDecimals,
   isValidAmount,
   setCheckedInstances,
   allowance,
@@ -22,7 +23,7 @@ export const DeployButton = ({
   const handleLetsDoItClick = () => {
     setIsLoading(true);
 
-    deployAirMan(contractInputValue, amountInputValue, setIsLoading, setOpen, network)
+    deployAirMan(contractInputValue, amountInputValue, tokenDecimals, setIsLoading, setOpen, network)
     .then((value) => {
       if (value === true) {
         handleCancelClick();
@@ -36,7 +37,7 @@ export const DeployButton = ({
 
   const handleApproveClick = async () => {
     setIsLoading(true);
-    approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), Number(amountInputValue), setIsLoading)
+    approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), amountInputValue, tokenDecimals, setIsLoading)
       .then((value) => {
         if (value === true) {
           setAllowance(Number(amountInputValue));
@@ -136,7 +137,7 @@ export const TokenContractInput = ({
       setTokenSymbol(value.symbol[0]);
       setSymbolCheck(true);
       setTokenAmount(value.balance);
-      setTokenDecimals(value.decimals)
+      setTokenDecimals(value.decimals[0])
       setAllowance((value.allowance).toString());
     } else {
       setIsValidContract(false);
