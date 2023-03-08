@@ -74,11 +74,12 @@ export const approveTokens = async (_account, _tokenContractAddress, _targetAddr
   }
 }
 
-export const sendTokens = async (_account, _tokenContractAddress, _targetAddress, amount, _setIsLoading) => {
+export const sendTokens = async (_account, _tokenContractAddress, _targetAddress, amount, decimals, _setIsLoading) => {
   const tokenInstance = new ethers.Contract(_tokenContractAddress, erc20ABI, provider);
+  const parsedAmount = ethers.utils.parseUnits(amount.toString(), decimals);
 
   try {
-    const tx = (await tokenInstance.connect(signer).transfer(_targetAddress, Number(amount)));
+    const tx = (await tokenInstance.connect(signer).transfer(_targetAddress, parsedAmount));
 
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);

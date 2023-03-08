@@ -38,6 +38,7 @@ export const ManageAssetsPopup = ({
   setIsLoading,
   userTokenBalance,
   tokenBalance,
+  tokenDecimals,
   setTokenBalance,
   etherBalance,
   setEtherBalance
@@ -48,12 +49,12 @@ export const ManageAssetsPopup = ({
 
   const handleAmountChange = (num) => {
     setAmount(num);
-    setIsValidAmount(!isNaN(num) && num > 0);
+    setIsValidAmount(!isNaN(num) && num > 0 && (num * 10 ** Number(tokenDecimals)) <= Number(userTokenBalance));
   }
 
   const handleSendClick = () => {
     setIsLoading(true);
-    sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), setIsLoading)
+    sendTokens(accounts, instanceToken, instanceAddress, Number(amountInputValue), tokenDecimals, setIsLoading)
     .then((value) => {
       if (value === true) {
         setPopUpOpen(false);
@@ -546,9 +547,7 @@ const DeployedCampaignCard = ({
   const [addPopupOpen, setaddPopupOpen] = useState(false);
   const [banPopupOpen, setBanPopupOpen] = useState(false);
 
-  const date = Date.now();
-  //const options = { month: 'short', weekday: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-  //const dateString = date.toLocaleString('en-US', options);
+  let date = Date.now();
 
   if (campaignBalance === '') {
     getEtherBalance(campaignInfo.campaignAddress)
@@ -704,7 +703,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
   if (userTokenBalance === '') {
     checkBalance(accounts, instanceToken)
-    .then((value) => {setUserTokenBalance((parseInt(value)).toLocaleString())})
+    .then((value) => {setUserTokenBalance((parseFloat(value)))})
   }
 
   if (open && !campaignDataChecked) {
@@ -859,6 +858,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             setEtherBalance={ setEtherBalance }
             userTokenBalance={ userTokenBalance }
             tokenBalance= { tokenBalance }
+            tokenDecimals={ tokenDecimals }
             setTokenBalance= { setTokenBalance }
             setCheckedBalance={ setCheckedBalance } /> }
           on='click'
