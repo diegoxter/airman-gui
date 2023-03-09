@@ -84,7 +84,6 @@ export const ManageAssetsPopup = ({
     })
   }
 
-
   return (
     <Grid divided='vertically'>
       <Grid.Row>
@@ -124,7 +123,7 @@ export const ManageAssetsPopup = ({
             size='tiny'
             color={(etherBalance === 0 || etherBalance==='')?'grey':'orange'}
             content='Withdraw Ether' onClick={handleWithdrawEtherClick}
-            disabled={(etherBalance === 0 || etherBalance === '')}
+            disabled={(etherBalance === 0 || etherBalance === '' || etherBalance === '0.0')}
           />
         </Grid.Column>
       </Grid.Row>
