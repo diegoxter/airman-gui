@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button, Form, Modal, Grid, Segment, Popup, Header, Icon, Divider } from 'semantic-ui-react';
-import { useDebounce } from "use-debounce";
 import { getEtherBalance, cleanAddress, getAdmPanAddress, weiToEther } from '../../interactions';
 import { getFee, getDeployedInstances, withdrawEther, setNewFee } from '../../interactions/airmanSystem';
 import { CopyButton } from '../CommonComponents';
@@ -154,7 +153,7 @@ export const AdminModal = ({ network }) => {
         <Button
           loading={isLoading}
           content="Withdraw Ether"
-          disabled={!(Number(instanceBalance) > 0)}
+          disabled={(Number(instanceBalance) <= 0)}
           color='orange'
           labelPosition='right'
           icon='checkmark'

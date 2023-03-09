@@ -30,6 +30,14 @@ import {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+const getFeeAmount = (whitelistFee) => {
+  if (!isNaN(whitelistFee) && whitelistFee !== '') {
+    return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'))
+  } else {
+    return '0'
+  }
+}
+
 export const ManageAssetsPopup = ({
   setPopUpOpen,
   accounts,
@@ -233,14 +241,6 @@ export const NewAirdropModal = ({
     })
   }
 
-  const getFeeAmount = () => {
-    if (!isNaN(whitelistFee) && whitelistFee !== '') {
-      return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'))
-    } else {
-      return '0'
-    }
-  }
-
   const getHumanDateWrapper = () => {
     if (timeInSeconds !== '') {
       return getHumanDate((Date.now() + (timeInSeconds*1000))/1000)
@@ -289,7 +289,7 @@ export const NewAirdropModal = ({
             error={(!hasValidFeeAmounts)}
             onChange={(e) => handleWhitelistFeeChange(e.target.value)} >
             <label>
-              Whitelist fee in Wei (can be 0) <br /> [value in Ether: <u>{getFeeAmount()}</u>]:
+              Whitelist fee in Wei (can be 0) <br /> [value in Ether: <u>{getFeeAmount(whitelistFee)}</u>]:
             </label>
             <input placeholder='Fee in Wei...' />
           </Form.Field>
@@ -588,14 +588,6 @@ const DeployedCampaignCard = ({
     .then((result) => setCampaignTokenBalance(result));
    }
 
-  const getFeeAmount = () => {
-    if (!isNaN(whitelistFee) && whitelistFee !== '') {
-      return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'))
-    } else {
-      return '0'
-    }
-  }
-
   const handleSettingsButtonClick = () => {
     setSettingsPopupOpen(!settingsPopUpOpen)
   }
@@ -720,7 +712,7 @@ const DeployedCampaignCard = ({
                   />
                   <Divider />
                  <input placeholder='New fee in wei...'/>
-                 <label>New fee value in Ether: <br />{getFeeAmount()}</label>
+                 <label>New fee value in Ether: <br />{getFeeAmount(whitelistFee)}</label>
 
                 </Form.Field>
                 <Checkbox label='Is it private?' checked={isPrivate} onClick={() => console.log('Checkbox click')}/>
