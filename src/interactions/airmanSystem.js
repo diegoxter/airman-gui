@@ -125,6 +125,7 @@ export const deployAirdropCampaign = async (
   uintValues,
   decimals,
   _hasFixedAmount,
+  _isPrivate,
   _setIsLoading ) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
   const parsedAmount = ethers.utils.parseUnits(uintValues[1].toString(), decimals);
@@ -136,7 +137,8 @@ export const deployAirdropCampaign = async (
       uintValues[2],
       uintValues[3],
       uintValues[4],
-      _hasFixedAmount
+      _hasFixedAmount,
+      _isPrivate
     );
 
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {

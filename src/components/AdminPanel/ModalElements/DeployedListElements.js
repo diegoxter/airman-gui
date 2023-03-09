@@ -151,6 +151,7 @@ export const NewAirdropModal = ({
   const [whitelistFee, setWhitelistFee] = useState('0');
   const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
   const [hasFixedAmount, setHasFixedAmount] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [amountPerParticipant, setAmountPerParticipant] = useState('');
   const [hasValidAmountPerParticipant, setHasValidAmountPerParticipant] = useState(false);
   const [maxParticipantAmount, setMaxParticipantAmount] = useState('');
@@ -169,8 +170,12 @@ export const NewAirdropModal = ({
     setOpen(false);
   }
 
-  const handleCheckboxChange = () => {
+  const handleFixedAmountCheckboxChange = () => {
     setHasFixedAmount(!hasFixedAmount);
+  }
+
+  const handleIsPrivateCheckboxChange = () => {
+    setIsPrivate(!isPrivate);
   }
 
   const handleTimeChange = (value) => {
@@ -220,6 +225,7 @@ export const NewAirdropModal = ({
       Number(maxParticipantAmount) ],
       tokenDecimals,
       hasFixedAmount,
+      isPrivate,
       setIsLoading)
     .then(() => {
       handleClose();
@@ -284,14 +290,19 @@ export const NewAirdropModal = ({
             onChange={(e) => handleWhitelistFeeChange(e.target.value)} >
             <label>
               Whitelist fee in Wei (can be 0) <br /> [value in Ether: <u>{getFeeAmount()}</u>]:
-              </label>
+            </label>
             <input placeholder='Fee in Wei...' />
           </Form.Field>
 
           <Form.Field>
             <Checkbox
             label='Has fixed amount per user?'
-            onChange={() => handleCheckboxChange()}
+            onChange={() => handleFixedAmountCheckboxChange()}
+            />
+
+          <Checkbox
+            label='Is it a private airdrop?'
+            onChange={() => handleIsPrivateCheckboxChange()}
             />
           </Form.Field>
 
@@ -532,6 +543,7 @@ const DeployedCampaignCard = ({
   campaignInfo,
   instanceToken,
   isCampaignActive,
+  setCampaignDataChecked,
   tokenSymbol,
   tokenDecimals,
   getHumanDate,
@@ -541,12 +553,25 @@ const DeployedCampaignCard = ({
   setIsLoading
 }) => {
   const [campaignBalance, setCampaignBalance] = useState('');
+  const [isPrivate, setIsPrivate] = useState('')
   const [campaignTokenBalance, setCampaignTokenBalance] = useState('');
   const [campaignWithdrawDate, setCampaignWithdrawDate] = useState('');
   const [addPopupOpen, setaddPopupOpen] = useState(false);
   const [banPopupOpen, setBanPopupOpen] = useState(false);
+  const [settingsPopUpOpen, setSettingsPopupOpen] = useState(false)
+  const [currentFee, setCurrentFee] = useState('');
+  const [whitelistFee, setWhitelistFee] = useState('');
+  const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
 
   let date = Date.now();
+
+  if (currentFee === '' && campaignInfo.fee !== '') {
+    setCurrentFee((weiToEther(campaignInfo.fee)))
+  }
+
+  if (isPrivate === '') {
+    setIsPrivate(campaignInfo.isPrivate)
+  }
 
   if (campaignBalance === '') {
     getEtherBalance(campaignInfo.campaignAddress)
@@ -561,7 +586,19 @@ const DeployedCampaignCard = ({
   if (campaignTokenBalance === '' || checkedBalance === false) {
     checkBalance(campaignInfo.campaignAddress, instanceToken)
     .then((result) => setCampaignTokenBalance(result));
-   };
+   }
+
+  const getFeeAmount = () => {
+    if (!isNaN(whitelistFee) && whitelistFee !== '') {
+      return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'))
+    } else {
+      return '0'
+    }
+  }
+
+  const handleSettingsButtonClick = () => {
+    setSettingsPopupOpen(!settingsPopUpOpen)
+  }
 
   const handleWithdrawTokens = () => {
     setIsLoading(true)
@@ -572,6 +609,70 @@ const DeployedCampaignCard = ({
         .then(() => setTokenBalance(''))
       }
     })
+  }
+
+  const handleWhitelistFeeChange = (value) => {
+    setWhitelistFee(value);
+    setHasValidFeeAmounts(!isNaN(value) && value !== '');
+  }
+
+  const returnManageUserButtons = () => {
+    if (date < campaignInfo.endDate * 1000) {
+      if (date < (campaignWithdrawDate * 1000)) {
+        return (
+          <div className='ui two buttons'>
+            <Popup
+              position='top center'
+              content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
+              on='click'
+              closeOnDocumentClick={false}
+              closeOnEscape={false}
+              pinned
+              trigger={
+              <Button
+              disabled={banPopupOpen}
+              basic={banPopupOpen}
+              color={(addPopupOpen)? 'orange':'teal'}
+              content={(addPopupOpen)? 'Close Popup':'Add users'}
+              onClick={() => setaddPopupOpen(!addPopupOpen)} />
+            } />
+
+            <Popup // TO DO add this function to the contract
+              position='top center'
+              content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
+              on='click'
+              closeOnDocumentClick={false}
+              closeOnEscape={false}
+              pinned
+              trigger={
+                <Button
+                disabled={addPopupOpen}
+                basic={addPopupOpen}
+                color={(banPopupOpen)? 'orange':'red'}
+                content={(banPopupOpen)? 'Close Popup':'Ban users'}
+                onClick={() => setBanPopupOpen(!banPopupOpen)}
+                /> }
+            />
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <Button
+              disabled={campaignTokenBalance === 0}
+              color={(campaignTokenBalance === 0)? 'grey': 'teal'}
+              fluid
+              onClick={handleWithdrawTokens} // TO DO this needs to be shown only if the time for owner to claim is up
+              content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
+            </Button>
+        </div>
+        );
+      }
+   } else {
+    return (
+      <Button disabled fluid color='grey' content='Wait until the withdrawal date is up'/>
+    );
+   }
   }
 
   return(
@@ -587,13 +688,43 @@ const DeployedCampaignCard = ({
           <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
         }
         {
-          (campaignInfo.fee > 0 && isCampaignActive(campaignInfo))
+          (isCampaignActive(campaignInfo))
           ?
           <Popup
-            flowing
-            content='Click to edit the fee'
+            closeOnDocumentClick={false}
+            closeOnEscape={false}
+            pinned
+            position='right center'
+            on='click'
             trigger={
-              <Button size='mini' floated='right'>Fee: <br/> {weiToEther(campaignInfo.fee)+'Ξ'} </Button>
+              <Button
+                size='tiny'
+                floated='right'
+                color={(settingsPopUpOpen)?'red':'grey'}
+                circular
+                icon={(settingsPopUpOpen)?'close':'settings'}
+                onClick={handleSettingsButtonClick}
+              />
+            }
+            content={ // aqui
+              <Form>
+                <Form.Field
+                  error={(!hasValidFeeAmounts)}
+                  onChange={(e) => handleWhitelistFeeChange(e.target.value)}
+                >
+                 <Button
+                  fluid
+                  loading={isLoading}
+                  disabled={!hasValidFeeAmounts || currentFee === (weiToEther(Number(whitelistFee))) || whitelistFee === ''}
+                  content={`Current fee: ${currentFee} Ξ`}
+                  />
+                  <Divider />
+                 <input placeholder='New fee in wei...'/>
+                 <label>New fee value in Ether: <br />{getFeeAmount()}</label>
+
+                </Form.Field>
+                <Checkbox label='Is it private?' checked={isPrivate} onClick={() => console.log('Checkbox click')}/>
+              </Form>
             }
           />
           :
@@ -619,61 +750,18 @@ const DeployedCampaignCard = ({
             Date to withdraw: <br /> <u>{getHumanDate(campaignWithdrawDate)} </u>
           </Item>
           :
-          <Item>End date: <u>Expired</u> <br/></Item>
+          <Item>
+            State: <br />
+            <u>Expired campaign</u> <br/>
+            Date to withdraw: <br /> <u>{getHumanDate(campaignWithdrawDate)} </u>
+          </Item>
       }
       <br />Participants <br /> Unclaimed
       </Card.Description>
       </Card.Content>
 
       <Card.Content extra>
-        {(date < (campaignWithdrawDate * 1000))
-        ?
-        <div className='ui two buttons'>
-          <Popup
-            position='top center'
-            content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
-            on='click'
-            closeOnDocumentClick={false}
-            closeOnEscape={false}
-            pinned
-            trigger={
-            <Button
-            disabled={banPopupOpen}
-            basic={banPopupOpen}
-            color={(addPopupOpen)? 'orange':'teal'}
-            content={(addPopupOpen)? 'Close':'Add users'}
-            onClick={() => setaddPopupOpen(!addPopupOpen)} />
-          } />
-
-          <Popup // TO DO add this function to the contract
-            position='top center'
-            content={<BanUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
-            on='click'
-            closeOnDocumentClick={false}
-            closeOnEscape={false}
-            pinned
-            trigger={
-              <Button
-              disabled={addPopupOpen}
-              basic={addPopupOpen}
-              color={(banPopupOpen)? 'orange':'red'}
-              content={(banPopupOpen)? 'Close':'Ban users'}
-              onClick={() => setBanPopupOpen(!banPopupOpen)}
-              /> }
-          />
-        </div>
-
-        :
-        <div>
-        <Button
-          disabled={campaignTokenBalance === 0}
-          color={(campaignTokenBalance === 0)? 'grey': 'teal'}
-          fluid
-          onClick={handleWithdrawTokens} // TO DO this needs to be shown only if the time for owner to claim is up
-          content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
-        </Button>
-      </div>
-      }
+        { returnManageUserButtons() }
       </Card.Content>
     </Card>
   )
@@ -814,6 +902,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             <DeployedCampaignCard
             key={Number(campaignInfo.campaignID['_hex'])}
             campaignInfo={ campaignInfo }
+            setCampaignDataChecked={ setCampaignDataChecked }
             instanceToken={ instanceToken }
             isCampaignActive={ isCampaignActive }
             tokenSymbol={ tokenSymbol }
