@@ -609,8 +609,8 @@ const DeployedCampaignCard = ({
   }
 
   const returnManageUserButtons = () => {
-    if (date < campaignInfo.endDate * 1000) {
-      if (date < (campaignWithdrawDate * 1000)) {
+    if (date < campaignWithdrawDate * 1000) {
+      if (date < campaignInfo.endDate * 1000) {
         return (
           <div className='ui two buttons'>
             <Popup
@@ -649,20 +649,21 @@ const DeployedCampaignCard = ({
         );
       } else {
         return (
-          <div>
-            <Button
-              disabled={campaignTokenBalance === 0}
-              color={(campaignTokenBalance === 0)? 'grey': 'teal'}
-              fluid
-              onClick={handleWithdrawTokens} // TO DO this needs to be shown only if the time for owner to claim is up
-              content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
-            </Button>
-        </div>
+          <Button disabled fluid color='grey' content='Wait for withdrawal date'/>
         );
       }
    } else {
     return (
-      <Button disabled fluid color='grey' content='Wait until the withdrawal date is up'/>
+      <div>
+        <Button
+          disabled={campaignTokenBalance === 0}
+          color={(campaignTokenBalance === 0)? 'black': 'teal'}
+          basic={(campaignTokenBalance === 0)}
+          fluid
+          onClick={handleWithdrawTokens}
+          content={(campaignTokenBalance === 0)? 'No assets to withdraw': 'Withdraw leftover assets'}>
+        </Button>
+    </div>
     );
    }
   }
