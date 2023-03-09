@@ -126,6 +126,11 @@
         "type": "bool"
       },
       {
+        "internalType": "bool",
+        "name": "isPrivate",
+        "type": "bool"
+      },
+      {
         "internalType": "contract AirdropCampaign",
         "name": "campaignAddress",
         "type": "address"
@@ -177,6 +182,11 @@
       {
         "internalType": "bool",
         "name": "hasFixedAmount",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isPrivate",
         "type": "bool"
       }
     ],

@@ -45,6 +45,11 @@
         "internalType": "bool",
         "name": "hasFixedAmount",
         "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "_isPrivate",
+        "type": "bool"
       }
     ],
     "stateMutability": "nonpayable",
@@ -66,12 +71,6 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "modifiedValue",
-        "type": "string"
-      },
       {
         "indexed": false,
         "internalType": "uint256",
@@ -211,6 +210,19 @@
   },
   {
     "inputs": [],
+    "name": "isPrivate",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "manageFunds",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -299,6 +311,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "toggleIsPrivate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -338,19 +357,27 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "unclaimedAirdrops",
+    "outputs": [
       {
-        "internalType": "uint8",
-        "name": "option",
-        "type": "uint8"
-      },
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "uint256",
         "name": "newValue",
         "type": "uint256"
       }
     ],
-    "name": "updateValue",
+    "name": "updateFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
