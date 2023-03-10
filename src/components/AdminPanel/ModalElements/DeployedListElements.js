@@ -721,6 +721,7 @@ const DeployedCampaignCard = ({
           :
           <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
         }
+        {(campaignInfo.isPrivate)? <Button floated='right' size='mini' circular icon='lock'/>: ''}
         {
           (isCampaignActive(campaignInfo))
           ?

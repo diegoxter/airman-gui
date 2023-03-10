@@ -117,17 +117,6 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
   return [ airdropListData, airdropParticipantData ];
 }
 
-export const checkUserStatus = async (_campaignAddress, _userAddress) => { // aqui
-  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
-  const participantInfo = await airdropCampaignInstance.participantInfo(_userAddress);
-
-  const isParticipant = participantInfo[0].toLowerCase() === _userAddress
-  const isBanned = participantInfo[1]
-  const canClaim = participantInfo[0].toLowerCase() === _userAddress && participantInfo[1] === false
-
-  return [isParticipant, isBanned, canClaim];
-}
-
 
 // Transaction functions
 export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setParticipantDataChecked) => {

@@ -244,7 +244,7 @@ const AirdropCampaignCard = ({
         {
           (isCampaignActive(campaignInfo.claimableSince))
           ?
-          `Active Placeholder ${(isPrivate)? 'Private':''}`
+          <p>{`Active Placeholder` + ((isPrivate)? 'Private':'')}</p>
           :
           <s>{`Inactive Placeholder `+ ((isPrivate)? 'Private':'')}</s>
         }

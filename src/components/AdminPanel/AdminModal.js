@@ -124,11 +124,11 @@ export const AdminModal = ({ network }) => {
             }
 
           <Divider horizontal>
-          <Header as='h4'>
-            <Icon name='certificate' />
-            Deploy a free Airdrop Manager instance
-          </Header>
-        </Divider>
+            <Header as='h4'>
+              <Icon name='certificate' />
+              Deploy a free Airdrop Manager instance
+            </Header>
+          </Divider>
         <Form.Group>
           <Form.Field>
             <label>Owner address</label>
