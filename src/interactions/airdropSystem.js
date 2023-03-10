@@ -17,6 +17,13 @@ export const getWhitelistFee = async (_campaignAddress) => {
   return fee;
 }
 
+export const getIsPrivate = async (_campaignAddress) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+  const isPrivate = await airdropCampaignInstance.isPrivate();
+
+  return isPrivate;
+}
+
 export const getOwnerTokenWithdrawDate = async (_campaignAddress) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
   const withdrawDate = await airdropCampaignInstance.ownerTokenWithdrawDate();
@@ -192,7 +199,6 @@ export const withdrawCampaignTokens = async (_campaignAddress, _setIsLoading) =>
   }
 }
 
-
 export const addUserList = async (_campaignAddress, _userList, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
@@ -231,6 +237,47 @@ export const banUser = async (_campaignAddress, _user, _setIsLoading) => {
     return false;
   }
 }
+
+export const updateFee = async (_campaignAddress, _newFee, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).updateFee(_newFee);
+
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true;
+  } catch (error) {
+    console.log('Failure to update fee');
+    _setIsLoading(false);
+    return false;
+  }
+}
+
+export const toggleIsPrivate = async (_campaignAddress, _setIsLoading) => {
+  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
+
+  try {
+    const tx = await airdropCampaignInstance.connect(signer).toggleIsPrivate();
+
+    let sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
+      sleep(2500);
+    }
+
+    return true;
+  } catch (error) {
+    console.log('Failure to update fee');
+    _setIsLoading(false);
+    return false;
+  }
+}
+
 
 // Helper functions
 export const isCampaignActive = (_campaignInfo_claimableSince) => {

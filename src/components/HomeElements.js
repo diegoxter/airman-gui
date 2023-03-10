@@ -98,7 +98,8 @@ export const CampaignModal = ({
       {
         (hasJoined)
         ?
-          <Button disabled={(hasClaimed)}
+          <Button
+            disabled={(hasClaimed)}
             color={(isActive)?'green':(hasClaimed)?'violet':'red'}
             content={(isActive)?'Manage':(hasClaimed)?'Claimed':'Claim'}
           />

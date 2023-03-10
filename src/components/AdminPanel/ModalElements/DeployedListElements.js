@@ -2,7 +2,16 @@ import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
 import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
-import { withdrawCampaignTokens, addUserList, banUser, getOwnerTokenWithdrawDate } from '../../../interactions/airdropSystem';
+import {
+  withdrawCampaignTokens,
+  addUserList,
+  banUser,
+  getOwnerTokenWithdrawDate,
+  updateFee,
+  getWhitelistFee,
+  getIsPrivate,
+  toggleIsPrivate
+} from '../../../interactions/airdropSystem';
 import { getEtherBalance, weiToEther, cleanAddress } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import {
@@ -501,17 +510,20 @@ const BanUsersPopup = ({ instanceAddress, isLoading, setIsLoading }) => {
   const [userInput, setUserInput] = useState('');
 
   const handleBanClick = () => {
-    console.log('Test ban button');
     setIsLoading(true);
-    // banUser(instanceAddress, userInput, setIsLoading)
-  }
-
-  const handleCheckBannedClick = () => {
-    console.log('Test check banned button');
+    banUser(instanceAddress, userInput, setIsLoading)
+    .then(() => {
+      const newItems = [];
+      setUserInput(newItems);
+    })
   }
 
   const handleUserChange = (e) => {
     setUserInput(e);
+  }
+
+  const handleCheckBannedClick = () => {
+    console.log('Check banned click')
   }
 
   return (
@@ -543,7 +555,6 @@ const DeployedCampaignCard = ({
   campaignInfo,
   instanceToken,
   isCampaignActive,
-  setCampaignDataChecked,
   tokenSymbol,
   tokenDecimals,
   getHumanDate,
@@ -560,17 +571,19 @@ const DeployedCampaignCard = ({
   const [banPopupOpen, setBanPopupOpen] = useState(false);
   const [settingsPopUpOpen, setSettingsPopupOpen] = useState(false)
   const [currentFee, setCurrentFee] = useState('');
-  const [whitelistFee, setWhitelistFee] = useState('');
+  const [newWhitelistFee, setNewWhitelistFee] = useState('');
   const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
 
   let date = Date.now();
 
-  if (currentFee === '' && campaignInfo.fee !== '') {
-    setCurrentFee((weiToEther(campaignInfo.fee)))
+  if (currentFee === '') {
+    getWhitelistFee(campaignInfo.campaignAddress)
+    .then((value) => setCurrentFee(weiToEther(value)))
   }
 
   if (isPrivate === '') {
-    setIsPrivate(campaignInfo.isPrivate)
+    getIsPrivate(campaignInfo.campaignAddress)
+    .then((value) => setIsPrivate(value))
   }
 
   if (campaignBalance === '') {
@@ -604,8 +617,36 @@ const DeployedCampaignCard = ({
   }
 
   const handleWhitelistFeeChange = (value) => {
-    setWhitelistFee(value);
+    setNewWhitelistFee(value);
     setHasValidFeeAmounts(!isNaN(value) && value !== '');
+  }
+
+  const handleNewFeeInWeiClick = () => {
+    setIsLoading(true);
+    updateFee(campaignInfo.campaignAddress, newWhitelistFee, setIsLoading) // aqui
+    .then((value) => {
+      if (value === true) {
+        new Promise(r => setTimeout(r, 4500))
+        .then(() => {
+          setCurrentFee('');
+          setHasValidFeeAmounts(false);
+          setNewWhitelistFee('');
+        })
+      }
+    })
+  }
+
+  const handleTogglePrivacyClick = () => {
+    setIsLoading(true);
+    toggleIsPrivate(campaignInfo.campaignAddress, setIsLoading)
+    .then((value) => {
+      if (value === true) {
+        new Promise(r => setTimeout(r, 4500))
+        .then(() => {
+          setIsPrivate('');
+        })
+      }
+    })
   }
 
   const returnManageUserButtons = () => {
@@ -699,24 +740,40 @@ const DeployedCampaignCard = ({
                 onClick={handleSettingsButtonClick}
               />
             }
-            content={ // aqui
+            content={
               <Form>
-                <Form.Field
+                  <Form.Field
                   error={(!hasValidFeeAmounts)}
                   onChange={(e) => handleWhitelistFeeChange(e.target.value)}
-                >
-                 <Button
+                  >
+                  <label>New fee value in Ether: <br />{getFeeAmount(newWhitelistFee)}</label>
+                 <input placeholder='New fee in wei...'/>
+                 </Form.Field>
+                  <Divider hidden/>
+                  <Popup
+                  content='Click to change the fee'
+                  trigger={
+                    <Button
+                    fluid
+                    loading={isLoading}
+                    basic
+                    color='teal'
+                    disabled={!hasValidFeeAmounts || currentFee === (weiToEther(Number(newWhitelistFee))) || newWhitelistFee === ''}
+                    content={`Current fee: ${currentFee} Ξ`}
+                    onClick={() => handleNewFeeInWeiClick()}
+                    />
+                  }
+                  />
+                 <Divider />
+                 <strong>The campaign is <u>{(isPrivate? 'private': 'not private')}</u></strong>
+                <Button
                   fluid
                   loading={isLoading}
-                  disabled={!hasValidFeeAmounts || currentFee === (weiToEther(Number(whitelistFee))) || whitelistFee === ''}
-                  content={`Current fee: ${currentFee} Ξ`}
-                  />
-                  <Divider />
-                 <input placeholder='New fee in wei...'/>
-                 <label>New fee value in Ether: <br />{getFeeAmount(whitelistFee)}</label>
-
-                </Form.Field>
-                <Checkbox label='Is it private?' checked={isPrivate} onClick={() => console.log('Checkbox click')}/>
+                  basic
+                  color='blue'
+                  content='Toggle privacy'
+                  onClick={handleTogglePrivacyClick}
+                />
               </Form>
             }
           />
@@ -895,7 +952,6 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             <DeployedCampaignCard
             key={Number(campaignInfo.campaignID['_hex'])}
             campaignInfo={ campaignInfo }
-            setCampaignDataChecked={ setCampaignDataChecked }
             instanceToken={ instanceToken }
             isCampaignActive={ isCampaignActive }
             tokenSymbol={ tokenSymbol }
