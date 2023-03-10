@@ -6,11 +6,9 @@ import {
   withdrawCampaignTokens,
   addUserList,
   banUser,
-  getOwnerTokenWithdrawDate,
   updateFee,
-  getWhitelistFee,
-  getIsPrivate,
-  toggleIsPrivate
+  toggleIsPrivate,
+  getBasicAirdropInfo
 } from '../../../interactions/airdropSystem';
 import { getEtherBalance, weiToEther, cleanAddress } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
@@ -308,7 +306,8 @@ export const NewAirdropModal = ({
             label='Has fixed amount per user?'
             onChange={() => handleFixedAmountCheckboxChange()}
             />
-
+          </Form.Field>
+          <Form.Field>
           <Checkbox
             label='Is it a private airdrop?'
             onChange={() => handleIsPrivateCheckboxChange()}
@@ -552,6 +551,7 @@ const BanUsersPopup = ({ instanceAddress, isLoading, setIsLoading }) => {
 }
 
 const DeployedCampaignCard = ({
+  network,
   campaignInfo,
   instanceToken,
   isCampaignActive,
@@ -563,37 +563,37 @@ const DeployedCampaignCard = ({
   isLoading,
   setIsLoading
 }) => {
-  const [campaignBalance, setCampaignBalance] = useState('');
-  const [isPrivate, setIsPrivate] = useState('')
-  const [campaignTokenBalance, setCampaignTokenBalance] = useState('');
-  const [campaignWithdrawDate, setCampaignWithdrawDate] = useState('');
-  const [addPopupOpen, setaddPopupOpen] = useState(false);
-  const [banPopupOpen, setBanPopupOpen] = useState(false);
-  const [settingsPopUpOpen, setSettingsPopupOpen] = useState(false)
-  const [currentFee, setCurrentFee] = useState('');
-  const [newWhitelistFee, setNewWhitelistFee] = useState('');
-  const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
+  const [ campaignBalance, setCampaignBalance ] = useState('');
+  const [ campaignTokenBalance, setCampaignTokenBalance ] = useState('');
+  const [ isPrivate, setIsPrivate ] = useState('')
+  const [ currentFee, setCurrentFee ] = useState('');
+  const [ campaignWithdrawDate, setCampaignWithdrawDate ] = useState('');
+  const [ participantAmount, setParticipantAmount ] = useState('');
+  const [ unclaimedAmount, setUnclaimedAmount ] = useState('');
+  const [ campaignDataChecked, setCampaignDataChecked ] = useState(false);
+  const [ addPopupOpen, setaddPopupOpen ] = useState(false);
+  const [ banPopupOpen, setBanPopupOpen ] = useState(false);
+  const [ settingsPopUpOpen, setSettingsPopupOpen ] = useState(false)
+  const [ newWhitelistFee, setNewWhitelistFee ] = useState('');
+  const [ hasValidFeeAmounts, setHasValidFeeAmounts ] = useState(false);
 
   let date = Date.now();
 
-  if (currentFee === '') {
-    getWhitelistFee(campaignInfo.campaignAddress)
-    .then((value) => setCurrentFee(weiToEther(value)))
-  }
-
-  if (isPrivate === '') {
-    getIsPrivate(campaignInfo.campaignAddress)
-    .then((value) => setIsPrivate(value))
+  if (!campaignDataChecked) {
+    getBasicAirdropInfo(network, campaignInfo.campaignAddress)
+    .then((value) => {
+      setCampaignWithdrawDate(value[0]);
+      setIsPrivate((value[1])[0]);
+      setCurrentFee(weiToEther(value[2]));
+      setParticipantAmount(Number(value[3]));
+      setUnclaimedAmount(Number(value[4]));
+      setCampaignDataChecked(true);
+    });
   }
 
   if (campaignBalance === '') {
     getEtherBalance(campaignInfo.campaignAddress)
     .then((value) => setCampaignBalance(value))
-  }
-
-  if (campaignWithdrawDate === '') {
-    getOwnerTokenWithdrawDate(campaignInfo.campaignAddress)
-    .then((value) => setCampaignWithdrawDate(value))
   }
 
   if (campaignTokenBalance === '' || checkedBalance === false) {
@@ -628,7 +628,7 @@ const DeployedCampaignCard = ({
       if (value === true) {
         new Promise(r => setTimeout(r, 4500))
         .then(() => {
-          setCurrentFee('');
+          setCampaignDataChecked(false);
           setHasValidFeeAmounts(false);
           setNewWhitelistFee('');
         })
@@ -643,7 +643,7 @@ const DeployedCampaignCard = ({
       if (value === true) {
         new Promise(r => setTimeout(r, 4500))
         .then(() => {
-          setIsPrivate('');
+          setCampaignDataChecked(false);
         })
       }
     })
@@ -656,19 +656,27 @@ const DeployedCampaignCard = ({
           <div className='ui two buttons'>
             <Popup
               position='top center'
-              content={<AddUsersPopup instanceAddress={ campaignInfo.campaignAddress } isLoading={ isLoading } setIsLoading={ setIsLoading } />}
+              content={
+                <AddUsersPopup
+                  instanceAddress={ campaignInfo.campaignAddress }
+                  isLoading={ isLoading }
+                  setIsLoading={ setIsLoading }
+                />
+              }
               on='click'
               closeOnDocumentClick={false}
               closeOnEscape={false}
               pinned
               trigger={
-              <Button
-              disabled={banPopupOpen}
-              basic={banPopupOpen}
-              color={(addPopupOpen)? 'orange':'teal'}
-              content={(addPopupOpen)? 'Close Popup':'Add users'}
-              onClick={() => setaddPopupOpen(!addPopupOpen)} />
-            } />
+                <Button
+                  disabled={banPopupOpen}
+                  basic={banPopupOpen}
+                  color={(addPopupOpen)? 'orange':'teal'}
+                  content={(addPopupOpen)? 'Close Popup':'Add users'}
+                  onClick={() => setaddPopupOpen(!addPopupOpen)}
+                />
+              }
+            />
 
             <Popup // TO DO add this function to the contract
               position='top center'
@@ -721,7 +729,7 @@ const DeployedCampaignCard = ({
           :
           <s>{`Campaign #${Number(campaignInfo.campaignID['_hex'])}`}</s>
         }
-        {(campaignInfo.isPrivate)? <Button floated='right' size='mini' circular icon='lock'/>: ''}
+        {(isPrivate)? <Button floated='right' size='mini' circular icon='lock'/>: ''}
         {
           (isCampaignActive(campaignInfo))
           ?
@@ -738,7 +746,7 @@ const DeployedCampaignCard = ({
                 color={(settingsPopUpOpen)?'red':'grey'}
                 circular
                 icon={(settingsPopUpOpen)?'close':'settings'}
-                onClick={handleSettingsButtonClick}
+                onClick={() => handleSettingsButtonClick()}
               />
             }
             content={
@@ -773,7 +781,7 @@ const DeployedCampaignCard = ({
                   basic
                   color='blue'
                   content='Toggle privacy'
-                  onClick={handleTogglePrivacyClick}
+                  onClick={() => handleTogglePrivacyClick()}
                 />
               </Form>
             }
@@ -807,7 +815,8 @@ const DeployedCampaignCard = ({
             Date to withdraw: <br /> <u>{getHumanDate(campaignWithdrawDate)} </u>
           </Item>
       }
-      <br />Participants <br /> Unclaimed
+      <br />Participants <u>{participantAmount}</u><br />
+      Unclaimed <u>{unclaimedAmount}</u>
       </Card.Description>
       </Card.Content>
 
@@ -951,18 +960,19 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
         :
           campaignData.map((campaignInfo) => (
             <DeployedCampaignCard
-            key={Number(campaignInfo.campaignID['_hex'])}
-            campaignInfo={ campaignInfo }
-            instanceToken={ instanceToken }
-            isCampaignActive={ isCampaignActive }
-            tokenSymbol={ tokenSymbol }
-            tokenDecimals={ tokenDecimals }
-            getHumanDate={ getHumanDate }
-            checkedBalance={ checkedBalance }
-            isLoading={ isLoading }
-            setIsLoading={ setIsLoading }
-            tokenBalance={ tokenBalance }
-            setTokenBalance={ setTokenBalance }
+              key={Number(campaignInfo.campaignID['_hex'])}
+              network={ network }
+              campaignInfo={ campaignInfo }
+              instanceToken={ instanceToken }
+              isCampaignActive={ isCampaignActive }
+              tokenSymbol={ tokenSymbol }
+              tokenDecimals={ tokenDecimals }
+              getHumanDate={ getHumanDate }
+              checkedBalance={ checkedBalance }
+              isLoading={ isLoading }
+              setIsLoading={ setIsLoading }
+              tokenBalance={ tokenBalance }
+              setTokenBalance={ setTokenBalance }
             />
 
           ))}

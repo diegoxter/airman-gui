@@ -17,21 +17,54 @@ export const getWhitelistFee = async (_campaignAddress) => {
   return fee;
 }
 
-export const getIsPrivate = async (_campaignAddress) => {
-  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
-  const isPrivate = await airdropCampaignInstance.isPrivate();
+export const getBasicAirdropInfo = async (_network, instanceAddress) => {
 
-  return isPrivate;
+  const ownerTokenWithdrawDateCall = {
+    abi: airdropCampaignAbi,
+    address: instanceAddress,
+    name: 'ownerTokenWithdrawDate',
+    params: [],
+  };
+  const IsPrivateCall = {
+    abi: airdropCampaignAbi,
+    address: instanceAddress,
+    name: 'isPrivate',
+    params: [],
+  };
+  const whiteListFeeCall = {
+    abi: airdropCampaignAbi,
+    address: instanceAddress,
+    name: 'whitelistFee',
+    params: [],
+  };
+  const participantCall = {
+    abi: airdropCampaignAbi,
+    address: instanceAddress,
+    name: 'participantAmount',
+    params: [],
+  };
+  const unclaimedCall = {
+    abi: airdropCampaignAbi,
+    address: instanceAddress,
+    name: 'unclaimedAirdrops',
+    params: [],
+  };
+
+  const airdropCampaignDataRaw = await multicall(
+    airdropCampaignAbi,
+    [
+      ownerTokenWithdrawDateCall,
+      IsPrivateCall,
+      whiteListFeeCall,
+      participantCall,
+      unclaimedCall
+    ],
+    _network);
+
+  return airdropCampaignDataRaw
 }
 
-export const getOwnerTokenWithdrawDate = async (_campaignAddress) => {
-  const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
-  const withdrawDate = await airdropCampaignInstance.ownerTokenWithdrawDate();
-
-  return withdrawDate;
-}
-
-export const getAirdropCampaignInfo = async (_network, _account) => {
+export const getDetailedAirdropCampaignInfo = async (_network, _account) => {
   const airdropList = await getAirdropCampaignsAddressList(_network);
   const airdropListData = [];
   const airdropParticipantData = []; // aqui
@@ -39,59 +72,66 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
   await Promise.all(airdropList.map(async (instanceAddress, index) => {
     const airdropCampaignInstance = new ethers.Contract(instanceAddress, airdropCampaignAbi, provider);
 
-    const tokenAddressCalls = {
+    const tokenAddressCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'tokenAddress',
       params: [],
     };
-    const claimableSinceCalls = {
+    const claimableSinceCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'claimableSince',
       params: [],
     };
-    const fixedAmountCalls = {
+    const fixedAmountCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'fixedAmount',
       params: [],
     };
-    const whitelistFeeCalls = {
+    const whitelistFeeCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'whitelistFee',
       params: [],
     };
-    const tokenAmountCalls = {
+    const tokenAmountCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'tokenAmount',
       params: [],
     };
-    const amountForEachUserCalls = {
+    const amountForEachUserCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'amountForEachUser',
       params: [],
     };
-    const isPrivateCalls = {
+    const isPrivateCall = {
       abi: airdropCampaignAbi,
       address: instanceAddress,
       name: 'isPrivate',
+      params: [],
+    };
+    const ownerTokenWithdrawDateCall = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'ownerTokenWithdrawDate',
       params: [],
     };
 
     const airdropCampaignDataRaw = await multicall(
       airdropCampaignAbi,
       [
-          tokenAddressCalls,
-          claimableSinceCalls,
-          fixedAmountCalls,
-          whitelistFeeCalls,
-          tokenAmountCalls,
-          amountForEachUserCalls,
-          isPrivateCalls
+          tokenAddressCall,
+          claimableSinceCall,
+          fixedAmountCall,
+          whitelistFeeCall,
+          tokenAmountCall,
+          amountForEachUserCall,
+          isPrivateCall,
+          ownerTokenWithdrawDateCall
       ],
       _network);
 
@@ -103,7 +143,8 @@ export const getAirdropCampaignInfo = async (_network, _account) => {
         whitelistFee: Number(airdropCampaignDataRaw[3]),
         tokenAmount: Number(airdropCampaignDataRaw[4]),
         amountForEachUser: Number(airdropCampaignDataRaw[5]),
-        isPrivate: airdropCampaignDataRaw[6]
+        isPrivate: airdropCampaignDataRaw[6],
+        ownerTokenWithdrawDateCalls: airdropCampaignDataRaw[7]
       };
 
       const participantInfoRawData = await airdropCampaignInstance.participantInfo(_account);

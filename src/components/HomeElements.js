@@ -6,7 +6,7 @@ import {
   retireFromAirdrop,
   claimAirdrop,
   isCampaignActive,
-  getAirdropCampaignInfo
+  getDetailedAirdropCampaignInfo
 } from '../interactions/airdropSystem';
 import { weiToEther, cleanAddress } from '../interactions';
 
@@ -244,9 +244,9 @@ const AirdropCampaignCard = ({
         {
           (isCampaignActive(campaignInfo.claimableSince))
           ?
-          <p>{`Active Placeholder` + ((isPrivate)? 'Private':'')}</p>
+          <p>{`Active Placeholder` + ((isPrivate)? ' Private':'')}</p>
           :
-          <s>{`Inactive Placeholder `+ ((isPrivate)? 'Private':'')}</s>
+          <s>{`Inactive Placeholder `+ ((isPrivate)? ' Private':'')}</s>
         }
 
       </Card.Header>
@@ -266,6 +266,7 @@ const AirdropCampaignCard = ({
 
       <Card.Meta>
         End date: <br/><b>{getHumanDate(campaignInfo.claimableSince)}</b><br/>
+        Withdraw before: <br /> <b>{getHumanDate(campaignInfo.ownerTokenWithdrawDateCalls)} </b>
       </Card.Meta>
 
       <Card.Description>
@@ -310,7 +311,7 @@ export const AirdropList = ({ network, accounts }) => {
 
   if (campaignDataChecked === false || participantDataChecked === false) {
    if (network !== '' && accounts !== '') {
-    getAirdropCampaignInfo(network, accounts)
+    getDetailedAirdropCampaignInfo(network, accounts)
     .then((result) => {
       setCampaignData(result[0]);
       setCampaignDataChecked(true);
