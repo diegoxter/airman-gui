@@ -4,12 +4,7 @@ import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from '.
 import { DeployedAirdropModal } from './ModalElements/DeployedListElements';
 
 
-export const DeployedAirManList = ({
-  network,
-  accounts,
-  instances,
-  checkedInstances,
-}) => {
+export const DeployedAirManList = ({ network, accounts, instances, checkedInstances, }) => {
 
   if (checkedInstances) {
     if (instances.length > 0) {
@@ -19,12 +14,12 @@ export const DeployedAirManList = ({
             <Card key={instance.id} style={{marginLeft: '15px', width: '25%'}}>
               <Card.Content>
                 <Image
-                    floated='right'
-                    size='mini'
-                    src='https://react.semantic-ui.com/images/avatar/large/molly.png'
+                  floated='right'
+                  size='mini'
+                  src='https://react.semantic-ui.com/images/avatar/large/molly.png'
                 />
-                <Card.Header>{`AirMan instance #${Number(instance.id['_hex'])}`}</Card.Header>
-                <Card.Meta>Address: {cleanAddress(instance.instanceAddress, 4, 38)}</Card.Meta>
+                <Card.Header> {`AirMan instance #${Number(instance.id['_hex'])}`} </Card.Header>
+                <Card.Meta> Address: {cleanAddress(instance.instanceAddress, 4, 38)} </Card.Meta>
                 <Card.Description>
                   Token: {cleanAddress(instance.instanceToken, 4, 38)}
                 </Card.Description>
@@ -37,7 +32,7 @@ export const DeployedAirManList = ({
                     instanceNumer={ Number(instance.id) }
                     instanceAddress={ instance.instanceAddress }
                     instanceToken= { instance.instanceToken }
-                    />
+                  />
                 </div>
               </Card.Content>
             </Card>

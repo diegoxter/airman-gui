@@ -1,33 +1,25 @@
 import React from 'react';
 import { Divider, Grid, Icon } from 'semantic-ui-react'
-import {
-  Nav,
-  NavLink,
-  Bars,
-  NavMenu,
-  NavBtn,
-  NetworkDropdown,
-  Metamask
-} from './NavbarElements';
+import { Nav, NavLink, Bars, NavMenu, NavBtn, NetworkDropdown, Metamask } from './NavbarElements';
 import 'semantic-ui-css/semantic.min.css';
 
-// check the css properties for fixed bar
+// TO DO check the css properties for fixed bar
 
 const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
   return (
-    <>
+    <div>
       <Nav>
         <Bars />
           <NavMenu>
-            <NavLink to='/' activestyle={true.toString()}>
+            <NavLink to='/'>
               <Icon name='home'/>
             </NavLink>
 
-            <NavLink to='/profile' activestyle={true.toString()}>
+            <NavLink to='/profile'>
               Profile
             </NavLink>
 
-            <NavLink to='/about' activestyle={true.toString()}>
+            <NavLink to='/about'>
               About
             </NavLink>
           </NavMenu>
@@ -46,7 +38,7 @@ const Navbar = ({ network, changeNetwork, isConnected, accounts }) => {
           </NavBtn>
         </Grid>
       </Nav>
-    </>
+    </div>
   );
 };
 

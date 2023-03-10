@@ -112,10 +112,8 @@ const NetworkDropdown = ({ network, accounts }) => {
     }
   }
 
-  if (network === '') {
-    return false;
-  } else {
-    if ((isSupportedNetwork(network) === false) && accounts !== '')  {
+  if (network !== '') {
+    if (isSupportedNetwork(network) === false) {
       return (
         <Dropdown
           text='Please use a supported network'
@@ -173,13 +171,13 @@ class Metamask extends Component {
       } else {
         return (
           <Dropdown
-          button
-          className='icon'
-          floating
-          labeled
-          icon='user circle'
-          text='Settings'
-          options={connectedMenuOptions}
+            button
+            className='icon'
+            floating
+            labeled
+            icon='user circle'
+            text='Settings'
+            options={connectedMenuOptions}
           >
           </Dropdown>
         );

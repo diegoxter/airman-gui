@@ -227,10 +227,12 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
   })
 
   let airManListDataRaw
+
   try {
     airManListDataRaw = await multicall(adminPanelAbi, calls, _network);
   } catch (e) {
     airManListDataRaw = 0
+    console.log(`Error getting the deployed AirMan instances`)
   }
 
   return airManListDataRaw;

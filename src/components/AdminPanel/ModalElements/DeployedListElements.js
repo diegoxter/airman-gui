@@ -58,9 +58,9 @@ export const ManageAssetsPopup = ({
   etherBalance,
   setEtherBalance
  }) => {
-  const [amount, setAmount] = useState('');
-  const [amountInputValue] = useDebounce(amount, 600);
-  const [isValidAmount, setIsValidAmount] = useState(false);
+  const [ amount, setAmount ] = useState('');
+  const [ amountInputValue ] = useDebounce(amount, 600);
+  const [ isValidAmount, setIsValidAmount ] = useState(false);
 
   const handleAmountChange = (num) => {
     setAmount(num);
@@ -158,19 +158,19 @@ export const NewAirdropModal = ({
   setCampaignDataChecked,
   getHumanDate
   }) => {
-  const [open, setOpen] = useState(false);
-  const [timeInSeconds, setTimeInSeconds] = useState('');
-  const [hasValidTimeAmounts, setHasValidTimeAmounts] = useState(false);
-  const [amountToAirdrop, setAmountToAirdrop] = useState('');
-  const [hasValidAmounts, setHasValidAmounts] = useState(false);
-  const [whitelistFee, setWhitelistFee] = useState('0');
-  const [hasValidFeeAmounts, setHasValidFeeAmounts] = useState(false);
-  const [hasFixedAmount, setHasFixedAmount] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [amountPerParticipant, setAmountPerParticipant] = useState('');
-  const [hasValidAmountPerParticipant, setHasValidAmountPerParticipant] = useState(false);
-  const [maxParticipantAmount, setMaxParticipantAmount] = useState('');
-  const [hasValidMaxParticipantAmount, setHasValidMaxParticipantAmount] = useState(false);
+  const [ open, setOpen ] = useState(false);
+  const [ timeInSeconds, setTimeInSeconds ] = useState('');
+  const [ hasValidTimeAmounts, setHasValidTimeAmounts ] = useState(false);
+  const [ amountToAirdrop, setAmountToAirdrop ] = useState('');
+  const [ hasValidAmounts, setHasValidAmounts ] = useState(false);
+  const [ whitelistFee, setWhitelistFee ] = useState('0');
+  const [ hasValidFeeAmounts, setHasValidFeeAmounts ] = useState(false);
+  const [ hasFixedAmount, setHasFixedAmount ] = useState(false);
+  const [ isPrivate, setIsPrivate ] = useState(false);
+  const [ amountPerParticipant, setAmountPerParticipant ] = useState('');
+  const [ hasValidAmountPerParticipant, setHasValidAmountPerParticipant ] = useState(false);
+  const [ maxParticipantAmount, setMaxParticipantAmount ] = useState('');
+  const [ hasValidMaxParticipantAmount, setHasValidMaxParticipantAmount ] = useState(false);
 
   const handleClose = () => {
     setHasValidTimeAmounts(false);
@@ -250,7 +250,7 @@ export const NewAirdropModal = ({
 
   const getHumanDateWrapper = () => {
     if (timeInSeconds !== '') {
-      return getHumanDate((Date.now() + (timeInSeconds*1000))/1000)
+      return getHumanDate((Date.now() + (timeInSeconds*1000)) / 1000)
     } else {
       return 'No data'
     }
@@ -258,7 +258,7 @@ export const NewAirdropModal = ({
 
   const withdrawalDate = () => {
     if (timeInSeconds !== '') {
-      return getHumanDate((Date.now() + ((timeInSeconds*1000)*2))/1000)
+      return getHumanDate((Date.now() + ((timeInSeconds*1000)*2)) / 1000)
     } else {
       return 'No data'
     }
@@ -273,7 +273,9 @@ export const NewAirdropModal = ({
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
     >
-      <Header> Tokens held in AirMan: <u>{(parseFloat(tokenBalance / 10 ** Number(tokenDecimals))).toLocaleString('en-US')} {tokenSymbol}</u></Header >
+      <Header>
+        Tokens held in AirMan: <u>{(parseFloat(tokenBalance / 10 ** Number(tokenDecimals))).toLocaleString('en-US')} {tokenSymbol}</u>
+      </Header >
 
       <Modal.Content scrolling>
         <Form>
@@ -829,17 +831,17 @@ const DeployedCampaignCard = ({
 
 
 export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanceAddress, instanceToken }) => {
-  const [open, setOpen] = useState(false);
-  const [popUpOpen, setPopUpOpen] = useState(false);
-  const [campaignData, setCampaignData] = useState([]);
-  const [campaignDataChecked, setCampaignDataChecked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false);
-  const [userTokenBalance, setUserTokenBalance] = useState('')
-  const [etherBalance, setEtherBalance] = useState('');
-  const [tokenBalance, setTokenBalance] = useState('');
-  const [tokenDecimals, setTokenDecimals] = useState('')
-  const [tokenSymbol, setTokenSymbol] = useState('');
-  const [checkedBalance, setCheckedBalance] = useState(false);
+  const [ open, setOpen ] = useState(false);
+  const [ popUpOpen, setPopUpOpen ] = useState(false);
+  const [ campaignData, setCampaignData ] = useState([]);
+  const [ campaignDataChecked, setCampaignDataChecked ] = useState(false)
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ userTokenBalance, setUserTokenBalance ] = useState('')
+  const [ etherBalance, setEtherBalance ] = useState('');
+  const [ tokenBalance, setTokenBalance ] = useState('');
+  const [ tokenDecimals, setTokenDecimals ] = useState('')
+  const [ tokenSymbol, setTokenSymbol ] = useState('');
+  const [ checkedBalance, setCheckedBalance ] = useState(false);
 
   if (etherBalance === '') {
     getEtherBalance(instanceAddress)
@@ -895,7 +897,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   return (
     <Modal
       style={{height: '94%', overflowY: 'auto'}}
-      //dimmer='blurring'
+      dimmer='blurring'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
@@ -987,12 +989,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
           open={ popUpOpen }
           onClose={() => setPopUpOpen(false)}
           onOpen={() => setPopUpOpen(true)}
+          on='click'
+          position='top right'
           trigger={
-          <Button
-          color={(tokenBalance === 0 && etherBalance === 0)?'violet':'yellow'}
-          floated='left'>
-            {(tokenBalance === 0 && etherBalance === 0)?'No assets to manage':'Manage assets'}
-          </Button>
+            <Button
+              color={(tokenBalance === 0 && etherBalance === 0)?'violet':'yellow'}
+              floated='left'>
+              {(tokenBalance === 0 && etherBalance === 0)?'No assets to manage':'Manage assets'}
+            </Button>
           }
           content={ <ManageAssetsPopup
             setPopUpOpen={ setPopUpOpen }
@@ -1009,8 +1013,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
             tokenDecimals={ tokenDecimals }
             setTokenBalance= { setTokenBalance }
             setCheckedBalance={ setCheckedBalance } /> }
-          on='click'
-          position='top right' />
+          />
 
         <Button color='red' onClick={() => handleClose()}>
           Close

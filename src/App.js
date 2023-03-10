@@ -15,12 +15,12 @@ export const Content = styled.div`
   padding-left: 50px;
 `;
 
-  
+
 function App() {
-  
-  const [network, setNetwork] = useState('');
-  const [accounts, setAccounts] = useState(''); // TO DO this still needs to be better handled
-  const [isConnected, setIsConnected] = useState(false);
+
+  const [ network, setNetwork ] = useState('');
+  const [ accounts, setAccounts ] = useState('');
+  const [ isConnected, setIsConnected ] = useState(false);
 
 
   function changeNetwork(chainId) {
@@ -46,17 +46,17 @@ function App() {
     if(x.length > 0) {
       switchIsConnected(true);
       changeAccounts(x[0]);
-    } 
+    }
   }
 
   checkIfConnected();
 
   return (
     <Router>
-      <Navbar 
-        network={ network } 
-        changeNetwork={ changeNetwork } 
-        isConnected={ isConnected } 
+      <Navbar
+        network={ network }
+        changeNetwork={ changeNetwork }
+        isConnected={ isConnected }
         accounts={ accounts }/>
         <Content>
             <Routes>
@@ -69,5 +69,5 @@ function App() {
     </Router>
   );
 }
-  
+
 export default App;
