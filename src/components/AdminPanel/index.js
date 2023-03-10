@@ -6,7 +6,7 @@ import { AdminModal } from './AdminModal';
 import { DeployedAirManList } from './DeployedAirManList';
 import { isAdminAddress } from '../../interactions/airmanSystem';
 
-const AirdropManagerTab = ({network, accounts, isConnected, checkedInstances, setCheckedInstances, instances}) => {
+const AirdropManagerTab = ({ network, accounts, isConnected, checkedInstances, setCheckedInstances, instances }) => {
   const [ isAdmin, setIsAdmin ] = useState('')
 
   if (isConnected && accounts !== '' && network !== '' && isAdmin === '') {

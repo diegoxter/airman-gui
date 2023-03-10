@@ -39,9 +39,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const getFeeAmount = (whitelistFee) => {
   if (!isNaN(whitelistFee) && whitelistFee !== '') {
-    return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'))
+    return ethers.utils.formatEther(ethers.utils.parseUnits(whitelistFee, 'wei'));
   } else {
-    return '0'
+    return '0';
   }
 }
 
@@ -143,7 +143,7 @@ export const ManageAssetsPopup = ({
         </Grid.Column>
       </Grid.Row>
     </Grid>
-  )
+  );
 }
 
 
@@ -233,11 +233,13 @@ export const NewAirdropModal = ({
 
     deployAirdropCampaign(
       instanceAddress,
-      [ Number(timeInSeconds),
-      amountToAirdrop,
-      whitelistFee,
-      parsedAmountPerParticipant,
-      Number(maxParticipantAmount) ],
+      [
+        Number(timeInSeconds),
+        amountToAirdrop,
+        whitelistFee,
+        parsedAmountPerParticipant,
+        Number(maxParticipantAmount)
+      ],
       tokenDecimals,
       hasFixedAmount,
       isPrivate,
@@ -250,17 +252,17 @@ export const NewAirdropModal = ({
 
   const getHumanDateWrapper = () => {
     if (timeInSeconds !== '') {
-      return getHumanDate((Date.now() + (timeInSeconds*1000)) / 1000)
+      return getHumanDate((Date.now() + (timeInSeconds*1000)) / 1000);
     } else {
-      return 'No data'
+      return 'No data';
     }
   }
 
   const withdrawalDate = () => {
     if (timeInSeconds !== '') {
-      return getHumanDate((Date.now() + ((timeInSeconds*1000)*2)) / 1000)
+      return getHumanDate((Date.now() + ((timeInSeconds*1000)*2)) / 1000);
     } else {
-      return 'No data'
+      return 'No data';
     }
   }
 

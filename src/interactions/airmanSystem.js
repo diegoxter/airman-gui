@@ -220,7 +220,7 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
       abi: adminPanelAbi,
       address: getAdmPanAddress(_network),
       name: 'deployedByUser',
-      params: [_ownerAddress, instanceData],
+      params: [_ownerAddress, index],
     };
 
     calls[index] = getAirmanList;
