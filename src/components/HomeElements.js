@@ -6,9 +6,7 @@ import {
   retireFromAirdrop,
   claimAirdrop,
   isCampaignActive,
-  getAirdropCampaignInfo,
-  checkParticipation,
-  checkCanClaim
+  getAirdropCampaignInfo
 } from '../interactions/airdropSystem';
 import { weiToEther, cleanAddress } from '../interactions';
 
@@ -17,72 +15,109 @@ export const CampaignModal = ({
   campaignAddress,
   campaignFee,
   campaignEndDate,
+  isPrivate,
   canClaim,
+  isUserBanned,
   hasClaimed,
   setParticipantDataChecked
 }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasJoined, setHasJoined] = useState('');
-  const [checkedHasJoined, setCheckedHasJoined] = useState(false);
 
   const isActive = isCampaignActive(campaignEndDate);
 
-  if (!checkedHasJoined && accounts !== '' && campaignAddress !== '') {
-    checkParticipation(campaignAddress, accounts)
-    .then((result) => {
-      setHasJoined(result);
-      new Promise(r => setTimeout(r, 2500))
-        .then(() => setCheckedHasJoined(true))
-    })
-  }
-
   const handleJoinClick = () => {
     setIsLoading(true);
-    joinAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined);
+    joinAirdrop(campaignAddress, accounts, setIsLoading, setParticipantDataChecked);
   }
 
   const handleRetireClick = () => {
     setIsLoading(true);
-    retireFromAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined);
+    retireFromAirdrop(campaignAddress, accounts, setIsLoading, setParticipantDataChecked);
   }
 
   const handleClaim = () => {
     setIsLoading(true);
-    claimAirdrop(campaignAddress, accounts, setIsLoading, setHasJoined)
+    claimAirdrop(campaignAddress, accounts, setIsLoading, setParticipantDataChecked)
     .then((value) => {
       setOpen(!value);
-      new Promise(r => setTimeout(r, 9500)) // TO DO fix this
-      .then(() => setParticipantDataChecked(false))
     })
   }
 
   const chooseButton = () => {
-    if (hasJoined) {
       if (canClaim) {
         return ["Claim", handleClaim];
       } else {
         return ['Retire', handleRetireClick];
       }
-    } else {
-      return 'test';
-    }
   }
 
   const drawAirdropCardContent = (hasCampaignFee) => {
     if (hasCampaignFee) {
       return (
-        hasJoined?
+        canClaim?
         `You will receive ${campaignFee} as refund ether after retiring`
         :
         `The fee to join the campaign is ${campaignFee} ether`
         );
     } else {
       return (
-        hasJoined?
+        canClaim?
         'No refund for retiring this campaign'
         :
         'No fee to join this campaign');
+    }
+  }
+
+  const participationButtonContent = () => {
+    if (isActive) {
+      return ['green', 'Manage']
+    } else {
+      if (hasClaimed) {
+        return ['violet', 'Claimed']
+      } else {
+        return ['red', 'Claim']
+      }
+    }
+  }
+
+  const drawModalButtonTrigger = () => {
+    if (canClaim) {
+      if (isUserBanned) {
+        return (
+        <Button
+          basic
+          disabled={true} // aqui
+          color='red'
+          content='You are banned'
+        />
+        );
+      } else {
+        return (
+          <Button
+            disabled={(hasClaimed)} // aqui
+            color={(participationButtonContent())[0]}
+            content={(participationButtonContent())[1]}
+          />
+        );
+      }
+    } else if (isPrivate) {
+      return (
+        <Button
+          disabled
+          basic
+          color='grey'
+          content='Private Campaign'
+        />
+      );
+    } else {
+      return (
+        <Button
+          disabled={!isActive}
+          color={isActive?'green':'grey'}
+          content={isActive?'Join Campaign':'Campaign Expired'}
+        />
+      );
     }
   }
 
@@ -96,23 +131,11 @@ export const CampaignModal = ({
       open={open}
       trigger=
       {
-        (hasJoined)
-        ?
-          <Button
-            disabled={(hasClaimed)}
-            color={(isActive)?'green':(hasClaimed)?'violet':'red'}
-            content={(isActive)?'Manage':(hasClaimed)?'Claimed':'Claim'}
-          />
-        :
-          <Button
-            disabled={!isActive}
-            color={isActive?'green':'grey'}
-            content={isActive?'Join Campaign':'Campaign Expired'}
-          />
+        drawModalButtonTrigger()
       }
     >
       <Modal.Header>
-        {hasJoined?'Retire from':'Join'} campaign
+        {canClaim?'Retire from':'Join'} campaign
         <RefreshButton floated='right'/>
       </Modal.Header>
       <Modal.Content>
@@ -135,17 +158,20 @@ export const CampaignModal = ({
         :
           <Button
             content={
-              (hasJoined)
+              (canClaim)
               ? (chooseButton())[0]
-              : "Click to join"}
+              : "Click to join"
+              }
             onClick={
-              (hasJoined)
+              (canClaim)
               ? (chooseButton())[1]
-              : handleJoinClick}
+              : handleJoinClick
+              }
             color={
-              (hasJoined)
+              (canClaim)
               ? 'red'
-              : 'green'}
+              : 'green'
+              }
           />
         }
       </Modal.Actions>
@@ -153,17 +179,23 @@ export const CampaignModal = ({
   )
 }
 
-const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParticipantDataChecked }) => {
+const AirdropCampaignCard = ({
+  accounts,
+  campaignInfo,
+  participantData,
+  setParticipantDataChecked
+}) => {
+  const [ isPrivate, setIsPrivate ] = useState('');
   const [ canClaim, setCanClaim ] = useState('');
-  const [ checkedCanClaim, setCheckedCanClaim ] = useState(false);
+  const [ isUserBanned, setIsUserBanned ] = useState('');
+  const [ checkedUserData, setCheckedUserData ] = useState(false);
   const [ hasClaimed, setHasClaimed] = useState('');
 
-  if (accounts !== '' && !checkedCanClaim) {
-    checkCanClaim(campaignInfo.campaignAddress, accounts)
-    .then((result) => {
-      setCanClaim(result);
-      setCheckedCanClaim(true);
-    })
+  if (accounts !== '' && !checkedUserData) {
+    setCanClaim((participantData.address).toLowerCase() === accounts);
+    setIsUserBanned(participantData.isBanned);
+    setIsPrivate(campaignInfo.isPrivate[0]);
+    setCheckedUserData(true);
   }
 
   if (hasClaimed === '') {
@@ -212,9 +244,9 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
         {
           (isCampaignActive(campaignInfo.claimableSince))
           ?
-          `Active Placeholder`
+          `Active Placeholder ${(isPrivate)? 'Private':''}`
           :
-          <s>{`Inactive Placeholder`}</s>
+          <s>{`Inactive Placeholder `+ ((isPrivate)? 'Private':'')}</s>
         }
 
       </Card.Header>
@@ -252,11 +284,13 @@ const AirdropCampaignCard = ({ accounts, campaignInfo, participantData, setParti
       <Card.Content extra>
         <div className='ui two buttons'>
           <CampaignModal
+            isPrivate = { isPrivate }
             accounts={ accounts }
             campaignAddress={ campaignInfo.campaignAddress }
             campaignFee={ weiToEther(campaignInfo.whitelistFee) }
             campaignEndDate={ campaignInfo.claimableSince }
             canClaim={ canClaim }
+            isUserBanned={ isUserBanned }
             hasClaimed={ hasClaimed }
             setParticipantDataChecked={ setParticipantDataChecked }
           />
@@ -274,14 +308,16 @@ export const AirdropList = ({ network, accounts }) => {
   const [participantData, setParticipantData] = useState([]);
   const [participantDataChecked, setParticipantDataChecked] = useState(false);
 
-  if ((network !== '' && accounts !== '' && campaignDataChecked === false) || (participantDataChecked === false && network !== '' && accounts !== '')) {
-   getAirdropCampaignInfo(network, accounts)
+  if (campaignDataChecked === false || participantDataChecked === false) {
+   if (network !== '' && accounts !== '') {
+    getAirdropCampaignInfo(network, accounts)
     .then((result) => {
       setCampaignData(result[0]);
       setCampaignDataChecked(true);
       setParticipantData(result[1]);
       setParticipantDataChecked(true);
     })
+   }
   }
 
   if (campaignDataChecked === false) {
@@ -304,16 +340,15 @@ export const AirdropList = ({ network, accounts }) => {
         </div>
         :
         <Card.Group>
-
           {campaignData.map((campaignInfo, index) => (
             <AirdropCampaignCard
-            key={ campaignInfo.campaignAddress }
-            accounts={ accounts }
-            campaignInfo={ campaignInfo }
-            participantData={ participantData[index] }
-            setParticipantDataChecked={ setParticipantDataChecked } />
+              key={ campaignInfo.campaignAddress }
+              accounts={ accounts }
+              campaignInfo={ campaignInfo }
+              participantData={ participantData[index] }
+              setParticipantDataChecked={ setParticipantDataChecked }
+            />
           ))}
-
         </Card.Group>
         }
       </Segment>
