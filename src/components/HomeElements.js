@@ -285,23 +285,28 @@ const AirdropCampaignCard = ({
   );
 }
 
-export const AirdropList = ({ network, accounts }) => {
+export const AirdropList = ({
+  network,
+  accounts,
+  campaignDataChecked,
+  setCampaignDataChecked,
+  participantDataChecked,
+  setParticipantDataChecked
+}) => {
   const [ campaignData, setCampaignData ] = useState([]);
-  const [ campaignDataChecked, setCampaignDataChecked ] = useState(false);
   const [ participantData, setParticipantData ] = useState([]);
-  const [ participantDataChecked, setParticipantDataChecked ] = useState(false);
 
   if (campaignDataChecked === false || participantDataChecked === false) {
-   if (network !== '' && accounts !== '') {
-    getDetailedAirdropCampaignInfo(network, accounts)
-    .then((result) => {
-      setCampaignData(result[0]);
-      setCampaignDataChecked(true);
-      setParticipantData(result[1]);
-      setParticipantDataChecked(true);
-    })
+    if (network !== '' && accounts !== '') {
+     getDetailedAirdropCampaignInfo(network, accounts)
+     .then((result) => {
+       setCampaignData(result[0]);
+       setCampaignDataChecked(true);
+       setParticipantData(result[1]);
+       setParticipantDataChecked(true);
+     })
+    }
    }
-  }
 
   if (campaignDataChecked === false) {
     return(
@@ -311,29 +316,27 @@ export const AirdropList = ({ network, accounts }) => {
 
       </Segment>
     );
-  } else {
+  } else if (campaignData.length === 0) {
     return(
-      <Segment style={{width:'96%'}}>
-        {
-          (campaignData.length === 0)
-          ?
-          <div>
-            <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
-            <LoadingCardGroup />
-          </div>
-          :
-          <Card.Group>
-            {campaignData.map((campaignInfo, index) => (
-              <AirdropCampaignCard
-                key={ campaignInfo.campaignAddress }
-                accounts={ accounts }
-                campaignInfo={ campaignInfo }
-                participantData={ participantData[index] }
-                setParticipantDataChecked={ setParticipantDataChecked }
-              />
-            ))}
-          </Card.Group>
-        }
+      <Segment style={{width:'99%'}}>
+        <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
+        <LoadingCardGroup />
+      </Segment>
+    );
+  } else {
+    return (
+      <Segment>
+        <Card.Group>
+          {campaignData.map((campaignInfo, index) => (
+            <AirdropCampaignCard
+              key={ campaignInfo.campaignAddress }
+              accounts={ accounts }
+              campaignInfo={ campaignInfo }
+              participantData={ participantData[index] }
+              setParticipantDataChecked={ setParticipantDataChecked }
+            />
+          ))}
+        </Card.Group>
       </Segment>
     );
   }

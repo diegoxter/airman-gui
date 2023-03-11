@@ -1,11 +1,19 @@
 import { Checkbox, Grid, Card, Segment } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../components/CommonComponents';
 import { AirdropList } from '../components/HomeElements';
+import { useState } from 'react';
 
 const Home = ({ isConnected, network, accounts }) => {
+  const [ campaignDataChecked, setCampaignDataChecked ] = useState(false);
+  const [ participantDataChecked, setParticipantDataChecked ] = useState(false);
+
+  const handleRefreshClick = () => {
+    setCampaignDataChecked(false)
+    setParticipantDataChecked(false)
+  }
 
   return (
-    <Grid divided='vertically'>
+    <Grid divided='vertically' style={{width: '96%'}}>
       <Grid.Row>
         <Card
           style={{
@@ -35,14 +43,21 @@ const Home = ({ isConnected, network, accounts }) => {
           <Checkbox toggle label='Show Claimable'/>
         </Grid.Column>
 
-        <RefreshButton/>
+        <RefreshButton color='blue' execOnClick={handleRefreshClick}/>
       </Grid.Row>
 
       <Grid.Row>
         {
           (isConnected)
           ?
-          <AirdropList network={ network } accounts={ accounts } isConnected={ isConnected }/>
+          <AirdropList
+            network={ network }
+            accounts={ accounts }
+            campaignDataChecked={ campaignDataChecked }
+            setCampaignDataChecked={ setCampaignDataChecked }
+            participantDataChecked={ participantDataChecked }
+            setParticipantDataChecked={ setParticipantDataChecked }
+          />
           :
           <Grid.Column >
             <Segment style={{width:'96%'}}>

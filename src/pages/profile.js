@@ -32,7 +32,7 @@ const Profile = ({ network, accounts, isConnected }) => {
   ];
 
   return (
-    <Tab panes={panes} />
+    <Tab panes={panes} style={{width: '96%'}}/>
   );
 };
 
