@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Image, Modal, Form, Checkbox, Grid } from 'semantic-ui-react';
+import { Button, Image, Modal, Form, Checkbox, Grid, Header } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
 import { isSupportedNetwork, weiToEther } from '../../interactions';
 import { getFee } from '../../interactions/airmanSystem';
@@ -75,6 +75,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
 
         <Grid columns={3} divided>
           <Grid.Row>
+
             <Grid.Column >
               <Image size='medium' src='https://react.semantic-ui.com/images/avatar/large/rachel.png' wrapped />
               <Button style={buttonStyle} content='Attach token logo' />
@@ -123,13 +124,19 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
             </Grid.Column>
 
             <Grid.Column>
+              <Header as='h2'>
+                Project data <br/> <p style={{fontSize:'10px'}}>(You can edit this later)</p>
+              </Header>
               <Form>
-                <Form.Field label='Project description' control='textarea' rows='12' />
+                <Form.Input placeholder='Project description...' control='textarea' rows='4' />
+                <Form.Input placeholder='Project URL...'/>
+                <Form.Input placeholder='Twitter...'/>
+                <Form.Input placeholder='Telegram...'/>
+                <Form.Input placeholder='Discord...'/>
               </Form>
             </Grid.Column>
 
-
-            </Grid.Row>
+          </Grid.Row>
         </Grid>
   </Modal.Content>
       <Modal.Actions>
