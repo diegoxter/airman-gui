@@ -14,3 +14,5 @@ Some that come to my mind:
 6. Home page / admin page / profile filtering the airdrops
 7. Token Contract input in DeployAirman modal needs better handling for wrong contracts
 8. A button that gets ON when Manage campaign options accordion is OPEN [DONE]
+9. Server side code for project information handling
+10. Redux integration for state handling (including theme support)
