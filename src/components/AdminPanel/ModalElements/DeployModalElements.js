@@ -18,7 +18,7 @@ export const DeployButton = ({
   setAllowance,
   handleCancelClick
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const handleLetsDoItClick = () => {
     setIsLoading(true);
@@ -32,74 +32,52 @@ export const DeployButton = ({
         console.log('Not deployed');
         return false;
       }}
-    )
+    );
   }
 
   const handleApproveClick = async () => {
     setIsLoading(true);
-    approveTokens(accounts, contractInputValue, await getAdmPanAddress(network), amountInputValue, tokenDecimals, setIsLoading)
+    approveTokens(
+      accounts,
+      contractInputValue,
+      await getAdmPanAddress(network),
+      amountInputValue,
+      tokenDecimals,
+      setIsLoading
+    )
       .then((value) => {
         if (value === true) {
           setAllowance(amountInputValue * 10 ** Number(tokenDecimals));
         } else {
           console.log('Not approved');
         }
-    })
+    });
   }
 
-  const diabledButton = (
-    <Button
-      content="Verify the information given"
-      disabled
-    />
-  )
+  const diabledButton = ( <Button content="Verify the information given" disabled/> )
 
   if (isValidContract && amountInputValue !== '') {
     if (Number(amountInputValue) === 0 || contractInputValue === '') {
-      return (
-        <Button
-          content="Invalid token amount"
-          disabled
-        />
-      );
+      return ( <Button content="Invalid token amount" disabled/> );
     } else if (isLoading) {
       return (
-        <Button
-          loading
-          primary
-          size='medium'>
+        <Button loading primary size='medium'>
             PLACEH
         </Button>
       );
     } else if (Number(allowance) >= Number(amountInputValue * 10 ** Number(tokenDecimals))) {
       return (
-        <Button
-          content="Let's do it!"
-          onClick={() => {
-            handleLetsDoItClick();
-          }}
-          positive
-        />
+        <Button positivecontent="Let's do it!" onClick={() => { handleLetsDoItClick() }}/>
       );
     } else if (isValidAmount) {
       return (
-        <Button
-          color='blue'
-          content="Approve tokens"
-          onClick={() => {
-            handleApproveClick();
-          }}
-        />
+        <Button color='blue' content="Approve tokens" onClick={() => { handleApproveClick() }}/>
       );
     } else if (!isValidAmount) {
-      return (
-        diabledButton
-      );
+      return ( diabledButton );
     }
   } else {
-    return (
-      diabledButton
-    );
+    return ( diabledButton );
   }
 }
 

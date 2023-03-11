@@ -105,8 +105,6 @@ export const deployAirMan = async (_token, amount, decimals, _setIsLoading, _set
       )
     );
 
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
-
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }

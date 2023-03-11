@@ -4,9 +4,9 @@ import { multicall } from "./multicall";
 
 import erc20ABI from '../assets/abis/ERC20.json';
 
-let sleep = ms => new Promise(r => setTimeout(r, ms));
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 export const getTokenInfo = async (_owner, _tokenContractAddress, _targetAddress, _network) => {
 

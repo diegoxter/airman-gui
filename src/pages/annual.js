@@ -1,5 +1,5 @@
 import React from 'react';
-  
+
 const AnnualReport = () => {
   return (
     <div
@@ -14,5 +14,5 @@ const AnnualReport = () => {
     </div>
   );
 };
-  
+
 export default AnnualReport;

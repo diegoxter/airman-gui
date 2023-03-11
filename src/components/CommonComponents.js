@@ -1,14 +1,6 @@
-import {
-    Grid,
-    Placeholder,
-    Segment,
-    Message,
-    Button,
-    Icon
-} from 'semantic-ui-react';
+import { Grid, Placeholder, Segment, Message, Button, Icon } from 'semantic-ui-react';
 
 export const LoadingCardGroup = () => {
-
   return (
     <Grid columns={3} stackable>
       <Grid.Column>
@@ -60,7 +52,6 @@ export const LoadingCardGroup = () => {
 }
 
 export const FetchingDataMessage = () => {
-
   return(
     <div>
       <Message icon>
@@ -91,7 +82,6 @@ export const NotConnectedMessage = () => {
 }
 
 export const NoElementsFoundMessage = ({ whatIsBeingLookedFor }) => {
-
   return(
     <div>
       <Message warning icon style={{textAlign: 'center'}}>
@@ -110,13 +100,9 @@ export const CopyButton = ({ dataToCopy }) => {
     navigator.clipboard.writeText(dataToCopy);
   };
 
-  return(
-    <Button circular compact icon='copy' size='mini' onClick={(() => handleCopyClick())}/>
-  );
+  return( <Button circular compact icon='copy' size='mini' onClick={(() => handleCopyClick())}/> );
 }
 
 export const RefreshButton = ({ floated }) => {
-  return(
-    <Button circular icon='refresh' floated={floated}/>
-  );
+  return( <Button circular icon='refresh' floated={floated}/> );
 }

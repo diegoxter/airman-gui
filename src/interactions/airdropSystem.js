@@ -8,6 +8,7 @@ import airdropCampaignAbi from './../assets/abis/AirdropCampaign.json';
 // TO DO this breaks when changing networks
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Getter functions
 export const getWhitelistFee = async (_campaignAddress) => {
@@ -67,7 +68,7 @@ export const getBasicAirdropInfo = async (_network, instanceAddress) => {
 export const getDetailedAirdropCampaignInfo = async (_network, _account) => {
   const airdropList = await getAirdropCampaignsAddressList(_network);
   const airdropListData = [];
-  const airdropParticipantData = []; // aqui
+  const airdropParticipantData = [];
 
   await Promise.all(airdropList.map(async (instanceAddress, index) => {
     const airdropCampaignInstance = new ethers.Contract(instanceAddress, airdropCampaignAbi, provider);
@@ -168,14 +169,12 @@ export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading,
       {
         value: await getWhitelistFee(_campaignAddress),
       }
-      )
-    );
-
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
+    ));
 
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
+
     _setParticipantDataChecked(false);
 
     return true;
@@ -192,8 +191,6 @@ export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLo
 
   try {
     const tx = await airdropCampaignInstance.connect(signer).retireFromCampaign();
-
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
 
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
@@ -215,8 +212,6 @@ export const claimAirdrop = async (_campaignAddress, _userAddress, _setIsLoading
   try {
     const tx = await airdropCampaignInstance.connect(signer).receiveTokens();
 
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
-
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -237,8 +232,6 @@ export const withdrawCampaignTokens = async (_campaignAddress, _setIsLoading) =>
   try {
     const tx = await airdropCampaignInstance.connect(signer).manageFunds();
 
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
-
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -257,8 +250,6 @@ export const addUserList = async (_campaignAddress, _userList, _setIsLoading) =>
   try {
     const tx = await airdropCampaignInstance.connect(signer).batchAddToWhitelist(_userList);
 
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
-
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -275,8 +266,6 @@ export const banUser = async (_campaignAddress, _user, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
   try {
     const tx = await airdropCampaignInstance.connect(signer).toggleParticipation(_user);
-
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
 
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
@@ -296,8 +285,6 @@ export const updateFee = async (_campaignAddress, _newFee, _setIsLoading) => {
   try {
     const tx = await airdropCampaignInstance.connect(signer).updateFee(_newFee);
 
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
-
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
@@ -315,8 +302,6 @@ export const toggleIsPrivate = async (_campaignAddress, _setIsLoading) => {
 
   try {
     const tx = await airdropCampaignInstance.connect(signer).toggleIsPrivate();
-
-    let sleep = ms => new Promise(r => setTimeout(r, ms));
 
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);

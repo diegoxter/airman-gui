@@ -21,8 +21,8 @@ export const CampaignModal = ({
   hasClaimed,
   setParticipantDataChecked
 }) => {
-  const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [ open, setOpen ] = useState(false);
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const isActive = isCampaignActive(campaignEndDate);
 
@@ -84,18 +84,11 @@ export const CampaignModal = ({
   const drawModalButtonTrigger = () => {
     if (canClaim) {
       if (isUserBanned) {
-        return (
-        <Button
-          basic
-          disabled={true} // aqui
-          color='red'
-          content='You are banned'
-        />
-        );
+        return ( <Button basic disabled={true} color='red' content='You are banned'/> );
       } else {
         return (
           <Button
-            disabled={(hasClaimed)} // aqui
+            disabled={(hasClaimed)}
             color={(participationButtonContent())[0]}
             content={(participationButtonContent())[1]}
           />
@@ -103,12 +96,7 @@ export const CampaignModal = ({
       }
     } else if (isPrivate) {
       return (
-        <Button
-          disabled
-          basic
-          color='grey'
-          content='Private Campaign'
-        />
+        <Button disabled basic color='grey' content='Private Campaign'/>
       );
     } else {
       return (
@@ -129,10 +117,7 @@ export const CampaignModal = ({
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
-      trigger=
-      {
-        drawModalButtonTrigger()
-      }
+      trigger={ drawModalButtonTrigger() }
     >
       <Modal.Header>
         {canClaim?'Retire from':'Join'} campaign
@@ -141,16 +126,13 @@ export const CampaignModal = ({
       <Modal.Content>
         <Modal.Description>
           <Header content={drawAirdropCardContent(campaignFee > 0)}/>
-
-          <p>
-            Placeholder
-          </p>
-          <p>Placeholder</p>
+            <p> Placeholder </p>
+            <p> Placeholder </p>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
         <Button color='grey' onClick={() => setOpen(false)}>
-        Close
+          Close
         </Button>
         { (isLoading)
         ?
@@ -161,17 +143,17 @@ export const CampaignModal = ({
               (canClaim)
               ? (chooseButton())[0]
               : "Click to join"
-              }
+            }
             onClick={
               (canClaim)
               ? (chooseButton())[1]
               : handleJoinClick
-              }
+            }
             color={
               (canClaim)
               ? 'red'
               : 'green'
-              }
+            }
           />
         }
       </Modal.Actions>
@@ -270,16 +252,16 @@ const AirdropCampaignCard = ({
       </Card.Meta>
 
       <Card.Description>
-      {
+        {
           (campaignInfo.whitelistFee > 0)
           ?
           <u><strong>{`Fee to join: ${getFeeAmount()} Ether`}</strong></u>
           :
           ``
-      }
+        }
 
         <br/>Project description Placeholder
-      </Card.Description>
+        </Card.Description>
       </Card.Content>
 
       <Card.Content extra>
@@ -304,10 +286,10 @@ const AirdropCampaignCard = ({
 }
 
 export const AirdropList = ({ network, accounts }) => {
-  const [campaignData, setCampaignData] = useState([]);
-  const [campaignDataChecked, setCampaignDataChecked] = useState(false);
-  const [participantData, setParticipantData] = useState([]);
-  const [participantDataChecked, setParticipantDataChecked] = useState(false);
+  const [ campaignData, setCampaignData ] = useState([]);
+  const [ campaignDataChecked, setCampaignDataChecked ] = useState(false);
+  const [ participantData, setParticipantData ] = useState([]);
+  const [ participantDataChecked, setParticipantDataChecked ] = useState(false);
 
   if (campaignDataChecked === false || participantDataChecked === false) {
    if (network !== '' && accounts !== '') {
@@ -333,24 +315,24 @@ export const AirdropList = ({ network, accounts }) => {
     return(
       <Segment style={{width:'96%'}}>
         {
-        (campaignData.length === 0)
-        ?
-        <div>
-          <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
-          <LoadingCardGroup />
-        </div>
-        :
-        <Card.Group>
-          {campaignData.map((campaignInfo, index) => (
-            <AirdropCampaignCard
-              key={ campaignInfo.campaignAddress }
-              accounts={ accounts }
-              campaignInfo={ campaignInfo }
-              participantData={ participantData[index] }
-              setParticipantDataChecked={ setParticipantDataChecked }
-            />
-          ))}
-        </Card.Group>
+          (campaignData.length === 0)
+          ?
+          <div>
+            <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
+            <LoadingCardGroup />
+          </div>
+          :
+          <Card.Group>
+            {campaignData.map((campaignInfo, index) => (
+              <AirdropCampaignCard
+                key={ campaignInfo.campaignAddress }
+                accounts={ accounts }
+                campaignInfo={ campaignInfo }
+                participantData={ participantData[index] }
+                setParticipantDataChecked={ setParticipantDataChecked }
+              />
+            ))}
+          </Card.Group>
         }
       </Segment>
     );

@@ -627,7 +627,7 @@ const DeployedCampaignCard = ({
 
   const handleNewFeeInWeiClick = () => {
     setIsLoading(true);
-    updateFee(campaignInfo.campaignAddress, newWhitelistFee, setIsLoading) // aqui
+    updateFee(campaignInfo.campaignAddress, newWhitelistFee, setIsLoading)
     .then((value) => {
       if (value === true) {
         new Promise(r => setTimeout(r, 4500))
@@ -899,7 +899,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   return (
     <Modal
       style={{height: '94%', overflowY: 'auto'}}
-      dimmer='blurring'
+      dimmer='inverted'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
       open={open}
