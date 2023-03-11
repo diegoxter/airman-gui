@@ -25,8 +25,8 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
   }
 
   const handleRefreshClick = () => {
-    setInstances('')
-    setCheckedInstances(false)
+    setInstances('');
+    setCheckedInstances(false);
   }
 
   return(

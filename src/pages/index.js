@@ -8,8 +8,8 @@ const Home = ({ isConnected, network, accounts }) => {
   const [ participantDataChecked, setParticipantDataChecked ] = useState(false);
 
   const handleRefreshClick = () => {
-    setCampaignDataChecked(false)
-    setParticipantDataChecked(false)
+    setCampaignDataChecked(false);
+    setParticipantDataChecked(false);
   }
 
   return (

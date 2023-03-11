@@ -896,6 +896,11 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
     return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
   }
 
+  const handleRefreshClick = () => {
+    setCampaignDataChecked(false);
+    setCampaignData([]);
+  }
+
   return (
     <Modal
       style={{height: '94%', overflowY: 'auto'}}
@@ -938,7 +943,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               <Checkbox toggle label={'Placeholder'} />
             </Grid.Column>
 
-            <RefreshButton />
+            <RefreshButton color='blue' execOnClick={handleRefreshClick}/>
           </Grid.Row>
 
         </Grid>
