@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Tab } from 'semantic-ui-react';
 import AirdropManagerTab from '../components/AdminPanel';
 
