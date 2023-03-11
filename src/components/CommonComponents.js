@@ -103,7 +103,7 @@ export const CopyButton = ({ dataToCopy }) => {
   return( <Button circular compact icon='copy' size='mini' onClick={(() => handleCopyClick())}/> );
 }
 
-export const RefreshButton = ({ floated, color, isLoading, execOnClick }) => {
+export const RefreshButton = ({ floated, color, execOnClick }) => {
   return(
     <Button
       circular

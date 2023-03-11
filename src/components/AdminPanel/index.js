@@ -4,14 +4,29 @@ import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../CommonC
 import { AdminPanelModal } from './DeployAirmanModal';
 import { AdminModal } from './AdminModal';
 import { DeployedAirManList } from './DeployedAirManList';
-import { isAdminAddress } from '../../interactions/airmanSystem';
+import { getInstanceInfoByOwner, isAdminAddress } from '../../interactions/airmanSystem';
 
-const AirdropManagerTab = ({ network, accounts, isConnected, checkedInstances, setCheckedInstances, instances }) => {
+const AirdropManagerTab = ({ network, accounts, isConnected }) => {
   const [ isAdmin, setIsAdmin ] = useState('')
+  const [ instances, setInstances ] = useState('');
+  const [ checkedInstances, setCheckedInstances ] = useState(false);
+
+  if (network !== '' && accounts !== '' && checkedInstances === false) {
+    getInstanceInfoByOwner(network, accounts)
+    .then((value) => {
+      setInstances(value);
+      setCheckedInstances(true);
+    })
+  }
 
   if (isConnected && accounts !== '' && network !== '' && isAdmin === '') {
     isAdminAddress(network, accounts)
     .then((value) => setIsAdmin(value))
+  }
+
+  const handleRefreshClick = () => {
+    setInstances('')
+    setCheckedInstances(false)
   }
 
   return(
@@ -73,7 +88,7 @@ const AirdropManagerTab = ({ network, accounts, isConnected, checkedInstances, s
           <Checkbox toggle label='Show empty'/>
         </Grid.Column>
 
-        <RefreshButton/>
+        <RefreshButton color='blue' execOnClick={handleRefreshClick}/>
 
       </Grid.Row>
 
