@@ -43,8 +43,9 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
       projectDiscord
     };
 
-    const json = JSON.stringify(projectInfo)
-    console.log(json);
+    const json = JSON.stringify(projectInfo);
+
+    return json;
   }
 
   const handleNameChange = (value) => {

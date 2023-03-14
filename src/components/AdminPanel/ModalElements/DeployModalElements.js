@@ -1,5 +1,5 @@
 import { approveTokens, getTokenInfo } from '../../../interactions/erc20';
-import { getAdmPanAddress } from '../../../interactions';
+import { getAdmPanAddress, addToIPFS } from '../../../interactions';
 import { deployAirMan } from '../../../interactions/airmanSystem';
 import { Button, Form } from 'semantic-ui-react';
 import { useState } from 'react';
@@ -23,8 +23,11 @@ export const DeployButton = ({
   const [ isLoading, setIsLoading ] = useState(false);
 
   const handleLetsDoItClick = () => {
-    jsonStringify()
-
+    const data = jsonStringify()
+    addToIPFS(data)
+    .then((value) => {
+      console.log('https://testairdropman.infura-ipfs.io/ipfs/'+value)
+    })
     /*setIsLoading(true);
 
     deployAirMan(contractInputValue, amountInputValue, tokenDecimals, setIsLoading, setOpen, network)
@@ -39,12 +42,12 @@ export const DeployButton = ({
     );*/
   }
 
-  const handleApproveClick = async () => {
+  const handleApproveClick = () => {
     setIsLoading(true);
     approveTokens(
       accounts,
       contractInputValue,
-      await getAdmPanAddress(network),
+      getAdmPanAddress(network),
       amountInputValue,
       tokenDecimals,
       setIsLoading

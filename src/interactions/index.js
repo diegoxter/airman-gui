@@ -199,25 +199,26 @@ export const waitForConfirmation = async (txHash, provider, interval, _setIsLoad
 }
 
 // IPFS code
-/*
-const projectId = process.env.infuraProjectID;
-const privateKey = process.env.infuraAPIKey;
 
-// Create a new IPFS instance with the Infura provider
-const ipfs = create({
-  host: 'ipfs.infura.io',
-  port: 5001,
-  protocol: 'https',
-  headers: {
-    authorization: `Bearer ${projectId}:${privateKey}`
-  }
-});
+const credentials = `${process.env.REACT_APP_INFURAPROJECTID}:${process.env.REACT_APP_INFURAAPIKEY}`;
+const encoder = new TextEncoder();
+const data = encoder.encode(credentials);
+const auth = `Basic ${btoa(String.fromCharCode(...data))}`;
 
 export const addToIPFS = async (file) => {
-  const data = await ipfs.add(file);
 
-  console.log(data.cid.toString());
+  // Create a new IPFS instance with the Infura provider
+  const ipfs = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+    authorization: auth,
+  },
+  });
+
+  const data = await ipfs.add(file);
 
   return data.cid
 }
-*/
+
