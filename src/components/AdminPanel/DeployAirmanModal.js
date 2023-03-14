@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Image, Modal, Form, Checkbox, Grid, Header, Divider } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
 import { isSupportedNetwork, weiToEther } from '../../interactions';

@@ -23,23 +23,30 @@ export const DeployButton = ({
   const [ isLoading, setIsLoading ] = useState(false);
 
   const handleLetsDoItClick = () => {
+    setIsLoading(true);
     const data = jsonStringify()
     addToIPFS(data)
-    .then((value) => {
-      console.log('https://testairdropman.infura-ipfs.io/ipfs/'+value)
+    .then((jsonData) => {
+      //console.log('https://testairdropman.infura-ipfs.io/ipfs/'+value)
+      deployAirMan(
+        jsonData,
+        contractInputValue,
+        amountInputValue,
+        tokenDecimals,
+        setIsLoading,
+        setOpen,
+        network
+      )
+      .then((value) => {
+        if (value === true) {
+          handleCancelClick();
+          setCheckedInstances(false);
+        } else {
+          console.log('Not deployed');
+          return false;
+        }}
+      );
     })
-    /*setIsLoading(true);
-
-    deployAirMan(contractInputValue, amountInputValue, tokenDecimals, setIsLoading, setOpen, network)
-    .then((value) => {
-      if (value === true) {
-        handleCancelClick();
-        setCheckedInstances(false);
-      } else {
-        console.log('Not deployed');
-        return false;
-      }}
-    );*/
   }
 
   const handleApproveClick = () => {

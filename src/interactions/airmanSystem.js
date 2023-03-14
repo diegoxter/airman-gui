@@ -90,13 +90,14 @@ export const getAirdropCampaignsAddressList = async (_network) => {
 }
 
 // Transaction functions
-export const deployAirMan = async (_token, amount, decimals, _setIsLoading, _setOpen, _network) => {
+export const deployAirMan = async (_cid, _token, amount, decimals, _setIsLoading, _setOpen, _network) => {
   const adminPanelInstance = new ethers.Contract((getAdmPanAddress(_network)), adminPanelAbi, signer);
   const fee = await getFee(_network);
   const parsedAmount = ethers.utils.parseUnits(amount.toString(), decimals);
 
   try {
     const tx = (await adminPanelInstance.connect(signer).newAirdropManagerInstance(
+      _cid,
       _token,
       parsedAmount,
       {
