@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { create } from 'ipfs-http-client'
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -196,3 +197,27 @@ export const waitForConfirmation = async (txHash, provider, interval, _setIsLoad
     return true;
   }
 }
+
+// IPFS code
+/*
+const projectId = process.env.infuraProjectID;
+const privateKey = process.env.infuraAPIKey;
+
+// Create a new IPFS instance with the Infura provider
+const ipfs = create({
+  host: 'ipfs.infura.io',
+  port: 5001,
+  protocol: 'https',
+  headers: {
+    authorization: `Bearer ${projectId}:${privateKey}`
+  }
+});
+
+export const addToIPFS = async (file) => {
+  const data = await ipfs.add(file);
+
+  console.log(data.cid.toString());
+
+  return data.cid
+}
+*/

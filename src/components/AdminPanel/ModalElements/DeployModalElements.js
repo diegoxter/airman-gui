@@ -7,21 +7,25 @@ import { useState } from 'react';
 export const DeployButton = ({
   network,
   setOpen,
+  checked,
+  amountInputValue,
+  tokenDecimals,
   contractInputValue,
   accounts,
   isValidContract,
-  amountInputValue,
-  tokenDecimals,
   isValidAmount,
   setCheckedInstances,
   allowance,
   setAllowance,
-  handleCancelClick
+  handleCancelClick,
+  jsonStringify
 }) => {
   const [ isLoading, setIsLoading ] = useState(false);
 
   const handleLetsDoItClick = () => {
-    setIsLoading(true);
+    jsonStringify()
+
+    /*setIsLoading(true);
 
     deployAirMan(contractInputValue, amountInputValue, tokenDecimals, setIsLoading, setOpen, network)
     .then((value) => {
@@ -32,7 +36,7 @@ export const DeployButton = ({
         console.log('Not deployed');
         return false;
       }}
-    );
+    );*/
   }
 
   const handleApproveClick = async () => {
@@ -67,7 +71,7 @@ export const DeployButton = ({
       );
     } else if (Number(allowance) >= Number(amountInputValue * 10 ** Number(tokenDecimals))) {
       return (
-        <Button positivecontent="Let's do it!" onClick={() => { handleLetsDoItClick() }}/>
+        <Button positive content="Let's do it!" onClick={() => { handleLetsDoItClick() }} disabled={!checked} />
       );
     } else if (isValidAmount) {
       return (
