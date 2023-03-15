@@ -146,6 +146,7 @@ export const TokenContractInput = ({
 
   return (
       <Form.Input
+      width={10}
       label='Token contract'
       placeholder='Address: 0x...'
       value={contract}

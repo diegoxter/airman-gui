@@ -129,101 +129,93 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
       }
     >
       <Modal.Header>Deploy your Airdrop Manager instance for {feeToDeploy} ether</Modal.Header>
-      <Modal.Content image>
+      <Modal.Content image scrolling>
 
         <Grid celled='internally'>
-          <Grid.Row>
 
-            <Grid.Column width={5}>
-              <Form>
-                <Form.Input
-                  label='Project name'
-                  placeholder='Enter name'
-                  onChange={(e) => handleNameChange(e.target.value)}
-                />
-              </Form>
-              <Divider />
+        <Grid.Column width={12}>
+          <Form>
+          <Header as='h2'>
+              Project data <br/> <p style={{fontSize:'10px'}}>(You can edit this later at a cost)</p>
+          </Header>
+            <Form.Input
+              placeholder='Project name'
+              onChange={(e) => handleNameChange(e.target.value)}
+            />
+            <Form.Input
+              placeholder='Project description...'
+              control='textarea'
+              rows='5'
+              onChange={(e) => handleProjectDescriptionChange(e.target.value)}
+            />
+            <Form.Group widths='equal'>
+              <Form.Input placeholder='Project URL...' onChange={(e) => handleProjectURLChange(e.target.value)}/>
+              <Form.Input placeholder='Twitter...' onChange={(e) => handleProjectTwitterChange(e.target.value)}/>
+            </Form.Group>
 
-              {
-                (selectedFile === null)
-                ?
-                <Icon
-                  size='massive'
-                  name='cloud upload'
-                  style={{ display: 'block', margin: 'auto' }}
-                />
-                :
-                <Image
-                  size='small'
-                  src={URL.createObjectURL(selectedFile)}
-                  wrapped
-                  style={{ display: 'block', margin: 'auto' }}
-                />
-              }
+            <Form.Group widths='equal'>
+              <Form.Input placeholder='Telegram...' onChange={(e) => handleProjectTelegramChange(e.target.value)}/>
+              <Form.Input placeholder='Discord...' onChange={(e) => handleProjectDiscordChange(e.target.value)}/>
+            </Form.Group>
+            <Divider />
 
-              <div>
-                <Button style={buttonStyle} content='Attach token logo' onClick={handleButtonClick} />
-                <input
-                  style={{ display: "none" }}
-                  ref={inputRef}
-                  type="file"
-                  accept='.png,.jpg,.jpeg,.svg'
-                  onChange={(e) => onFileChange(e.target.files[0])}
-                />
-              </div>
+            <Form.Group>
+              <TokenContractInput
+                accounts={ accounts }
+                network={ network }
+                setIsValidContract= { setIsValidContract }
+                contract={ contract }
+                setContract={ setContract }
+                contractInputValue={ contractInputValue }
+                symbolCheck={ symbolCheck }
+                setAllowance= { setAllowance }
+                setTokenSymbol={ setTokenSymbol }
+                setSymbolCheck={ setSymbolCheck }
+                setTokenDecimals={ setTokenDecimals }
+                setTokenAmount={ setTokenAmount }
+              />
 
-            </Grid.Column>
+              <Form.Input
+                width={7}
+                label={`Tokens you hold: ${((tokenAmount  / 10 ** Number(tokenDecimals)).toLocaleString('en-US'))} ${tokenSymbol}`}
+                placeholder='AirMan-held tokens'
+                value={amount}
+                onChange={(e) => handleAmountChange(e.target.value)}
+              />
 
-            <Grid.Column width={6}>
-              <Header as='h2'>
-                Project data <br/> <p style={{fontSize:'10px'}}>(You can edit this later at a cost)</p>
-              </Header>
-              <Form>
-                <Form.Input
-                  placeholder='Project description...'
-                  control='textarea'
-                  rows='5'
-                  onChange={(e) => handleProjectDescriptionChange(e.target.value)}
-                />
-                <Form.Input placeholder='Project URL...' onChange={(e) => handleProjectURLChange(e.target.value)}/>
-                <Form.Input placeholder='Twitter...' onChange={(e) => handleProjectTwitterChange(e.target.value)}/>
-                <Form.Input placeholder='Telegram...' onChange={(e) => handleProjectTelegramChange(e.target.value)}/>
-                <Form.Input placeholder='Discord...' onChange={(e) => handleProjectDiscordChange(e.target.value)}/>
-              </Form>
-            </Grid.Column>
+            </Form.Group>
+            <Form.Field>
+                <Checkbox label="I agree that any changes to these informations will incur a fee" onChange={()=> handleCheckboxChange()}/>
+            </Form.Field>
+          </Form>
+          </Grid.Column>
 
-            <Grid.Column width={5}>
-              <Form>
-                  <TokenContractInput
-                    accounts={ accounts }
-                    network={ network }
-                    setIsValidContract= { setIsValidContract }
-                    contract={ contract }
-                    setContract={ setContract }
-                    contractInputValue={ contractInputValue }
-                    symbolCheck={ symbolCheck }
-                    setAllowance= { setAllowance }
-                    setTokenSymbol={ setTokenSymbol }
-                    setSymbolCheck={ setSymbolCheck }
-                    setTokenDecimals={ setTokenDecimals }
-                    setTokenAmount={ setTokenAmount }
-                  />
-
-                  <Form.Input
-                    label={`Tokens held: ${((tokenAmount  / 10 ** Number(tokenDecimals)).toLocaleString('en-US'))} ${tokenSymbol}`}
-                    placeholder='Amount for AirMan to manage'
-                    value={amount}
-                    onChange={(e) => handleAmountChange(e.target.value)}
-                  />
-
-                  <Form.Field>
-                    <Checkbox label="I agree that any changes to these informations will incur a fee" onChange={()=> handleCheckboxChange()}/>
-                  </Form.Field>
-
-              </Form>
-            </Grid.Column>
-
-          </Grid.Row>
+          <Grid.Column width={4}>
+            {
+              (selectedFile === null)
+              ?
+              <Icon
+                size='massive'
+                name='cloud upload'
+                style={{ display: 'block', margin: 'auto' }}
+              />
+              :
+              <Image
+                size='small'
+                src={URL.createObjectURL(selectedFile)}
+                wrapped
+                style={{ display: 'block', margin: 'auto' }}
+              />
+            }
+            <Button style={buttonStyle} content='Attach token logo' onClick={handleButtonClick} fluid/>
+            <input
+              style={{ display: "none" }}
+              ref={inputRef}
+              type="file"
+              accept='.png,.jpg,.jpeg,.svg'
+              onChange={(e) => onFileChange(e.target.files[0])}
+            />
+          </Grid.Column>
         </Grid>
   </Modal.Content>
       <Modal.Actions>
