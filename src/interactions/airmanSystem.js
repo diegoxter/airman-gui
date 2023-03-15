@@ -238,33 +238,36 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
 }
 
 // TO DO optimize both of these
-export const getCID = async (_network, _instanceAddress) => {
-  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
-  const calls = [
-    {
-      abi: airdropManagerAbi,
-      address: _instanceAddress,
-      name: 'CID',
-      params: [0],
-    },
-    {
-      abi: airdropManagerAbi,
-      address: _instanceAddress,
-      name: 'CID',
-      params: [1],
-    }
-  ];
+export const getAirManInstancesMetadata = async (_network, _instances) => {
+  const instancesMetadata = []
 
-  const data = await  multicall(airdropManagerAbi,  calls,  _network);
+  await Promise.all(_instances.map(async (instance, index) => {
+    const calls = [
+      {
+        abi: airdropManagerAbi,
+        address: instance.instanceAddress,
+        name: 'CID',
+        params: [0],
+      },
+      {
+        abi: airdropManagerAbi,
+        address: instance.instanceAddress,
+        name: 'CID',
+        params: [1],
+      }
+    ];
 
-  return data;
+    instancesMetadata[index] = await multicall(airdropManagerAbi,  calls,  _network);
+
+  }))
+
+  return instancesMetadata;
 }
 
 export const getImageCID = async (_instanceAddress) => {
   const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
-  const data = await airManInstance.CID(1)
 
-  return data;
+  return await airManInstance.CID(1);
 }
 
 export const getCampaignInfo = async (_network, _instanceAddress) => {

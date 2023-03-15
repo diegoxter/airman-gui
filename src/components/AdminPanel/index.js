@@ -4,12 +4,14 @@ import { LoadingCardGroup, NotConnectedMessage, RefreshButton } from '../CommonC
 import { AdminPanelModal } from './DeployAirmanModal';
 import { AdminModal } from './AdminModal';
 import { DeployedAirManList } from './DeployedAirManList';
-import { getInstanceInfoByOwner, isAdminAddress } from '../../interactions/airmanSystem';
+import { getInstanceInfoByOwner, isAdminAddress, getAirManInstancesMetadata } from '../../interactions/airmanSystem';
 
 const AirdropManagerTab = ({ network, accounts, isConnected }) => {
   const [ isAdmin, setIsAdmin ] = useState('')
   const [ instances, setInstances ] = useState('');
   const [ checkedInstances, setCheckedInstances ] = useState(false);
+  const [ instancesMetadata, setInstancesMetadata ] = useState([]);
+  const [ instancesMetadataChecked, setInstancesMetadataChecked ] = useState(false)
 
   if (network !== '' && accounts !== '' && checkedInstances === false) {
     getInstanceInfoByOwner(network, accounts)
@@ -17,11 +19,20 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
       setInstances(value);
       setCheckedInstances(true);
     })
+
+    if (isAdmin === '') {
+      isAdminAddress(network, accounts)
+      .then((value) => setIsAdmin(value))
+    }
+
   }
 
-  if (isConnected && accounts !== '' && network !== '' && isAdmin === '') {
-    isAdminAddress(network, accounts)
-    .then((value) => setIsAdmin(value))
+  if (network !== '' && instances !== '' && instancesMetadataChecked === false ) {
+    getAirManInstancesMetadata(network, instances)
+    .then((result) => {
+      setInstancesMetadata(result)
+      setInstancesMetadataChecked(true)
+    })
   }
 
   const handleRefreshClick = () => {
@@ -101,6 +112,8 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
         isConnected={ isConnected }
         instances={ instances }
         checkedInstances={ checkedInstances }
+        instancesMetadata={ instancesMetadata }
+        instancesMetadataChecked={ instancesMetadataChecked }
       />
       :
       <Grid.Column >

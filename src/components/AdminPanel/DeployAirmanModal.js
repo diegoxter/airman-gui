@@ -39,7 +39,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
     }
   }
 
-  if (feeToDeploy === 0) {
+  if (isConnected && feeToDeploy === 0) {
     getFee(network)
     .then((value) => {setFeeToDeploy(weiToEther(Number(value)))})
   }
@@ -184,9 +184,6 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
               />
 
             </Form.Group>
-            <Form.Field>
-                <Checkbox label="I agree that any changes to these informations will incur a fee" onChange={()=> handleCheckboxChange()}/>
-            </Form.Field>
           </Form>
           </Grid.Column>
 
@@ -215,6 +212,13 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
               accept='.png,.jpg,.jpeg,.svg'
               onChange={(e) => onFileChange(e.target.files[0])}
             />
+
+            <Divider />
+
+            <Form.Field>
+              <Checkbox label="I agree that any changes to these informations will incur a fee" onChange={()=> handleCheckboxChange()}/>
+            </Form.Field>
+
           </Grid.Column>
         </Grid>
   </Modal.Content>
