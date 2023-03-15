@@ -30,12 +30,12 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   const inputRef = useRef(null);
 
   const onFileChange = (e) => {
-    const size = (e[0].size / 1024 / 1024).toFixed(2);
+    const size = (e.size / 1024 / 1024).toFixed(2);
 
     if (size > 2) {
       alert("File must be less than 2 MB");
     } else {
-      setSelectedFile(e[0])
+      setSelectedFile(e);
     }
   }
 
@@ -51,7 +51,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   };
 
   // Testing purposes
-  const jsonStringify = () => {
+  const jsonStringifyInputFields = () => {
     const projectInfo = {
       name,
       projectDescription,
@@ -168,7 +168,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
                   ref={inputRef}
                   type="file"
                   accept='.png,.jpg,.jpeg,.svg'
-                  onChange={(e) => onFileChange(e.target.files)}
+                  onChange={(e) => onFileChange(e.target.files[0])}
                 />
               </div>
 
@@ -244,7 +244,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
           allowance={ allowance }
           setAllowance={ setAllowance }
           handleCancelClick={ handleCancelClick }
-          jsonStringify={ () => jsonStringify() }
+          campaignMetadata={ [jsonStringifyInputFields(), selectedFile] }
         />
       </Modal.Actions>
     </Modal>

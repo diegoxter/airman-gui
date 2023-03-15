@@ -18,34 +18,37 @@ export const DeployButton = ({
   allowance,
   setAllowance,
   handleCancelClick,
-  jsonStringify
+  campaignMetadata
 }) => {
   const [ isLoading, setIsLoading ] = useState(false);
 
   const handleLetsDoItClick = () => {
     setIsLoading(true);
-    const data = jsonStringify()
-    addToIPFS(data)
+    addToIPFS(campaignMetadata[0])
     .then((jsonData) => {
-      //console.log('https://testairdropman.infura-ipfs.io/ipfs/'+value)
-      deployAirMan(
-        jsonData,
-        contractInputValue,
-        amountInputValue,
-        tokenDecimals,
-        setIsLoading,
-        setOpen,
-        network
-      )
+      addToIPFS(campaignMetadata[1])
       .then((value) => {
-        if (value === true) {
-          handleCancelClick();
-          setCheckedInstances(false);
-        } else {
-          console.log('Not deployed');
-          return false;
-        }}
-      );
+        //console.log('https://testairdropman.infura-ipfs.io/ipfs/'+value)
+        //console.log('https://testairdropman.infura-ipfs.io/ipfs/'+jsonData)
+        deployAirMan(
+          [jsonData, value],
+          contractInputValue,
+          amountInputValue,
+          tokenDecimals,
+          setIsLoading,
+          setOpen,
+          network
+        )
+        .then((value) => {
+          if (value === true) {
+            handleCancelClick();
+            setCheckedInstances(false);
+          } else {
+            console.log('Not deployed');
+            return false;
+          }}
+        );
+      });
     })
   }
 

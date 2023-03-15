@@ -169,6 +169,11 @@
   {
     "inputs": [
       {
+        "internalType": "string[]",
+        "name": "cid",
+        "type": "string[]"
+      },
+      {
         "internalType": "address payable",
         "name": "_newOwner",
         "type": "address"
@@ -370,6 +375,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "cid",
+        "type": "string[]"
+      },
       {
         "internalType": "address",
         "name": "_instanceToken",
