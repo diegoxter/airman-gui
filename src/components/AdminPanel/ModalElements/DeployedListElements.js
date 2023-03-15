@@ -853,7 +853,7 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       title: 'Project information',
       content: {
         content: [
-          <Segment>
+          <Segment key={'info'}>
             <Button icon='pencil' floated='right'/>
             <Form>
               <Form.Group>
