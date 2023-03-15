@@ -31,7 +31,7 @@ export const DeployButton = ({
         //console.log('https://testairdropman.infura-ipfs.io/ipfs/'+value)
         //console.log('https://testairdropman.infura-ipfs.io/ipfs/'+jsonData)
         deployAirMan(
-          [jsonData, value],
+          [jsonData.toString(), value.toString()],
           contractInputValue,
           amountInputValue,
           tokenDecimals,

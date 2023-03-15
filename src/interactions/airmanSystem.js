@@ -225,16 +225,25 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
     calls[index] = getAirmanList;
   })
 
-  let airManListDataRaw
+  let airManListDataRaw;
 
   try {
     airManListDataRaw = await multicall(adminPanelAbi, calls, _network);
   } catch (e) {
-    airManListDataRaw = 0
-    console.log(`Error getting the deployed AirMan instances`)
+    airManListDataRaw = 0;
+    console.log(`Error getting the deployed AirMan instances`);
   }
 
   return airManListDataRaw;
+}
+
+export const getCID = async (_instanceAddress) => {
+  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
+  const data = await airManInstance.showCID();
+
+  console.log(data);
+
+  return data;
 }
 
 export const getCampaignInfo = async (_network, _instanceAddress) => {

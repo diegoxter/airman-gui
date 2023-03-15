@@ -32,7 +32,9 @@ import {
     Input,
     Divider,
     Icon,
-    Item
+    Item,
+    Accordion,
+    TextArea
 } from 'semantic-ui-react';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -845,6 +847,39 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [ tokenSymbol, setTokenSymbol ] = useState('');
   const [ checkedBalance, setCheckedBalance ] = useState(false);
 
+  const panels = [
+    {
+      key: 'project-metadata',
+      title: 'Project information',
+      content: {
+        content: [
+          <Segment>
+            <Button icon='pencil' floated='right'/>
+            <Form>
+              <Form.Group>
+                <Form.Input readOnly value='Test' label='Project page'/>
+                <Form.Input readOnly value='Test' label='Twitter'/>
+                <Form.Field
+                  readOnly
+                  value='Test'
+                  width={12}
+                  control={TextArea}
+                  style={{ marginBottom: '5px', height: '150px' }}
+                  label='About the project'
+                />
+              </Form.Group>
+
+              <Form.Group style={{ marginTop: '-74px', marginLeft: '-1px' }}>
+                <Form.Input readOnly value='Test' label='Discord'/>
+                <Form.Input readOnly value='Test' label='Telegram'/>
+              </Form.Group>
+
+            </Form>
+          </Segment>
+      ]},
+    }
+  ]
+
   if (etherBalance === '') {
     getEtherBalance(instanceAddress)
     .then((value) => {
@@ -948,6 +983,10 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
 
         </Grid>
       </Modal.Header>
+
+      <div>
+        <Accordion fluid styled panels={panels}></Accordion>
+      </div>
 
       <Modal.Content scrolling style={{height: '68%', overflowY: 'auto'}}>
         { (!campaignDataChecked)
