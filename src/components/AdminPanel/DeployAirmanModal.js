@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Image, Modal, Form, Checkbox, Grid, Header, Divider } from 'semantic-ui-react';
+import React, { useState, useRef } from 'react';
+import { Button, Icon, Image, Modal, Form, Checkbox, Grid, Header, Divider } from 'semantic-ui-react';
 import { useDebounce } from "use-debounce";
 import { isSupportedNetwork, weiToEther } from '../../interactions';
 import { getFee } from '../../interactions/airmanSystem';
@@ -25,12 +25,30 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   const [tokenAmount, setTokenAmount] = useState('');
   const [isValidAmount, setIsValidAmount] = useState(undefined);
   const [allowance, setAllowance] = useState('');
-  const [feeToDeploy, setFeeToDeploy] = useState(0)
+  const [feeToDeploy, setFeeToDeploy] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const inputRef = useRef(null);
+
+  const onFileChange = (e) => {
+    const size = (e[0].size / 1024 / 1024).toFixed(2);
+
+    if (size > 2) {
+      alert("File must be less than 2 MB");
+    } else {
+      setSelectedFile(e[0])
+    }
+  }
 
   if (feeToDeploy === 0) {
     getFee(network)
     .then((value) => {setFeeToDeploy(weiToEther(Number(value)))})
   }
+
+  const handleButtonClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
 
   // Testing purposes
   const jsonStringify = () => {
@@ -82,6 +100,7 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
   }
 
   const handleCancelClick = () => {
+    setSelectedFile(null);
     setOpen(false);
     setChecked(false);
     setIsValidAmount(false);
@@ -125,13 +144,33 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
               </Form>
               <Divider />
 
-              <Image
-                size='small'
-                src='https://react.semantic-ui.com/images/avatar/large/rachel.png'
-                wrapped
-                style={{ display: 'block', margin: 'auto' }}
-              />
-              <Button style={buttonStyle} content='Attach token logo' />
+              {
+                (selectedFile === null)
+                ?
+                <Icon
+                  size='massive'
+                  name='cloud upload'
+                  style={{ display: 'block', margin: 'auto' }}
+                />
+                :
+                <Image
+                  size='small'
+                  src={URL.createObjectURL(selectedFile)}
+                  wrapped
+                  style={{ display: 'block', margin: 'auto' }}
+                />
+              }
+
+              <div>
+                <Button style={buttonStyle} content='Attach token logo' onClick={handleButtonClick} />
+                <input
+                  style={{ display: "none" }}
+                  ref={inputRef}
+                  type="file"
+                  accept='.png,.jpg,.jpeg,.svg'
+                  onChange={(e) => onFileChange(e.target.files)}
+                />
+              </div>
 
             </Grid.Column>
 
