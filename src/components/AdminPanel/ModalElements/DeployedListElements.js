@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ethers } from "ethers";
 import { useDebounce } from "use-debounce";
-import { deployAirdropCampaign, getCampaignInfo, manageAirmanFunds } from '../../../interactions/airmanSystem';
+import { deployAirdropCampaign, manageAirmanFunds } from '../../../interactions/airmanSystem';
 import {
   withdrawCampaignTokens,
   addUserList,
@@ -10,15 +10,9 @@ import {
   toggleIsPrivate,
   getBasicAirdropInfo
 } from '../../../interactions/airdropSystem';
-import { getEtherBalance, weiToEther, cleanAddress, readJSONFromIPFS } from '../../../interactions';
-import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
-import {
-  LoadingCardGroup,
-  NoElementsFoundMessage,
-  FetchingDataMessage,
-  CopyButton,
-  RefreshButton
-} from '../../CommonComponents';
+import { getEtherBalance, weiToEther, cleanAddress } from '../../../interactions';
+import { checkBalance, sendTokens } from '../../../interactions/erc20';
+import { CopyButton } from '../../CommonComponents';
 import {
     Card,
     Button,
@@ -32,9 +26,7 @@ import {
     Input,
     Divider,
     Icon,
-    Item,
-    Accordion,
-    TextArea
+    Item
 } from 'semantic-ui-react';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -556,7 +548,7 @@ const BanUsersPopup = ({ instanceAddress, isLoading, setIsLoading }) => {
   )
 }
 
-const DeployedCampaignCard = ({
+export const DeployedCampaignCard = ({
   network,
   campaignInfo,
   instanceToken,
@@ -831,272 +823,4 @@ const DeployedCampaignCard = ({
       </Card.Content>
     </Card>
   )
-}
-
-
-export const DeployedAirdropModal = ({
-  accounts,
-  network,
-  instanceNumer,
-  instanceAddress,
-  instanceToken,
-  instancesProjectInfo
-}) => {
-  const [ open, setOpen ] = useState(false);
-  const [ popUpOpen, setPopUpOpen ] = useState(false);
-  const [ campaignData, setCampaignData ] = useState([]);
-  const [ campaignDataChecked, setCampaignDataChecked ] = useState(false)
-  const [ isLoading, setIsLoading ] = useState(false);
-  const [ userTokenBalance, setUserTokenBalance ] = useState('')
-  const [ etherBalance, setEtherBalance ] = useState('');
-  const [ tokenBalance, setTokenBalance ] = useState('');
-  const [ tokenDecimals, setTokenDecimals ] = useState('')
-  const [ tokenSymbol, setTokenSymbol ] = useState('');
-  const [ checkedBalance, setCheckedBalance ] = useState(false);
-  const [ projectInfoJSON, setProjectInfoJSON ] = useState('');
-
-  if (projectInfoJSON === '') {
-    readJSONFromIPFS(instancesProjectInfo)
-    .then((json) => {
-      setProjectInfoJSON(json);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  }
-
-  const panels = [
-    {
-      key: 'project-metadata',
-      title: 'Project information',
-      content: {
-        content: [
-          <Segment key={'info'}>
-            <Button icon='pencil' floated='right' onClick={() => console.log('click')}/>
-            <Form>
-              <Form.Group>
-                <Form.Input readOnly value={projectInfoJSON.projectURL} label='Project page'/>
-                <Form.Input readOnly value={projectInfoJSON.projectTwitter} label='Twitter'/>
-                <Form.Field
-                  readOnly
-                  value={projectInfoJSON.projectDescription}
-                  width={12}
-                  control={TextArea}
-                  style={{ marginBottom: '5px', height: '150px' }}
-                  label='About the project'
-                />
-              </Form.Group>
-
-              <Form.Group style={{ marginTop: '-74px', marginLeft: '-1px' }}>
-                <Form.Input readOnly value={projectInfoJSON.projectDiscord} label='Discord'/>
-                <Form.Input readOnly value={projectInfoJSON.projectTelegram} label='Telegram'/>
-              </Form.Group>
-
-            </Form>
-          </Segment>
-      ]},
-    }
-  ]
-
-  if (etherBalance === '') {
-    getEtherBalance(instanceAddress)
-    .then((value) => {
-      setEtherBalance(value)
-    })
-  }
-
-  if (userTokenBalance === '') {
-    checkBalance(accounts, instanceToken)
-    .then((value) => {setUserTokenBalance((parseFloat(value)))})
-  }
-
-  if (open && !campaignDataChecked) {
-    getCampaignInfo(network, instanceAddress)
-    .then((value) => {
-      setCampaignData(value);
-      setCampaignDataChecked(true);
-    })
-  }
-
-  if (tokenBalance === '' || tokenSymbol === '') {
-    getTokenInfo(instanceAddress, instanceToken, instanceAddress, network)
-    .then((value) => {
-      setTokenBalance((value.balance));
-      setTokenSymbol(value.symbol[0]);
-      setTokenDecimals(value.decimals);
-    })
-  }
-
-  const handleClose = () => {
-    setTokenBalance('');
-    setUserTokenBalance('');
-    setTokenSymbol('');
-    setOpen(false);
-    setCampaignDataChecked(false);
-    setCampaignData([]);
-    setCheckedBalance(false);
-  }
-
-  const getHumanDate = (unixtime) => {
-    const date = new Date(unixtime * 1000);
-    const options = { month: 'short', weekday: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-    const dateString = date.toLocaleString('en-US', options);
-
-    return dateString.toString();
-  }
-
-  const isCampaignActive = (campaignInfo) => {
-    return (Number(campaignInfo.endDate['_hex']) * 1000 > Date.now())
-  }
-
-  const handleRefreshClick = () => {
-    setCampaignDataChecked(false);
-    setCampaignData([]);
-  }
-
-  return (
-    <Modal
-      style={{height: '94%', overflowY: 'auto'}}
-      dimmer='inverted'
-      onClose={() => handleClose()}
-      onOpen={() => setOpen(true)}
-      open={open}
-      trigger={<Button fluid color='violet'> Manage Airdrop Campaigns </Button>} >
-
-      <Modal.Header>
-        <Grid >
-          <Grid.Row>
-            <Grid.Column as='h1' floated='left' width={7}>
-              Instance #{instanceNumer} <br/>
-              Deployed campaigns
-              <br/> <p style={{
-                fontSize: '12px',
-                marginTop:'20px'}}>Instance address: {cleanAddress(instanceAddress, 4, 38)} <CopyButton dataToCopy={instanceAddress} /> <br />
-                Token address: {cleanAddress(instanceToken, 4, 38)} <CopyButton dataToCopy={instanceToken} /> </p>
-            </Grid.Column>
-
-            <Grid.Column floated='right' width={5}>
-              Tokens held in this contract: <br/>
-              <Segment textAlign='center'>
-                <u>{(parseFloat(tokenBalance) > 0)?(parseFloat(tokenBalance)  / 10 ** Number(tokenDecimals)).toLocaleString('en-US'): 0 } {tokenSymbol}</u>
-                </Segment>
-            </Grid.Column>
-          </Grid.Row>
-
-          <Grid.Row columns={'equal'}>
-            <Grid.Column>
-              <Checkbox toggle label={'Placeholder'} />
-            </Grid.Column>
-
-            <Grid.Column>
-              <Checkbox toggle label={'Placeholder'} />
-            </Grid.Column>
-
-            <Grid.Column>
-              <Checkbox toggle label={'Placeholder'} />
-            </Grid.Column>
-
-            <RefreshButton color='blue' execOnClick={handleRefreshClick}/>
-          </Grid.Row>
-
-        </Grid>
-      </Modal.Header>
-
-      <div>
-        <Accordion fluid styled panels={panels}></Accordion>
-      </div>
-
-      <Modal.Content scrolling style={{height: '68%', overflowY: 'auto'}}>
-        { (!campaignDataChecked)
-        ?
-        <Segment style={{width:'96%'}}>
-          <FetchingDataMessage />
-          <Divider hidden/>
-          <LoadingCardGroup />
-        </Segment>
-        :
-        <Card.Group itemsPerRow={3}>
-        {(campaignData.length === 0)
-        ?
-          <Segment style={{width:'96%'}}>
-            <NoElementsFoundMessage whatIsBeingLookedFor='Airdrop Campaigns'/>
-              <Divider hidden/>
-            <LoadingCardGroup />
-          </Segment>
-        :
-          campaignData.map((campaignInfo) => (
-            <DeployedCampaignCard
-              key={Number(campaignInfo.campaignID['_hex'])}
-              network={ network }
-              campaignInfo={ campaignInfo }
-              instanceToken={ instanceToken }
-              isCampaignActive={ isCampaignActive }
-              tokenSymbol={ tokenSymbol }
-              tokenDecimals={ tokenDecimals }
-              getHumanDate={ getHumanDate }
-              checkedBalance={ checkedBalance }
-              isLoading={ isLoading }
-              setIsLoading={ setIsLoading }
-              tokenBalance={ tokenBalance }
-              setTokenBalance={ setTokenBalance }
-            />
-
-          ))}
-
-      </Card.Group>
-        }
-
-      </Modal.Content>
-
-      <Modal.Actions>
-        <Popup
-          open={ popUpOpen }
-          onClose={() => setPopUpOpen(false)}
-          onOpen={() => setPopUpOpen(true)}
-          on='click'
-          position='top right'
-          trigger={
-            <Button
-              color={(tokenBalance === 0 && etherBalance === 0)?'violet':'yellow'}
-              floated='left'>
-              {(tokenBalance === 0 && etherBalance === 0)?'No assets to manage':'Manage assets'}
-            </Button>
-          }
-          content={ <ManageAssetsPopup
-            setPopUpOpen={ setPopUpOpen }
-            accounts={ accounts }
-            network={ network }
-            instanceAddress={ instanceAddress }
-            instanceToken={ instanceToken }
-            isLoading={ isLoading }
-            setIsLoading={ setIsLoading }
-            etherBalance={ etherBalance }
-            setEtherBalance={ setEtherBalance }
-            userTokenBalance={ userTokenBalance }
-            tokenBalance= { tokenBalance }
-            tokenDecimals={ tokenDecimals }
-            setTokenBalance= { setTokenBalance }
-            setCheckedBalance={ setCheckedBalance } /> }
-          />
-
-        <Button color='red' onClick={() => handleClose()}>
-          Close
-        </Button>
-
-        <NewAirdropModal
-          instanceAddress={ instanceAddress }
-          instanceToken={ instanceToken }
-          tokenBalance={ tokenBalance }
-          setTokenBalance={ setTokenBalance }
-          tokenSymbol={ tokenSymbol }
-          tokenDecimals={ tokenDecimals }
-          setIsLoading={ setIsLoading }
-          isLoading={ isLoading }
-          setCampaignDataChecked={ setCampaignDataChecked }
-          getHumanDate={ getHumanDate }
-        />
-
-      </Modal.Actions>
-    </Modal>
-  );
 }

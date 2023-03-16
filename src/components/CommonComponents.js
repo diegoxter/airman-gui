@@ -1,4 +1,33 @@
-import { Grid, Placeholder, Segment, Message, Button, Icon } from 'semantic-ui-react';
+import { Grid, Placeholder, Segment, Message, Button, Icon, Form, TextArea } from 'semantic-ui-react';
+
+export const ProjectInfo = ({ projectInfoSource }) => {
+
+  return (
+    <Segment>
+    <Button disabled icon='pencil' floated='right' onClick={() => console.log('click')}/>
+    <Form>
+      <Form.Group>
+        <Form.Input readOnly value={projectInfoSource.projectURL} label='Project page'/>
+        <Form.Input readOnly value={projectInfoSource.projectTwitter} label='Twitter'/>
+        <Form.Field
+          readOnly
+          value={projectInfoSource.projectDescription}
+          width={12}
+          control={TextArea}
+          style={{ marginBottom: '5px', height: '150px' }}
+          label='About the project'
+        />
+      </Form.Group>
+
+      <Form.Group style={{ marginTop: '-74px', marginLeft: '-1px' }}>
+        <Form.Input readOnly value={projectInfoSource.projectDiscord} label='Discord'/>
+        <Form.Input readOnly value={projectInfoSource.projectTelegram} label='Telegram'/>
+      </Form.Group>
+
+    </Form>
+  </Segment>
+  );
+}
 
 export const LoadingCardGroup = () => {
   return (
