@@ -5,7 +5,7 @@ import { isSupportedNetwork, weiToEther } from '../../interactions';
 import { getFee } from '../../interactions/airmanSystem';
 import { DeployButton, TokenContractInput } from './ModalElements/DeployModalElements';
 
-export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInstances }) => {
+export const AdminPanelModal = ({ network, accounts, isConnected, setInstances, setCheckedInstances, setInstancesMetadataChecked }) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
@@ -236,7 +236,9 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setCheckedInst
           accounts={ accounts }
           isValidContract={ isValidContract }
           isValidAmount={ isValidAmount }
+          setInstances={ setInstances }
           setCheckedInstances={ setCheckedInstances }
+          setInstancesMetadataChecked={ setInstancesMetadataChecked }
           allowance={ allowance }
           setAllowance={ setAllowance }
           handleCancelClick={ handleCancelClick }

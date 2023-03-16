@@ -14,7 +14,9 @@ export const DeployButton = ({
   accounts,
   isValidContract,
   isValidAmount,
+  setInstances,
   setCheckedInstances,
+  setInstancesMetadataChecked,
   allowance,
   setAllowance,
   handleCancelClick,
@@ -43,6 +45,8 @@ export const DeployButton = ({
           if (value === true) {
             handleCancelClick();
             setCheckedInstances(false);
+            setInstancesMetadataChecked(false);
+            setInstances('');
           } else {
             console.log('Not deployed');
             return false;

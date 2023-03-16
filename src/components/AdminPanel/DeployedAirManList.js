@@ -19,7 +19,7 @@ export const DeployedAirManList = ({ network, accounts, instances, checkedInstan
                   <Image
                     floated='right'
                     size='mini'
-                    src={`https://testairdropman.infura-ipfs.io/ipfs/${(instancesMetadata[index])[1]}`}  />
+                    src={`https://testairdropman.infura-ipfs.io/ipfs/${(instancesMetadata[index])}`}  />
                   <Card.Header> {`AirMan instance #${Number(instance.id['_hex'])}`} </Card.Header>
                   <Card.Meta> Address: {cleanAddress(instance.instanceAddress, 4, 38)} </Card.Meta>
                   <Card.Description>

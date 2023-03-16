@@ -29,8 +29,14 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
 
   if (network !== '' && instances !== '' && instancesMetadataChecked === false ) {
     getAirManInstancesMetadata(network, instances)
-    .then((result) => {
-      setInstancesMetadata(result)
+    .then((result, i) => {
+      const tempArray = []
+
+      for (let index = 0; index < result.length; index++) {
+        tempArray[index] = (result[index])[1];
+      }
+
+      setInstancesMetadata(tempArray)
       setInstancesMetadataChecked(true)
     })
   }
@@ -38,6 +44,7 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
   const handleRefreshClick = () => {
     setInstances('');
     setCheckedInstances(false);
+    setInstancesMetadataChecked(false);
   }
 
   return(
@@ -61,7 +68,9 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
                   network={ network }
                   accounts={ accounts }
                   isConnected={ isConnected }
+                  setInstances={ setInstances }
                   setCheckedInstances={ setCheckedInstances }
+                  setInstancesMetadataChecked={ setInstancesMetadataChecked }
                 />
               </Grid.Column>
             </Grid>
