@@ -4,11 +4,18 @@ import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage } from '.
 import { DeployedAirdropModal } from './ModalElements/DeployedListElements';
 
 
-export const DeployedAirManList = ({ network, accounts, instances, checkedInstances, instancesMetadata, instancesMetadataChecked }) => {
+export const DeployedAirManList = ({
+  network,
+  accounts,
+  instances,
+  checkedInstances,
+  instancesImageData,
+  instancesProjectInfo,
+  instancesMetadataChecked
+}) => {
 
   if (checkedInstances) {
-    if (instances.length > 0 && instancesMetadata.length > 0) {
-      // TO DO Fix the issue when deploying a new AirMan
+    if (instances.length > 0 && instancesImageData.length > 0) {
 
       return (
         <Card.Group style={{width: '70%'}}>
@@ -19,7 +26,7 @@ export const DeployedAirManList = ({ network, accounts, instances, checkedInstan
                   <Image
                     floated='right'
                     size='mini'
-                    src={`https://testairdropman.infura-ipfs.io/ipfs/${(instancesMetadata[index])}`}  />
+                    src={`https://testairdropman.infura-ipfs.io/ipfs/${(instancesImageData[index])}`}  />
                   <Card.Header> {`AirMan instance #${Number(instance.id['_hex'])}`} </Card.Header>
                   <Card.Meta> Address: {cleanAddress(instance.instanceAddress, 4, 38)} </Card.Meta>
                   <Card.Description>

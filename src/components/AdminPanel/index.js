@@ -10,7 +10,8 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
   const [ isAdmin, setIsAdmin ] = useState('')
   const [ instances, setInstances ] = useState('');
   const [ checkedInstances, setCheckedInstances ] = useState(false);
-  const [ instancesMetadata, setInstancesMetadata ] = useState([]);
+  const [ instancesImageData, setInstancesImageData ] = useState([]);
+  const [ instancesProjectInfo, setInstancesProjectInfo ] = useState([]);
   const [ instancesMetadataChecked, setInstancesMetadataChecked ] = useState(false)
 
   if (network !== '' && accounts !== '' && checkedInstances === false) {
@@ -30,14 +31,17 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
   if (network !== '' && instances !== '' && instancesMetadataChecked === false ) {
     getAirManInstancesMetadata(network, instances)
     .then((result, i) => {
-      const tempArray = []
+      const tempImageDataArray = [];
+      const tempProjectInfoArray = [];
 
       for (let index = 0; index < result.length; index++) {
-        tempArray[index] = (result[index])[1];
+        tempProjectInfoArray[index] = (result[index])[0];
+        tempImageDataArray[index] = (result[index])[1];
       }
 
-      setInstancesMetadata(tempArray)
-      setInstancesMetadataChecked(true)
+      setInstancesProjectInfo(tempProjectInfoArray);
+      setInstancesImageData(tempImageDataArray);
+      setInstancesMetadataChecked(true);
     })
   }
 
@@ -121,7 +125,8 @@ const AirdropManagerTab = ({ network, accounts, isConnected }) => {
         isConnected={ isConnected }
         instances={ instances }
         checkedInstances={ checkedInstances }
-        instancesMetadata={ instancesMetadata }
+        instancesImageData={ instancesImageData }
+        instancesProjectInfo={ instancesProjectInfo }
         instancesMetadataChecked={ instancesMetadataChecked }
       />
       :
