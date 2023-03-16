@@ -206,7 +206,6 @@ const data = encoder.encode(credentials);
 const auth = `Basic ${btoa(String.fromCharCode(...data))}`;
 
 export const addToIPFS = async (file) => {
-
   // Create a new IPFS instance with the Infura provider
   const ipfs = create({
     host: 'ipfs.infura.io',
@@ -226,3 +225,13 @@ export const addToIPFS = async (file) => {
 
 }
 
+export const readJSONFromIPFS = async (hash) => {
+  try {
+    const response = await fetch(`https://testairdropman.infura-ipfs.io/ipfs/${hash}`);
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};

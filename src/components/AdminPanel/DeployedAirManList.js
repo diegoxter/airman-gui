@@ -41,6 +41,7 @@ export const DeployedAirManList = ({
                       instanceNumer={ Number(instance.id) }
                       instanceAddress={ instance.instanceAddress }
                       instanceToken= { instance.instanceToken }
+                      instancesProjectInfo={ instancesProjectInfo }
                     />
                   </div>
                 </Card.Content>

@@ -10,7 +10,7 @@ import {
   toggleIsPrivate,
   getBasicAirdropInfo
 } from '../../../interactions/airdropSystem';
-import { getEtherBalance, weiToEther, cleanAddress } from '../../../interactions';
+import { getEtherBalance, weiToEther, cleanAddress, readJSONFromIPFS } from '../../../interactions';
 import { checkBalance, sendTokens, getTokenInfo } from '../../../interactions/erc20';
 import {
   LoadingCardGroup,
@@ -834,7 +834,14 @@ const DeployedCampaignCard = ({
 }
 
 
-export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanceAddress, instanceToken }) => {
+export const DeployedAirdropModal = ({
+  accounts,
+  network,
+  instanceNumer,
+  instanceAddress,
+  instanceToken,
+  instancesProjectInfo
+}) => {
   const [ open, setOpen ] = useState(false);
   const [ popUpOpen, setPopUpOpen ] = useState(false);
   const [ campaignData, setCampaignData ] = useState([]);
@@ -846,6 +853,17 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
   const [ tokenDecimals, setTokenDecimals ] = useState('')
   const [ tokenSymbol, setTokenSymbol ] = useState('');
   const [ checkedBalance, setCheckedBalance ] = useState(false);
+  const [ projectInfoJSON, setProjectInfoJSON ] = useState('');
+
+  if (projectInfoJSON === '') {
+    readJSONFromIPFS(instancesProjectInfo)
+    .then((json) => {
+      setProjectInfoJSON(json);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   const panels = [
     {
@@ -854,14 +872,14 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
       content: {
         content: [
           <Segment key={'info'}>
-            <Button icon='pencil' floated='right'/>
+            <Button icon='pencil' floated='right' onClick={() => console.log('click')}/>
             <Form>
               <Form.Group>
-                <Form.Input readOnly value='Test' label='Project page'/>
-                <Form.Input readOnly value='Test' label='Twitter'/>
+                <Form.Input readOnly value={projectInfoJSON.projectURL} label='Project page'/>
+                <Form.Input readOnly value={projectInfoJSON.projectTwitter} label='Twitter'/>
                 <Form.Field
                   readOnly
-                  value='Test'
+                  value={projectInfoJSON.projectDescription}
                   width={12}
                   control={TextArea}
                   style={{ marginBottom: '5px', height: '150px' }}
@@ -870,8 +888,8 @@ export const DeployedAirdropModal = ({ accounts, network, instanceNumer, instanc
               </Form.Group>
 
               <Form.Group style={{ marginTop: '-74px', marginLeft: '-1px' }}>
-                <Form.Input readOnly value='Test' label='Discord'/>
-                <Form.Input readOnly value='Test' label='Telegram'/>
+                <Form.Input readOnly value={projectInfoJSON.projectDiscord} label='Discord'/>
+                <Form.Input readOnly value={projectInfoJSON.projectTelegram} label='Telegram'/>
               </Form.Group>
 
             </Form>
