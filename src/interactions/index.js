@@ -15,7 +15,7 @@ export const getAdmPanAddress = (_network) => {
     case 4002:
       // test token 0x7B76ce0b863e161D3024c1553300e5937EB83Ea0
       // test coin 18 decimals 0xbf467eB67367f17EE561F92BF7592AF12f96DB8C
-      adminPanelContract = '0xA202FfE4e3ddA7b8EFe6525C0Ac0AD2a4A9bE365'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
+      adminPanelContract = '0x8b55bB8D6320095A4aB59BaAe0fD470b2d4D61F2'; // previous '0x21f77B2eE7040Bc6647f36517463fB8F628061D2';
       break;
 
     case 87:

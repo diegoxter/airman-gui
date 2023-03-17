@@ -121,6 +121,12 @@ export const getDetailedAirdropCampaignInfo = async (_network, _account) => {
       name: 'ownerTokenWithdrawDate',
       params: [],
     };
+    const airManAddressCall = {
+      abi: airdropCampaignAbi,
+      address: instanceAddress,
+      name: 'airMan',
+      params: [],
+    };
 
     const airdropCampaignDataRaw = await multicall(
       airdropCampaignAbi,
@@ -132,7 +138,8 @@ export const getDetailedAirdropCampaignInfo = async (_network, _account) => {
           tokenAmountCall,
           amountForEachUserCall,
           isPrivateCall,
-          ownerTokenWithdrawDateCall
+          ownerTokenWithdrawDateCall,
+          airManAddressCall
       ],
       _network);
 
@@ -145,7 +152,8 @@ export const getDetailedAirdropCampaignInfo = async (_network, _account) => {
         tokenAmount: Number(airdropCampaignDataRaw[4]),
         amountForEachUser: Number(airdropCampaignDataRaw[5]),
         isPrivate: airdropCampaignDataRaw[6],
-        ownerTokenWithdrawDateCalls: airdropCampaignDataRaw[7]
+        ownerTokenWithdrawDateCalls: airdropCampaignDataRaw[7],
+        airManAddress: airdropCampaignDataRaw[8]
       };
 
       const participantInfoRawData = await airdropCampaignInstance.participantInfo(_account);
@@ -161,7 +169,7 @@ export const getDetailedAirdropCampaignInfo = async (_network, _account) => {
 
 
 // Transaction functions
-export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setParticipantDataChecked) => {
+export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
@@ -175,18 +183,15 @@ export const joinAirdrop = async (_campaignAddress, _userAddress, _setIsLoading,
       sleep(2500);
     }
 
-    _setParticipantDataChecked(false);
-
     return true;
   } catch (error) {
     console.log(error);
     _setIsLoading(false);
-    _setParticipantDataChecked(false);
     return false;
   }
 }
 
-export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setParticipantDataChecked) => {
+export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
@@ -196,8 +201,6 @@ export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLo
       sleep(2500);
     }
 
-    _setParticipantDataChecked(false);
-
     return true;
   } catch (error) {
     console.log(error);
@@ -206,7 +209,7 @@ export const retireFromAirdrop = async (_campaignAddress, _userAddress, _setIsLo
   }
 }
 
-export const claimAirdrop = async (_campaignAddress, _userAddress, _setIsLoading, _setParticipantDataChecked) => {
+export const claimAirdrop = async (_campaignAddress, _userAddress, _setIsLoading) => {
   const airdropCampaignInstance = new ethers.Contract(_campaignAddress, airdropCampaignAbi, provider);
 
   try {
@@ -215,8 +218,6 @@ export const claimAirdrop = async (_campaignAddress, _userAddress, _setIsLoading
     while (await waitForConfirmation(tx.hash, provider, 5000, _setIsLoading) !== true) {
       sleep(2500);
     }
-
-    _setParticipantDataChecked(false);
 
     return true;
   } catch (error) {

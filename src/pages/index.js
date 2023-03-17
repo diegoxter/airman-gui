@@ -49,6 +49,7 @@ const AirdropList = ({
           {campaignData.map((campaignInfo, index) => (
             <AirdropCampaignCard
               key={ campaignInfo.campaignAddress }
+              network={ network }
               accounts={ accounts }
               campaignInfo={ campaignInfo }
               participantData={ participantData[index] }

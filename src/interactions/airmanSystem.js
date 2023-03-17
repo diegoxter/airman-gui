@@ -237,7 +237,29 @@ export const getInstanceInfoByOwner = async (_network, _ownerAddress) => {
   return airManListDataRaw;
 }
 
-// TO DO optimize both of these
+
+export const getAirManMetadata = async (_network, _instance) => {
+  const calls = [
+    {
+      abi: airdropManagerAbi,
+      address: _instance,
+      name: 'CID',
+      params: [0],
+    },
+    {
+      abi: airdropManagerAbi,
+      address: _instance,
+      name: 'CID',
+      params: [1],
+    }
+  ];
+
+  const instanceMetadata = await multicall(airdropManagerAbi,  calls,  _network);
+
+
+  return instanceMetadata;
+}
+
 export const getAirManInstancesMetadata = async (_network, _instances) => {
   const instancesMetadata = []
 
@@ -262,12 +284,6 @@ export const getAirManInstancesMetadata = async (_network, _instances) => {
   }))
 
   return instancesMetadata;
-}
-
-export const getImageCID = async (_instanceAddress) => {
-  const airManInstance = new ethers.Contract(_instanceAddress, airdropManagerAbi, signer);
-
-  return await airManInstance.CID(1);
 }
 
 export const getCampaignInfo = async (_network, _instanceAddress) => {

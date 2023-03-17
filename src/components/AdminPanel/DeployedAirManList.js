@@ -60,7 +60,9 @@ const DeployedAirdropModal = ({
       title: 'Project information',
       content: {
         content: [
-          <ProjectInfo  key={'info'} projectInfoSource={ projectInfoJSON }/>
+          <Segment>
+            <ProjectInfo  key={'info'} projectInfoSource={ projectInfoJSON } drawButton={true}/>
+          </Segment>
       ]},
     }
   ]
@@ -274,8 +276,7 @@ export const DeployedAirManList = ({
   instances,
   checkedInstances,
   instancesImageData,
-  instancesProjectInfo,
-  instancesMetadataChecked
+  instancesProjectInfo
 }) => {
 
   if (checkedInstances) {

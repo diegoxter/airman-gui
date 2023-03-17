@@ -1,10 +1,10 @@
 import { Grid, Placeholder, Segment, Message, Button, Icon, Form, TextArea } from 'semantic-ui-react';
 
-export const ProjectInfo = ({ projectInfoSource }) => {
+export const ProjectInfo = ({ projectInfoSource, drawButton }) => {
 
   return (
-    <Segment>
-    <Button disabled icon='pencil' floated='right' onClick={() => console.log('click')}/>
+    <div>
+    { drawButton ? <Button disabled icon='pencil' floated='right' onClick={() => console.log('click')}/> : false}
     <Form>
       <Form.Group>
         <Form.Input readOnly value={projectInfoSource.projectURL} label='Project page'/>
@@ -25,7 +25,7 @@ export const ProjectInfo = ({ projectInfoSource }) => {
       </Form.Group>
 
     </Form>
-  </Segment>
+  </div>
   );
 }
 

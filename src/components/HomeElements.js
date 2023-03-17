@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Card, Button, Accordion, Modal, Image, Header } from 'semantic-ui-react';
-import { RefreshButton } from './CommonComponents';
+import { Card, Button, Modal, Image, Header } from 'semantic-ui-react';
+import { RefreshButton, ProjectInfo } from './CommonComponents';
 import { joinAirdrop, retireFromAirdrop, claimAirdrop, isCampaignActive } from '../interactions/airdropSystem';
-import { weiToEther, cleanAddress } from '../interactions';
+import { weiToEther, cleanAddress, readJSONFromIPFS } from '../interactions';
+import { getAirManMetadata } from '../interactions/airmanSystem';
 
 export const CampaignModal = ({
   accounts,
@@ -13,7 +14,8 @@ export const CampaignModal = ({
   canClaim,
   isUserBanned,
   hasClaimed,
-  setParticipantDataChecked
+  setCanClaim,
+  projectInfoJSON
 }) => {
   const [ open, setOpen ] = useState(false);
   const [ isLoading, setIsLoading ] = useState(false);
@@ -22,27 +24,29 @@ export const CampaignModal = ({
 
   const handleJoinClick = () => {
     setIsLoading(true);
-    joinAirdrop(campaignAddress, accounts, setIsLoading, setParticipantDataChecked);
+    joinAirdrop(campaignAddress, accounts, setIsLoading)
+    .then((result) => setCanClaim(result))
   }
 
   const handleRetireClick = () => {
     setIsLoading(true);
-    retireFromAirdrop(campaignAddress, accounts, setIsLoading, setParticipantDataChecked);
+    retireFromAirdrop(campaignAddress, accounts, setIsLoading)
+    .then((result) => setCanClaim(!result))
   }
 
   const handleClaim = () => {
     setIsLoading(true);
-    claimAirdrop(campaignAddress, accounts, setIsLoading, setParticipantDataChecked)
+    claimAirdrop(campaignAddress, accounts, setIsLoading)
     .then((value) => {
       setOpen(!value);
     })
   }
 
   const chooseButton = () => {
-      if (canClaim) {
-        return ["Claim", handleClaim];
-      } else {
+      if (canClaim && isActive) {
         return ['Retire', handleRetireClick];
+      } else {
+        return ["Claim", handleClaim];
       }
   }
 
@@ -106,7 +110,7 @@ export const CampaignModal = ({
 
   return (
     <Modal
-      size='mini'
+      size='small'
       dimmer='inverted'
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
@@ -120,8 +124,7 @@ export const CampaignModal = ({
       <Modal.Content>
         <Modal.Description>
           <Header content={drawAirdropCardContent(campaignFee > 0)}/>
-            <p> Placeholder </p>
-            <p> Placeholder </p>
+           <ProjectInfo projectInfoSource={ projectInfoJSON } drawButton={false}/>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
@@ -156,16 +159,20 @@ export const CampaignModal = ({
 }
 
 export const AirdropCampaignCard = ({
+  network,
   accounts,
   campaignInfo,
-  participantData,
-  setParticipantDataChecked
+  participantData
 }) => {
   const [ isPrivate, setIsPrivate ] = useState('');
   const [ canClaim, setCanClaim ] = useState('');
   const [ isUserBanned, setIsUserBanned ] = useState('');
   const [ checkedUserData, setCheckedUserData ] = useState(false);
   const [ hasClaimed, setHasClaimed] = useState('');
+  const [ instancesImageData, setInstancesImageData ] = useState([]);
+  const [ instancesProjectInfo, setInstancesProjectInfo ] = useState([]);
+  const [ instancesMetadataChecked, setInstancesMetadataChecked ] = useState(false)
+  const [ projectInfoJSON, setProjectInfoJSON ] = useState('');
 
   if (accounts !== '' && !checkedUserData) {
     setCanClaim((participantData.address).toLowerCase() === accounts);
@@ -174,28 +181,24 @@ export const AirdropCampaignCard = ({
     setCheckedUserData(true);
   }
 
+  if (network !== '' && instancesMetadataChecked === false ) {
+    getAirManMetadata(network, campaignInfo.airManAddress[0])
+    .then((result) => {
+      setInstancesImageData(result[1]);
+      readJSONFromIPFS(result[0])
+      .then((json) => {
+        setProjectInfoJSON(json);
+        setInstancesMetadataChecked(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    })
+  }
+
   if (hasClaimed === '') {
     setHasClaimed(participantData.claimed);
   }
-
-  const panels = [
-    {
-      key: 'content',
-      title: {
-        content: 'Project information',
-      },
-      content: {
-        content: (
-          <span>
-            Project page:     PLACEHOLDER <br/>
-            Project Twitter:  PLACEHOLDER <br/>
-            Project Telegram: PLACEHOLDER <br/>
-            Project Discrod:  PLACEHOLDER <br/>
-          </span>
-        ),
-      },
-    },
-  ];
 
   const getHumanDate = (unixtime) => {
     const date = new Date(unixtime * 1000);
@@ -220,9 +223,9 @@ export const AirdropCampaignCard = ({
         {
           (isCampaignActive(campaignInfo.claimableSince))
           ?
-          <p>{`Active Placeholder` + ((isPrivate)? ' Private':'')}</p>
+          <p>{(projectInfoJSON.name) + ((isPrivate)? ' Private':'')}</p>
           :
-          <s>{`Inactive Placeholder `+ ((isPrivate)? ' Private':'')}</s>
+          <s>{(projectInfoJSON.name)+ ((isPrivate)? ' Private':'')}</s>
         }
 
       </Card.Header>
@@ -231,7 +234,7 @@ export const AirdropCampaignCard = ({
         <Image
           floated='right'
           size='tiny'
-          src='https://react.semantic-ui.com/images/avatar/large/molly.png'
+          src={`https://testairdropman.infura-ipfs.io/ipfs/${instancesImageData[0]}`}
         />
         Token address: <br/><b>{cleanAddress(campaignInfo.tokenAddress[0], 4, 38)}</b>
       </Card.Meta>
@@ -241,7 +244,7 @@ export const AirdropCampaignCard = ({
       </Card.Meta>
 
       <Card.Meta>
-        End date: <br/><b>{getHumanDate(campaignInfo.claimableSince)}</b><br/>
+        Claim date: <br/><b>{getHumanDate(campaignInfo.claimableSince)}</b><br/>
         Withdraw before: <br /> <b>{getHumanDate(campaignInfo.ownerTokenWithdrawDateCalls)} </b>
       </Card.Meta>
 
@@ -253,8 +256,6 @@ export const AirdropCampaignCard = ({
           :
           ``
         }
-
-        <br/>Project description Placeholder
         </Card.Description>
       </Card.Content>
 
@@ -269,10 +270,10 @@ export const AirdropCampaignCard = ({
             canClaim={ canClaim }
             isUserBanned={ isUserBanned }
             hasClaimed={ hasClaimed }
-            setParticipantDataChecked={ setParticipantDataChecked }
+            setCanClaim={ setCanClaim }
+            projectInfoJSON={ projectInfoJSON }
           />
         </div>
-        <Accordion panels={panels}/>
 
       </Card.Content>
     </Card>

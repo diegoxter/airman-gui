@@ -287,7 +287,6 @@ export const AirdropManagerTab = ({ network, accounts, isConnected }) => {
         checkedInstances={ checkedInstances }
         instancesImageData={ instancesImageData }
         instancesProjectInfo={ instancesProjectInfo }
-        instancesMetadataChecked={ instancesMetadataChecked }
       />
       :
       <Grid.Column >
