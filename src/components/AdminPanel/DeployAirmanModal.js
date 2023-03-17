@@ -157,6 +157,9 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setInstances, 
               <Form.Input placeholder='Telegram...' onChange={(e) => handleProjectTelegramChange(e.target.value)}/>
               <Form.Input placeholder='Discord...' onChange={(e) => handleProjectDiscordChange(e.target.value)}/>
             </Form.Group>
+            <Form.Field>
+              <Checkbox label="I agree that any changes to these informations will incur a fee" onChange={()=> handleCheckboxChange()}/>
+            </Form.Field>
             <Divider />
 
             <Form.Group>
@@ -205,6 +208,16 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setInstances, 
               />
             }
             <Button style={buttonStyle} content='Attach token logo' onClick={handleButtonClick} fluid/>
+            <Button
+              disabled={selectedFile === null}
+              size='mini'
+              fluid
+              style={buttonStyle}
+              color='red'
+              content='Remove image'
+              onClick={() => setSelectedFile(null)}
+              />
+
             <input
               style={{ display: "none" }}
               ref={inputRef}
@@ -214,10 +227,6 @@ export const AdminPanelModal = ({ network, accounts, isConnected, setInstances, 
             />
 
             <Divider />
-
-            <Form.Field>
-              <Checkbox label="I agree that any changes to these informations will incur a fee" onChange={()=> handleCheckboxChange()}/>
-            </Form.Field>
 
           </Grid.Column>
         </Grid>

@@ -26,7 +26,6 @@ import { DeployedCampaignCard, NewAirdropModal, ManageAssetsPopup } from './Moda
 const DeployedAirdropModal = ({
   accounts,
   network,
-  instanceNumer,
   instanceAddress,
   instanceToken,
   instancesProjectInfo
@@ -60,7 +59,7 @@ const DeployedAirdropModal = ({
       title: 'Project information',
       content: {
         content: [
-          <Segment>
+          <Segment key={instanceAddress}>
             <ProjectInfo  key={'info'} projectInfoSource={ projectInfoJSON } drawButton={true}/>
           </Segment>
       ]},
@@ -303,7 +302,6 @@ export const DeployedAirManList = ({
                     <DeployedAirdropModal
                       accounts={ accounts }
                       network={ network }
-                      instanceNumer={ Number(instance.id) }
                       instanceAddress={ instance.instanceAddress }
                       instanceToken= { instance.instanceToken }
                       instancesProjectInfo={ instancesProjectInfo }

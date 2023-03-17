@@ -88,7 +88,12 @@ export const DeployButton = ({
       );
     } else if (Number(allowance) >= Number(amountInputValue * 10 ** Number(tokenDecimals))) {
       return (
-        <Button positive content="Let's do it!" onClick={() => { handleLetsDoItClick() }} disabled={!checked} />
+        <Button
+          positive
+          content="Let's do it!"
+          onClick={() => { handleLetsDoItClick() }}
+          disabled={!checked || campaignMetadata[1] === null}
+        />
       );
     } else if (isValidAmount) {
       return (
