@@ -125,7 +125,7 @@ const DeployedAirdropModal = ({
 
   return (
     <Modal
-      style={{height: '94%', overflowY: 'auto'}}
+      style={{height: '94%', overflowY: 'auto', width: '80%'}}
       dimmer='inverted'
       onClose={() => handleClose()}
       onOpen={() => setOpen(true)}
@@ -136,7 +136,7 @@ const DeployedAirdropModal = ({
         <Grid >
           <Grid.Row>
             <Grid.Column as='h1' floated='left' width={7}>
-              Instance #{instanceNumer} <br/>
+              {projectInfoJSON.name} <br/>
               Deployed campaigns
               <br/> <p style={{
                 fontSize: '12px',
