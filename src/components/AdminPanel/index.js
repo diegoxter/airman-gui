@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Grid, Card, Segment, Divider, Checkbox, Modal, Button, Form, Popup, Icon, Header } from 'semantic-ui-react';
+import { useState, useRef } from 'react';
+import { Grid, Card, Segment, Divider, Checkbox, Modal, Button, Form, Popup, Icon, Header, Image } from 'semantic-ui-react';
 import { LoadingCardGroup, NotConnectedMessage, RefreshButton, CopyButton } from '../CommonComponents';
 import { AdminPanelModal } from './DeployAirmanModal';
 import { DeployedAirManList } from './DeployedAirManList';
@@ -7,14 +7,36 @@ import { getEtherBalance, cleanAddress, getAdmPanAddress, weiToEther } from '../
 import { getInstanceInfoByOwner, isAdminAddress, getAirManInstancesMetadata, setNewFee, withdrawEther, getDeployedInstances, getFee } from '../../interactions/airmanSystem';
 
 const AdminModal = ({ network }) => {
-  const [open, setOpen] = useState(false);
-  const [instanceBalance, setInstanceBalance] = useState('');
-  const [currentFee, setCurrentFee] = useState('');
-  const [deployedInstances, setDeployedInstances] = useState('');
-  const [isLoading, setIsLoading] = useState(false)
-  const [newFeeInEther, setNewFeeInEther] = useState('')
-  const [isValidFee, setIsValidFee] = useState(false)
+  const [ open, setOpen ] = useState(false);
+  const [ instanceBalance, setInstanceBalance ] = useState('');
+  const [ currentFee, setCurrentFee ] = useState('');
+  const [ deployedInstances, setDeployedInstances ] = useState('');
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ newFeeInEther, setNewFeeInEther ] = useState('');
+  const [ isValidFee, setIsValidFee ] = useState(false);
+  const [ newAdminAddress, setNewAdminAddress ] = useState('')
+  const [ removeAdminAddress, setRemoveAdminAddress ] = useState('')
+  const [selectedFile, setSelectedFile] = useState(null);
+  const inputRef = useRef(null);
+
   const adminPanelAddress = getAdmPanAddress(network);
+  const adminRole = '0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775'
+
+  const onFileChange = (e) => {
+    const size = (e.size / 1024 / 1024).toFixed(2);
+
+    if (size > 2) {
+      alert("File must be less than 2 MB");
+    } else {
+      setSelectedFile(e);
+    }
+  }
+
+  const handleButtonClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
 
   if (deployedInstances === '') {
     getDeployedInstances(network)
@@ -36,6 +58,14 @@ const AdminModal = ({ network }) => {
   const handleFeeChange = (value) => {
     setNewFeeInEther(value)
     setIsValidFee(!isNaN(value) && value !== '')
+  }
+
+  const handleNewAdminChange = (value) => {
+    setNewAdminAddress(value)
+  }
+
+  const handleRemoveAdminChange = (value) => {
+    setRemoveAdminAddress(value)
   }
 
   const handleWithdrawEtherClick = () => {
@@ -77,6 +107,11 @@ const AdminModal = ({ network }) => {
     setIsValidFee(false);
   }
 
+  const buttonStyle = {
+    width: '100%',
+    marginTop: '6px',
+  };
+
   return (
     <Modal
       size='tiny'
@@ -104,7 +139,11 @@ const AdminModal = ({ network }) => {
           </Grid.Row>
         </Grid>
       </Modal.Header>
-      <Modal.Content>
+      <Modal.Content scrolling>
+        <Header as='h4'>
+          <Icon name='superpowers' />
+          Admin functions
+        </Header>
         <Form>
           <Form.Group>
             <Form.Input placeholder='New fee in wei...' inline onChange={(e) => handleFeeChange(e.target.value)}/>
@@ -124,6 +163,28 @@ const AdminModal = ({ network }) => {
             :
             `No valid new fee input`
             }
+          <Divider hidden/>
+          <Form.Group>
+            <Form.Input placeholder='Address to add as admin' inline onChange={(e) => handleNewAdminChange(e.target.value)}/>
+            <Button
+              loading={isLoading}
+              disabled={newAdminAddress <= 42}
+              content='Add admin'
+              onClick={() => console.log('Add new admin click')}
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Input placeholder='Address to remove admin' inline onChange={(e) => handleRemoveAdminChange(e.target.value)}/>
+            <Button
+              loading={isLoading}
+              disabled={removeAdminAddress <= 42}
+              content='Remove admin'
+              onClick={() => console.log('Remove admin click')}
+            />
+
+          </Form.Group>
+          <Divider hidden/>
 
           <Divider horizontal>
             <Header as='h4'>
@@ -131,6 +192,41 @@ const AdminModal = ({ network }) => {
               Deploy a free Airdrop Manager instance
             </Header>
           </Divider>
+
+          {
+              (selectedFile === null)
+              ?
+              <Icon
+                size='massive'
+                name='cloud upload'
+                style={{ display: 'block', margin: 'auto' }}
+              />
+              :
+              <Image
+                size='small'
+                src={URL.createObjectURL(selectedFile)}
+                wrapped
+                style={{ display: 'block', margin: 'auto' }}
+              />
+            }
+            <Button style={buttonStyle} content='Attach token logo' onClick={handleButtonClick} fluid/>
+            <Button
+              disabled={selectedFile === null}
+              size='mini'
+              fluid
+              style={buttonStyle}
+              color='red'
+              content='Remove image'
+              onClick={() => setSelectedFile(null)}
+              />
+
+            <input
+              style={{ display: "none" }}
+              ref={inputRef}
+              type="file"
+              accept='.png,.jpg,.jpeg,.svg'
+              onChange={(e) => onFileChange(e.target.files[0])}
+            />
         <Form.Group>
           <Form.Field>
             <label>Owner address</label>
