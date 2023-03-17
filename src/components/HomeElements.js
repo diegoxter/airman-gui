@@ -1,13 +1,7 @@
 import { useState } from 'react';
-import { Card, Button, Accordion, Segment, Modal, Image, Header } from 'semantic-ui-react';
-import { LoadingCardGroup, FetchingDataMessage, NoElementsFoundMessage, RefreshButton } from './CommonComponents';
-import {
-  joinAirdrop,
-  retireFromAirdrop,
-  claimAirdrop,
-  isCampaignActive,
-  getDetailedAirdropCampaignInfo
-} from '../interactions/airdropSystem';
+import { Card, Button, Accordion, Modal, Image, Header } from 'semantic-ui-react';
+import { RefreshButton } from './CommonComponents';
+import { joinAirdrop, retireFromAirdrop, claimAirdrop, isCampaignActive } from '../interactions/airdropSystem';
 import { weiToEther, cleanAddress } from '../interactions';
 
 export const CampaignModal = ({
@@ -161,7 +155,7 @@ export const CampaignModal = ({
   )
 }
 
-const AirdropCampaignCard = ({
+export const AirdropCampaignCard = ({
   accounts,
   campaignInfo,
   participantData,
@@ -218,7 +212,7 @@ const AirdropCampaignCard = ({
   }
 
   return(
-    <Card style={{width:'280px', marginLeft:'60px', marginRight:'50px'}} >
+    <Card style={{width:'280px', marginLeft:'40px', marginRight:'50px'}} >
       <Card.Content>
 
       <Card.Header>
@@ -284,61 +278,3 @@ const AirdropCampaignCard = ({
     </Card>
   );
 }
-
-export const AirdropList = ({
-  network,
-  accounts,
-  campaignDataChecked,
-  setCampaignDataChecked,
-  participantDataChecked,
-  setParticipantDataChecked
-}) => {
-  const [ campaignData, setCampaignData ] = useState([]);
-  const [ participantData, setParticipantData ] = useState([]);
-
-  if (campaignDataChecked === false || participantDataChecked === false) {
-    if (network !== '' && accounts !== '') {
-     getDetailedAirdropCampaignInfo(network, accounts)
-     .then((result) => {
-       setCampaignData(result[0]);
-       setCampaignDataChecked(true);
-       setParticipantData(result[1]);
-       setParticipantDataChecked(true);
-     })
-    }
-   }
-
-  if (campaignDataChecked === false) {
-    return(
-      <Segment style={{width:'96%'}}>
-        <FetchingDataMessage />
-        <LoadingCardGroup />
-
-      </Segment>
-    );
-  } else if (campaignData.length === 0) {
-    return(
-      <Segment style={{width:'99%'}}>
-        <NoElementsFoundMessage whatIsBeingLookedFor='Active Airdrop Campaigns'/>
-        <LoadingCardGroup />
-      </Segment>
-    );
-  } else {
-    return (
-      <Segment>
-        <Card.Group>
-          {campaignData.map((campaignInfo, index) => (
-            <AirdropCampaignCard
-              key={ campaignInfo.campaignAddress }
-              accounts={ accounts }
-              campaignInfo={ campaignInfo }
-              participantData={ participantData[index] }
-              setParticipantDataChecked={ setParticipantDataChecked }
-            />
-          ))}
-        </Card.Group>
-      </Segment>
-    );
-  }
-}
-

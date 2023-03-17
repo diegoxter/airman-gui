@@ -1,5 +1,5 @@
 import { Tab } from 'semantic-ui-react';
-import AirdropManagerTab from '../components/AdminPanel';
+import { AirdropManagerTab } from '../components/AdminPanel';
 
 
 const Profile = ({ network, accounts, isConnected }) => {
