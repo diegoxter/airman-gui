@@ -59,6 +59,8 @@ export const getAirdropCampaignsAddressList = async (_network) => {
   }
 
   if (airManAddresses.length > 0) {
+    let iterator = 0
+
     await Promise.all(airManAddresses.map(async (airmanData) => {
       const airManInstance = new ethers.Contract(airmanData.instanceAddress, airdropManagerAbi, signer);
       const airManInstanceCampaignList = Number(await airManInstance.showDeployedCampaigns());
@@ -80,7 +82,8 @@ export const getAirdropCampaignsAddressList = async (_network) => {
         const airManDataRaw = await multicall(airdropManagerAbi, getAirdropListCalls, _network);
 
         for (let i = 0; i < (Object.keys(airManDataRaw)).length; i++) {
-          airdropCampaignsAddressList[i] = airManDataRaw[i].campaignAddress;
+          airdropCampaignsAddressList[iterator] = airManDataRaw[i].campaignAddress;
+          iterator++
         }
       }
     }))
