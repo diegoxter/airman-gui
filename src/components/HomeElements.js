@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, Button, Modal, Image, Header } from 'semantic-ui-react';
-import { RefreshButton, ProjectInfo } from './CommonComponents';
+import { Card, Button, Modal, Image, Header, Divider } from 'semantic-ui-react';
+import { ProjectInfo } from './CommonComponents';
 import { joinAirdrop, retireFromAirdrop, claimAirdrop, isCampaignActive } from '../interactions/airdropSystem';
 import { weiToEther, cleanAddress, readJSONFromIPFS } from '../interactions';
 import { getAirManMetadata } from '../interactions/airmanSystem';
@@ -14,6 +14,7 @@ export const CampaignModal = ({
   canClaim,
   isUserBanned,
   hasClaimed,
+  setHasClaimed,
   setCanClaim,
   projectInfoJSON
 }) => {
@@ -39,6 +40,7 @@ export const CampaignModal = ({
     claimAirdrop(campaignAddress, accounts, setIsLoading)
     .then((value) => {
       setOpen(!value);
+      setHasClaimed(value);
     })
   }
 
@@ -50,31 +52,45 @@ export const CampaignModal = ({
       }
   }
 
-  const drawAirdropCardContent = (hasCampaignFee) => {
-    if (hasCampaignFee) {
-      return (
-        canClaim?
-        `You will receive ${campaignFee} as refund ether after retiring`
-        :
-        `The fee to join the campaign is ${campaignFee} ether`
-        );
+  const drawModalContent = () => {
+    if (isActive) {
+      return 'Retire from campaign';
     } else {
-      return (
-        canClaim?
-        'No refund for retiring this campaign'
-        :
-        'No fee to join this campaign');
+      return 'Claim airdrop';
     }
+  }
+
+  const drawAirdropCardContent = (hasCampaignFee) => {
+    if (isActive) {
+      if (hasCampaignFee) {
+          return (
+            canClaim?
+            `You will receive ${campaignFee} as refund ether after retiring`
+            :
+            `The fee to join the campaign is ${campaignFee} ether`
+          );
+        } else {
+          return (
+            canClaim?
+            'No refund for retiring this campaign'
+            :
+            'No fee to join this campaign'
+          );
+        }
+      } else {
+        return 'Claim to receive your tokens'
+      }
+
   }
 
   const participationButtonContent = () => {
     if (isActive) {
-      return ['green', 'Manage']
+      return ['green', 'Manage'];
     } else {
       if (hasClaimed) {
-        return ['violet', 'Claimed']
+        return ['violet', 'Claimed'];
       } else {
-        return ['red', 'Claim']
+        return ['red', 'Reclaim airdrop'];
       }
     }
   }
@@ -118,13 +134,15 @@ export const CampaignModal = ({
       trigger={ drawModalButtonTrigger() }
     >
       <Modal.Header>
-        {canClaim?'Retire from':'Join'} campaign
-        <RefreshButton floated='right'/>
+        {canClaim? drawModalContent() :'Join campaign'}
       </Modal.Header>
       <Modal.Content>
         <Modal.Description>
           <Header content={drawAirdropCardContent(campaignFee > 0)}/>
-           <ProjectInfo projectInfoSource={ projectInfoJSON } drawButton={false}/>
+
+          <Divider hidden/>
+
+          <ProjectInfo projectInfoSource={ projectInfoJSON } drawButton={false}/>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
@@ -170,7 +188,6 @@ export const AirdropCampaignCard = ({
   const [ checkedUserData, setCheckedUserData ] = useState(false);
   const [ hasClaimed, setHasClaimed] = useState('');
   const [ instancesImageData, setInstancesImageData ] = useState([]);
-  const [ instancesProjectInfo, setInstancesProjectInfo ] = useState([]);
   const [ instancesMetadataChecked, setInstancesMetadataChecked ] = useState(false)
   const [ projectInfoJSON, setProjectInfoJSON ] = useState('');
 
@@ -270,6 +287,7 @@ export const AirdropCampaignCard = ({
             canClaim={ canClaim }
             isUserBanned={ isUserBanned }
             hasClaimed={ hasClaimed }
+            setHasClaimed={ setHasClaimed }
             setCanClaim={ setCanClaim }
             projectInfoJSON={ projectInfoJSON }
           />
